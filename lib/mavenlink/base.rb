@@ -48,7 +48,7 @@ module Mavenlink
     def delete_request(path)
       response = self.class.delete(path,
                   :headers => { "Authorization" => "Bearer #{self.oauth_token}"})
-      if response.code == 200
+      if response.code == 200 or response.code == 204
         response
       else
         raise "Server error code #{response.code}: #{response.parsed_response.inspect}"

@@ -129,12 +129,13 @@ module Mavenlink
   end
 
   class Expense < Base
-    attr_accessor :id, :created_at, :updated_at, :date, :notes, :category, :amount_in_cents, :currency,
+    attr_accessor :oauth_token, :id, :created_at, :updated_at, :date, :notes, :category, :amount_in_cents, :currency,
                   :currency_symbol, :currency_base_unit, :user_can_edit, :is_invoiced, :is_billable, 
                   :workspace_id, :user_id, :receipt_id
-    def initialize(id, created_at, updated_at, date, notes, category, amount_in_cents, currency,
+    def initialize(oauth_token, id, created_at, updated_at, date, notes, category, amount_in_cents, currency,
                   currency_symbol, currency_base_unit, user_can_edit, is_invoiced, is_billable, 
                   workspace_id, user_id, receipt_id)
+      self.oauth_token = oauth_token
       self.id = id
       self.created_at = created_at
       self.updated_at = updated_at
@@ -151,6 +152,21 @@ module Mavenlink
       self.workspace_id = self.workspace_id
       self.user_id = user_id
       self.receipt_id = receipt_id
+    end
+
+    def save
+      savable = ["notes", "category", "date", "amount_in_cents"]
+      options = {}
+      savable.each do |inst|
+        options["expense[#{inst}]"] = instance_variable_get("@#{inst}")
+      end
+      # API returns is_billable but expects billable when updating
+      options["expense[billable]"] = instance_variable_get("@is_billable")
+      response = put_request("/expenses/#{self.id}.json", options)
+    end
+
+    def delete
+      response = delete_request("/expenses/#{self.id}.json")
     end
   end
 
