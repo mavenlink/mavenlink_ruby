@@ -8,7 +8,7 @@ module Mavenlink
   end
 
   class User < Base
-    attr_accessor :oauth_token, :user_id, :full_name, :photo_path, :email_address, :headline
+    attr_accessor :user_id, :full_name, :photo_path, :email_address, :headline
     def initialize(user_id, full_name, photo_path, email_address, headline)
       self.user_id = user_id
       self.full_name = full_name
@@ -18,14 +18,123 @@ module Mavenlink
     end
   end
 
+  class Asset < Base
+    attr_accessor :oauth_token, :type, :data
+    def initialize(oauth_token, type, data)
+      self.oauth_token = oauth_token
+      self.type = type
+      self.data = data
+    end
+
+    def save
+    end
+
+    def delete
+    end
+  end
+
+  class Workspace < Base
+    attr_accessor :oauth_token, :id, :title, :archived, :description, :effective_due_date,
+                  :budgeted, :change_orders_enabled, :updated_at, :created_at, :consultant_role_name,
+                  :client_role_name, :can_create_line_items, :default_rate, :currency_symbol, 
+                  :currency_base_unit, :can_invite, :has_budget_access, :price, :price_in_cent,
+                  :budget_used, :over_budget, :currency, :primary_counterpart_json,
+                  :participants_json, :creator_json
+    def initialize(oauth_token, id, title, archived, description, effective_due_date,
+                  budgeted, change_orders_enabled, updated_at, created_at, consultant_role_name,
+                  client_role_name, can_create_line_items, default_rate, currency_symbol, 
+                  currency_base_unit, can_invite, has_budget_access, price, price_in_cent,
+                  budget_used, over_budget, currency, primary_counterpart_json, participants_json,
+                  creator_json)
+      self.oauth_token = oauth_token
+      self.id = id
+      self.title = title
+      self.archived = archived
+      self.description = description,
+      self.effective_due_date = effective_due_date
+      self.budgeted = budgeted
+      self.change_orders_enabled = change_orders_enabled
+      self.updated_at = updated_at
+      self.created_at = created_at
+      self.consultant_role_name = consultant_role_name
+      self.client_role_name = client_role_name
+      self.can_create_line_items = can_create_line_items
+      self.default_rate = default_rate
+      self.currency_symbol = currency_symbol
+      self.currency_base_unit = currency_base_unit
+      self.can_invite = can_invite
+      self.has_budget_access = has_budget_access
+      self.price = price
+      self.price_in_cent = price_in_cent
+      self.budget_used = budget_used
+      self.over_budget = over_budget
+      self.currency = currency
+      self.primary_counterpart_json = primary_counterpart_json
+      self.participants_json = participants_json
+      self.creator_json = creator_json
+    end
+
+    def primary_counterpart
+      self.reload if self.primary_counterpart_json.nil?
+      return nil if self.primary_counterpart_json.nil?
+      User.new(self.primary_counterpart_json["id"], self.primary_counterpart_json["full_name"], 
+                self.primary_counterpart_json["photo_path"], 
+                self.primary_counterpart_json["email_address"], self.primary_counterpart_json["headline"])
+    end
+
+    def participants
+      self.reload if self.participants_json.nil?
+      participants_list = []
+      participants_json.each do |ptct|
+        participants_list <<  User.new(ptct["id"], ptct["full_name"], ptct["photo_path"], 
+                                       ptct["email_address"], ptct["headline"])
+      end
+      participants_list
+    end
+
+    def creator
+      self.reload if self.creator_json.nil?
+      User.new(self.creator_json["id"], self.creator_json["full_name"], self.creator_json["photo_path"], 
+                self.creator_json["email_address"], self.creator_json["headline"])
+    end
+
+    def save
+      options = {"title" => self.title, "budgeted" => self.budgeted,
+                  "description" => self.description, "archived" => self.archived}
+      options.keys.each {|key| options["workspace[#{key}]"] = options.delete(key)}
+      response = put_request("/workspaces/#{self.id}.json", options)
+    end
+
+    def reload
+      options = {"include" => "primary_counterpart,participants,creator"}
+      response = get_request("/workspaces/#{self.id}.json", options)
+      result = response["workspaces"].first[1]
+      self.primary_counterpart_json = response["users"][result["primary_counterpart_id"]]
+      self.participants_json = []
+      result["participant_ids"].each {|k| self.participants_json << response["users"][k]}
+      self.creator_json = response["users"][result["creator_id"]]
+    end
+
+    def create_workspace_invitation(options)
+      unless ["full_name", "email_address", "invitee_role"].all? {|k| options.has_key? k}
+        raise "Missing required parameters"
+      end 
+      unless ["buyer", "maven"].include? options["invitee_role"]
+        raise "invitee_role must be 'buyer' or 'maven'"
+      end
+      options.keys.each {|key| options["invitation[#{key}]"] = options.delete(key)}
+      response = post_request("/workspaces/#{self.id}/invite.json", options)
+    end
+
+  end
+
   class Expense < Base
-    attr_accessor :oauth_token, :id, :created_at, :updated_at, :date, :notes, :category, :amount_in_cents, :currency,
+    attr_accessor :id, :created_at, :updated_at, :date, :notes, :category, :amount_in_cents, :currency,
                   :currency_symbol, :currency_base_unit, :user_can_edit, :is_invoiced, :is_billable, 
                   :workspace_id, :user_id, :receipt_id
     def initialize(id, created_at, updated_at, date, notes, category, amount_in_cents, currency,
                   currency_symbol, currency_base_unit, user_can_edit, is_invoiced, is_billable, 
                   workspace_id, user_id, receipt_id)
-      self.oauth_token = oauth_token
       self.id = id
       self.created_at = created_at
       self.updated_at = updated_at
@@ -48,11 +157,11 @@ module Mavenlink
   class TimeEntry < Base
     attr_accessor :oauth_token, :id, :created_at, :updated_at, :date_performed, :story_id, :time_in_minutes,
                   :billable, :notes, :rate_in_cents, :currency, :currency_symbol, :currency_base_unit,
-                  :user_can_edit, :workspace_id, :user_id, :user_json, :workspace_json, :story_json, :options_hash
+                  :user_can_edit, :workspace_id, :user_id, :user_json, :workspace_json, :story_json
 
     def initialize(oauth_token, id, created_at, updated_at, date_performed, story_id, time_in_minutes,
                   billable, notes, rate_in_cents, currency, currency_symbol, currency_base_unit,
-                  user_can_edit, workspace_id, user_id, user_json, workspace_json, story_json, options_hash)
+                  user_can_edit, workspace_id, user_id, user_json, workspace_json, story_json)
       self.oauth_token = oauth_token
       self.id = id
       self.created_at = created_at
@@ -72,42 +181,125 @@ module Mavenlink
       self.user_json = user_json
       self.workspace_json = workspace_json
       self.story_json = story_json
-      self.options_hash = options_hash
     end
 
     def delete
       response = delete_request("/time_entries/#{self.id}.json")
     end
 
-    def save(options)
-      options.keys.each {|key| options["time_entry[#{key}]"] = options.delete(key)}
-      # REmove first "time_entries.json/#{time_entry_id}"
+    def save
+      savable = ["date_performed", "story_id", "time_in_minutes", "notes",
+                "rate_in_cents", "billable"]
+      options = {}
+      savable.each do |inst|
+        options["time_entry[#{inst}]"] = instance_variable_get("@#{inst}")
+      end
       response = put_request("/time_entries/#{self.id}.json", options)
     end
 
-    # Why does a time entry have multiple users? 
-    def users
-      users = []
-      self.user_json.each do |key, user|
-        users << User.new(user["id"], user["full_name"], user["photo_path"], 
-        user["email_address"], user["headline"])
-      end
-      users
+    def user
+      self.reload if self.user_json.nil?
+      User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
+                self.user_json["email_address"], self.user_json["headline"])
     end
 
     def workspace
+      self.reload if self.workspace_json.nil?
     end
 
     def story
+      self.reload if self.story_json.nil?
     end
 
     def reload
-      response = get_request("/time_entries.json", self.options_hash)
-      self.user_json = response["users"]
-      self.story_json = response["stories"]
-      self.workspace_json = response["workspaces"]
+      options = {"include" => "user,story,workspace"}
+      response = get_request("/time_entries/#{self.id}.json", options)
+      result = response["time_entries"].first[1]
+      self.user_json = response["users"][result["user_id"]]
+      self.workspace_json = response["workspaces"][result["workspace_id"]]
+      self.story_json = response["stories"][result["story_id"]]
     end
 
+  end
+
+  class Invoice < Base
+    attr_accessor :oauth_token, :id, :created_at, :updated_at, :invoice_date, :due_date, :message, 
+                  :draft, :status, :balance_in_cents, :currency, :currency_base_unit, :currency_symbol,
+                  :payment_schedule, :workspace_ids, :user_id, :recipient_id, :user_json,
+                  :time_entries_json, :expenses_json, :additional_items_json, :workspaces_json 
+                  
+    def initialize(oauth_token, id, created_at, updated_at, invoice_date, due_date, message, 
+                  draft, status, balance_in_cents, currency, currency_base_unit, currency_symbol,
+                  payment_schedule, workspace_ids, user_id, recipient_id, time_entries_json,
+                  expenses_json, additional_items_json, workspaces_json, user_json)
+      self.oauth_token = oauth_token
+      self.id = id
+      self.created_at = created_at
+      self.updated_at = updated_at
+      self.invoice_date = invoice_date
+      self.due_date = due_date
+			self.message = message
+      self.draft = draft
+      self.status = status
+      self.balance_in_cents = balance_in_cents
+      self.currency = currency
+      self.currency_base_unit = currency_base_unit
+      self.currency_symbol = currency_symbol
+      self.payment_schedule = payment_schedule
+    	self.workspace_ids = workspace_ids
+    	self.user_id = user_id
+    	self.recipient_id = recipient_id
+      self.time_entries_json = time_entries_json
+      self.expenses_json = expenses_json
+      self.additional_items_json = additional_items_json
+      self.workspaces_json = workspaces_json
+      self.user_json = user_json
+    end
+
+    def reload
+      options = {"include" => "time_entries,expenses,additional_items,workspaces,user"}
+      response = get_request("/invoices/#{self.id}.json", options)
+      self.time_entries_json, self.expenses_json = [], [] 
+      self.additional_items_json, self.workspaces_json = [], []
+      result = response["invoices"].first[1]
+      result["time_entry_ids"].each {|k| self.time_entries_json << response["time_entries"][k]}
+      result["additional_item_ids"].each{|k| self.additional_items_json << response["additional_items"][k]}
+      result["expense_ids"].each{|k| self.expenses_json << response["expenses"][k]}
+      result["workspace_ids"].each{|k| self.workspaces_json << response["workspaces"][k]}
+      self.user_json = response["users"][result["user_id"]]
+    end
+
+    def time_entries
+      self.reload if self.time_entries_json.nil?
+      time_entry_list = []
+      time_entries_json.each do |ent|
+        time_entry_list << TimeEntry.new(self.oauth_token, ent["id"], ent["created_at"], ent["updated_at"], 
+                                      ent["date_performed"], ent["story_id"], ent["time_in_minutes"],
+                                      ent["billable"], ent["notes"], ent["rate_in_cents"], 
+                                      ent["currency"], ent["currency_symbol"], ent["currency_base_unit"],
+                                      ent["user_can_edit"], ent["workspace_id"], ent["user_id"], 
+                                      nil, nil, nil)
+      end
+      time_entry_list
+    end
+
+    def expenses
+      self.reload if self.expenses_json.nil?
+    end
+
+    def additional_items
+      self.reload if self.additional_items_json.nil?
+    end
+
+    def workspaces
+      self.reload if self.workspaces_json.nil?
+    end  
+
+    def user
+      self.reload if self.user_json.nil?
+      User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
+              self.user_json["email_address"], self.user_json["headline"])
+    end
   end
 
 end
