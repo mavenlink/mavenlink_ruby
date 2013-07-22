@@ -76,7 +76,7 @@ module Mavenlink
 
     def primary_counterpart
       self.reload if self.primary_counterpart_json.nil?
-      return nil if self.primary_counterpart_json.nil?
+      return nil if self.primary_counterpart_json.empty?
       User.new(self.primary_counterpart_json["id"], self.primary_counterpart_json["full_name"], 
                 self.primary_counterpart_json["photo_path"], 
                 self.primary_counterpart_json["email_address"], self.primary_counterpart_json["headline"])
@@ -315,6 +315,129 @@ module Mavenlink
       self.reload if self.user_json.nil?
       User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
               self.user_json["email_address"], self.user_json["headline"])
+    end
+  end
+
+  class Story < Base
+    attr_accessor :oauth_token, :id, :title, :description, :updated_at, :created_at, :due_date, :start_date,
+                  :story_type, :state, :position, :archived, :deleted_at, :sub_story_count, :budget_estimate_in_cents,
+                  :time_estimate_in_minutes, :workspace_id, :parent_id, :workspace_json, :parent_story_json,
+                  :assignees_json, :sub_stories_json, :tags_json, :percentage_complete
+    def initialize(oauth_token, id, title, description, updated_at, created_at, due_date, start_date,
+                  story_type, state, position, archived, deleted_at, sub_story_count, budget_estimate_in_cents,
+                  time_estimate_in_minutes, workspace_id, parent_id, workspace_json, parent_story_json, 
+                  assignees_json, sub_stories_json, tags_json, percentage_complete)
+      self.oauth_token = oauth_token
+      self.id = id
+      self.title = title
+      self.description = description
+      self.updated_at = updated_at
+      self.created_at = created_at
+      self.due_date = due_date
+      self.start_date = start_date
+      self.story_type = story_type
+      self.state = state
+      self.position = position
+      self.archived = archived
+      self.deleted_at = deleted_at
+      self.sub_story_count = sub_story_count
+      self.budget_estimate_in_cents = budget_estimate_in_cents
+      self.time_estimate_in_minutes = time_estimate_in_minutes
+      self.workspace_id = workspace_id
+      self.parent_id = parent_id
+      self.workspace_json = workspace_json
+      self.parent_story_json = parent_story_json
+      self.assignees_json = assignees_json
+      self.tags_json = tags_json
+      self.sub_stories_json = sub_stories_json
+      self.percentage_complete = percentage_complete
+    end
+
+    def save
+      savable = [ "title", "description", "parent_id", "story_type", "start_date", "due_date",
+                  "state", "budget_estimate_in_cents", "time_estimate_in_minutes", "percentage_complete" ]
+      options = {}
+      savable.each do |inst|
+        options["story[#{inst}]"] = instance_variable_get("@#{inst}")
+      end
+      response = put_request("/stories/#{self.id}.json", options)
+    end
+
+    def delete
+      response = delete_request("/stories/#{self.id}.json")
+    end
+
+    def reload
+      options = {"include" => "workspace,assignees,parent,sub_stories,tags"}
+      response = get_request("/stories/#{self.id}.json", options)
+      self.workspace_json, self.parent_story_json = [], [] 
+      self.sub_stories_json, self.assignees_json = [], []
+      result = response["stories"].first[1]
+      result["assignee_ids"].each {|k| self.assignees_json << response["users"][k]} unless result["assignee_ids"].nil?
+      result["sub_story_ids"].each {|k| self.sub_stories_json << response["stories"][k]} unless result["sub_story_ids"].nil?
+      self.parent_story_json = response["users"][result["parent_id"]]
+      self.workspace_json = response["workspaces"][result["workspace_id"]]
+    end
+
+    def workspace
+      self.reload if self.workspace_json.nil?
+      wksp = self.workspace_json
+      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
+                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
+                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
+                    wksp["consultant_role_name"], wksp["client_role_name"], 
+                    wksp["can_create_line_items"], wksp["default_rate"], 
+                    wksp["currency_symbol"], wksp["currency_base_unit"], 
+                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
+                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
+    end
+
+    def parent_story
+      self.reload if self.parent_story_json.nil?
+      return nil if self.parent_story_json.empty?
+      stry = self.parent_story_json
+      Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"], 
+                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"], 
+                stry["state"], stry["position"], stry["archived"], stry["deleted_at"], 
+                stry["sub_story_count"], stry["budget_estimate_in_cents"], 
+                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"], 
+                self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
+    end
+
+    def assignees
+      self.reload if self.assignees_json.nil?
+      return nil if self.assignees_json.empty?
+      assignees_list = []
+      self.assignees_json.each do |assg|
+        assignees_list <<  User.new(assg["id"], assg["full_name"], assg["photo_path"], 
+                                    assg["email_address"], assg["headline"])
+      end
+      assignees_list
+    end
+
+    def sub_stories
+      self.reload if self.sub_stories_json.nil?
+      return nil if self.sub_stories_json.empty?
+      sub_stories_list = []
+      self.sub_stories_json.each do |stry|
+        sub_stories_list << Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], 
+                                      stry["updated_at"], stry["created_at"], stry["due_date"], stry["start_date"], 
+                                      stry["story_type"], stry["state"], stry["position"], stry["archived"], 
+                                      stry["deleted_at"], stry["sub_story_count"], stry["budget_estimate_in_cents"], 
+                                      stry["time_estimate_in_cents"], stry["workspace_id"], stry["parent_id"], 
+                                      self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
+      end
+      sub_stories_list
+    end
+
+    def tags
+      self.reload if self.tags_json.nil?
+      return nil if self.tags_json.empty?
+      tags_list = []
+      self.tags_json.each do |tag|
+        tags_list << tag["name"]
+      end
+      tags_list
     end
   end
 

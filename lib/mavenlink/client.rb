@@ -171,5 +171,46 @@ module Mavenlink
       response = post_request("/workspaces.json", options)
     end
 
+    def stories(options={})
+      options["include"] = "workspace,assignees,parent,sub_stories,tags"
+      response = get_request("/stories.json", options)
+      users = response["users"]
+      results = response["results"]
+      workspaces = response["workspaces"]
+      story_data = response["stories"]
+      tags = response["tags"]
+      results = response["results"]
+      stories = []
+      results.each do |result|
+        if result["key"].eql? "stories"
+          stry = story_data[result["id"]]
+          workspace_json = workspaces[stry["workspace_id"]]
+          parent_story_json = story_data[stry["parent_id"]]
+          assignees_json, sub_stories_json, tags_json = [], [], []
+          stry["assignee_ids"].each {|k| assignees_json << users[k]}
+          stry["sub_story_ids"].each {|k| sub_stories_json << story_data[k]}
+          stry["tag_ids"].each {|k| tags_json << tags[k]}
+          stories << Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"], 
+                                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"], 
+                                stry["state"], stry["position"], stry["archived"], stry["deleted_at"], 
+                                stry["sub_story_count"], stry["budget_estimate_in_cents"], 
+                                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"], 
+                                workspace_json, parent_story_json, assignees_json, sub_stories_json, tags_json,
+                                stry["percentage_complete"])
+        end
+      end
+      stories
+    end
+
+    def create_story(options)
+      unless ["title", "story_type", "workspace_id", ].all? {|k| options.has_key? k}
+        raise "Missing required parameters"
+      end 
+      unless ["milestone", "task", "deliverable"].include? options["story_type"]
+        raise "story_type must be milestone, task or deliverable"
+      end
+      options.keys.each {|key| options["story[#{key}]"] = options.delete(key)}
+      response = post_request("/stories.json", options)
+    end
   end
 end
