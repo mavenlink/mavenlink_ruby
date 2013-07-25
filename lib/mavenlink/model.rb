@@ -221,6 +221,15 @@ module Mavenlink
 
     def workspace
       self.reload if self.workspace_json.nil?
+      wksp = self.workspace_json
+      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
+                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
+                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
+                    wksp["consultant_role_name"], wksp["client_role_name"], 
+                    wksp["can_create_line_items"], wksp["default_rate"], 
+                    wksp["currency_symbol"], wksp["currency_base_unit"], 
+                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
+                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
     end
 
     def story
@@ -308,7 +317,16 @@ module Mavenlink
     end
 
     def workspaces
-      self.reload if self.workspaces_json.nil?
+      self.reload if self.workspace_json.nil?
+      wksp = self.workspace_json
+      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
+                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
+                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
+                    wksp["consultant_role_name"], wksp["client_role_name"], 
+                    wksp["can_create_line_items"], wksp["default_rate"], 
+                    wksp["currency_symbol"], wksp["currency_base_unit"], 
+                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
+                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
     end  
 
     def user
@@ -438,6 +456,108 @@ module Mavenlink
         tags_list << tag["name"]
       end
       tags_list
+    end
+  end
+
+  class Post < Base
+    attr_accessor :oauth_token, :id, :newest_reply_at, :message, :has_attachment, :created_at, :updated_at, :reply_count,
+                  :private_val, :user_id, :workspace_id, :workspace_type, :reply, :subject_id, :subject_type, :story_id,
+                  :subject_json, :user_json, :workspace_json, :story_json, :replies_json, :newest_reply_json, 
+                  :newest_reply_user_json, :recipients_json, :google_documents_json, :assets_json
+    def initialize(oauth_token, id, newest_reply_at, message, has_attachment, created_at, updated_at, reply_count,
+                  private_val, user_id, workspace_id, workspace_type, reply, subject_id, subject_type, story_id,
+                  subject_json, user_json, workspace_json, story_json, replies_json, newest_reply_json, 
+                  newest_reply_user_json, recipients_json, google_documents_json, assets_json)
+      self.oauth_token = oauth_token
+      self.id = id
+      self.newest_reply_at = newest_reply_at
+      self.message = message
+      self.has_attachment = has_attachment
+      self.created_at = created_at
+      self.updated_at = updated_at
+      self.reply_count = reply_count
+      self.private_val = private_val
+      self.user_id = user_id
+      self.workspace_id = workspace_id
+      self.workspace_type = workspace_type
+      self.reply = reply
+      self.subject_id = subject_id
+      self.subject_type = subject_type
+      self.story_id = story_id
+      self.subject_json = subject_json
+      self.user_json = user_json
+      self.workspace_json = workspace_json
+      self.story_json = story_json
+      self.replies_json = replies_json
+      self.newest_reply_json = newest_reply_json
+      self.newest_reply_user_json = newest_reply_user_json
+      self.recipients_json = recipients_json
+      self.google_documents_json = google_documents_json
+      self.assets_json = assets_json
+    end
+
+    def reload
+    end
+
+    def save
+    end
+
+    def delete
+      response = delete_request("/posts/#{self.id}.json")
+    end
+
+    def parent_post
+      self.reload if self.subject_json.nil?
+      return nil if self.subject_json.empty?
+      pst = self.subject_json
+      Post.new(self.oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
+                pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
+                pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
+                pst["subject_type"], pst["story_id"], pst["subject_json"], nil, nil, nil, nil, nil, nil, 
+                nil, nil, nil)
+    end
+
+    def user
+      self.reload if self.user_json.nil?
+      User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
+              self.user_json["email_address"], self.user_json["headline"])
+    end
+
+    def workspace
+      self.reload if self.workspace_json.nil?
+      wksp = self.workspace_json
+      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
+                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
+                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
+                    wksp["consultant_role_name"], wksp["client_role_name"], 
+                    wksp["can_create_line_items"], wksp["default_rate"], 
+                    wksp["currency_symbol"], wksp["currency_base_unit"], 
+                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
+                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
+    end
+
+    def story
+      self.reload if self.story_json.nil?
+      return nil if self.story_json.empty?
+      stry = self.story_json
+      Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"], 
+                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"], 
+                stry["state"], stry["position"], stry["archived"], stry["deleted_at"], 
+                stry["sub_story_count"], stry["budget_estimate_in_cents"], 
+                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"], 
+                self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
+    end
+
+    def replies
+    end
+
+    def recipients
+    end
+
+    def google_documents
+    end
+
+    def assets
     end
   end
 

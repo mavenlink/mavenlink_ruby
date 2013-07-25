@@ -175,7 +175,6 @@ module Mavenlink
       options["include"] = "workspace,assignees,parent,sub_stories,tags"
       response = get_request("/stories.json", options)
       users = response["users"]
-      results = response["results"]
       workspaces = response["workspaces"]
       story_data = response["stories"]
       tags = response["tags"]
@@ -212,5 +211,46 @@ module Mavenlink
       options.keys.each {|key| options["story[#{key}]"] = options.delete(key)}
       response = post_request("/stories.json", options)
     end
+
+    def posts(options={})
+      options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
+      response = get_request("/posts.json", options)
+      users = response["users"]
+      workspaces = response["workspaces"]
+      stories = response["stories"]
+      assets = response["assets"]
+      posts_data = response["posts"]
+      results = response["results"]
+      google_documents = response["google_documents"]
+      posts = []
+      results.each do |result|
+        if result["key"].eql? "posts"
+          pst = posts_data[result["id"]]
+          subject_json = posts_data[pst["subject_id"]] unless pst["subject_id"].nil?
+          user_json = users[pst["user_id"]]
+          workspace_json = workspaces[pst["workspace_id"]]
+          story_json = stories[pst["story_id"]] unless pst["story_id"].nil?
+          newest_reply_json = posts_data[pst["newest_reply_id"]] unless pst["newest_reply_id"].nil?
+          newest_reply_user_json = users[pst["newest_reply_user_id"]] unless pst["newest_reply_user_id"].nil?
+          recipients_json, google_documents_json = [], []
+          assets_json, replies_json = [], []
+          pst["recipient_ids"].each {|k| recipients_json << users[k]}
+          google_documents_json = google_documents
+          pst["asset_ids"].each {|k| assets_json << assets[k]}
+          pst["reply_ids"].each {|k| replies_json << posts_data[k]}
+          posts << Post.new(self.oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
+                            pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
+                            pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
+                            pst["subject_type"], pst["story_id"], pst["subject_json"], user_json, workspace_json, 
+                            story_json, replies_json, newest_reply_json, newest_reply_user_json, 
+                            recipients_json, google_documents_json, assets_json)
+        end
+      end
+      posts
+    end
+
+    def create_post(options)
+    end
+
   end
 end
