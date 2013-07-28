@@ -202,7 +202,7 @@ module Mavenlink
     end
 
     def create_story(options)
-      unless ["title", "story_type", "workspace_id", ].all? {|k| options.has_key? k}
+      unless ["title", "story_type", "workspace_id" ].all? {|k| options.has_key? k}
         raise "Missing required parameters"
       end 
       unless ["milestone", "task", "deliverable"].include? options["story_type"]
@@ -250,6 +250,11 @@ module Mavenlink
     end
 
     def create_post(options)
+      unless ["message", "workspace_id"].all? {|k| options.has_key? k}
+        raise "Missing required parameters"
+      end 
+      options.keys.each {|key| options["post[#{key}]"] = options.delete(key)}
+      response = post_request("/posts.json", options)
     end
 
   end

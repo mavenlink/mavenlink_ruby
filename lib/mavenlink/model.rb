@@ -160,7 +160,6 @@ module Mavenlink
       savable.each do |inst|
         options["expense[#{inst}]"] = instance_variable_get("@#{inst}")
       end
-      # API returns is_billable but expects billable when updating
       options["expense[billable]"] = instance_variable_get("@is_billable")
       response = put_request("/expenses/#{self.id}.json", options)
     end
@@ -497,9 +496,30 @@ module Mavenlink
     end
 
     def reload
+      options = {"include" => "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"}
+      response = get_request("/posts/#{self.id}.json", options)
+      result = response["posts"].first[1]
+      subject_json = response["posts"][result["subject_id"]] unless result["subject_id"].nil?
+      user_json = response["users"][result["user_id"]]
+      workspace_json = response["workspaces"][result["workspace_id"]]
+      story_json = response["stories"][result["story_id"]] unless result["story_id"].nil?
+      newest_reply_json = response["posts"][result["newest_reply_id"]] unless result["newest_reply_id"].nil?
+      newest_reply_user_json = result["users"][response["newest_reply_user_id"]] unless result["newest_reply_user_id"].nil?
+      self.recipients_json, self.google_documents_json = [], []
+      self.assets_json, self.replies_json = [], []
+      result["recipient_ids"].each {|k| self.recipients_json << resposne["users"][k]}
+      self.google_documents_json = google_documents
+      result["asset_ids"].each {|k| self.assets_json << response["assets"][k]}
+      result["reply_ids"].each {|k| self.replies_json << resposne["posts"][k]}
     end
 
     def save
+      savable = [ "message", "story_id"]
+      options = {}
+      savable.each do |inst|
+        options["post[#{inst}]"] = instance_variable_get("@#{inst}")
+      end
+      response = put_request("/posts/#{self.id}.json", options)
     end
 
     def delete
@@ -549,9 +569,28 @@ module Mavenlink
     end
 
     def replies
+      self.reload if self.replies_json.nil?
+      return [] if self.replies_json.empty?
+      replies = []
+      self.replies_json.each do |pst|
+        replies << Post.new(self.oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
+                            pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
+                            pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
+                            pst["subject_type"], pst["story_id"], pst["subject_json"], nil, nil, nil, nil, nil, nil, 
+                            nil, nil, nil)
+      end
+      replies
     end
 
     def recipients
+      self.reload if self.recipients_json.nil?
+      return [] if self.recipients_json.empty?
+      recipients = []
+      self.recipients_json.each do |usr|
+        recipients << User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
+                              self.user_json["email_address"], self.user_json["headline"])
+      end
+      recipients
     end
 
     def google_documents

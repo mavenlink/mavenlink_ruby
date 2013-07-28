@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Mavenlink::VERSION
   spec.authors       = ["Parth Gandhi"]
   spec.email         = ["parthgandhi@outlook.com"]
-  spec.description   = %q{Mavenlink API}
+  spec.description   = %q{A Ruby client for Mavenlink's API}
   spec.summary       = %q{Mavenlink API}
   spec.homepage      = ""
   spec.license       = "MIT"
