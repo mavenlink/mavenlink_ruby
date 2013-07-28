@@ -1,3 +1,5 @@
+require_relative 'helper'
+
 module Mavenlink
   
   class ExpenseCategory < Base
@@ -8,6 +10,7 @@ module Mavenlink
   end
 
   class User < Base
+    include Mavenlink::Helper
     attr_accessor :user_id, :full_name, :photo_path, :email_address, :headline
     def initialize(user_id, full_name, photo_path, email_address, headline)
       self.user_id = user_id
@@ -19,6 +22,8 @@ module Mavenlink
   end
 
   class Asset < Base
+    include Mavenlink::Helper
+    
     attr_accessor :oauth_token, :type, :data
     def initialize(oauth_token, type, data)
       self.oauth_token = oauth_token
@@ -34,6 +39,8 @@ module Mavenlink
   end
 
   class Workspace < Base
+    include Mavenlink::Helper
+
     attr_accessor :oauth_token, :id, :title, :archived, :description, :effective_due_date,
                   :budgeted, :change_orders_enabled, :updated_at, :created_at, :consultant_role_name,
                   :client_role_name, :can_create_line_items, :default_rate, :currency_symbol, 
@@ -77,25 +84,21 @@ module Mavenlink
     def primary_counterpart
       self.reload if self.primary_counterpart_json.nil?
       return nil if self.primary_counterpart_json.empty?
-      User.new(self.primary_counterpart_json["id"], self.primary_counterpart_json["full_name"], 
-                self.primary_counterpart_json["photo_path"], 
-                self.primary_counterpart_json["email_address"], self.primary_counterpart_json["headline"])
+      get_user(self.primary_counterpart_json)
     end
 
     def participants
       self.reload if self.participants_json.nil?
       participants_list = []
       participants_json.each do |ptct|
-        participants_list <<  User.new(ptct["id"], ptct["full_name"], ptct["photo_path"], 
-                                       ptct["email_address"], ptct["headline"])
+        participants_list <<  get_user(ptct)
       end
       participants_list
     end
 
     def creator
       self.reload if self.creator_json.nil?
-      User.new(self.creator_json["id"], self.creator_json["full_name"], self.creator_json["photo_path"], 
-                self.creator_json["email_address"], self.creator_json["headline"])
+      get_user(self.creator_json)
     end
 
     def save
@@ -129,6 +132,8 @@ module Mavenlink
   end
 
   class Expense < Base
+    include Mavenlink::Helper
+
     attr_accessor :oauth_token, :id, :created_at, :updated_at, :date, :notes, :category, :amount_in_cents, :currency,
                   :currency_symbol, :currency_base_unit, :user_can_edit, :is_invoiced, :is_billable, 
                   :workspace_id, :user_id, :receipt_id
@@ -170,6 +175,8 @@ module Mavenlink
   end
 
   class TimeEntry < Base
+    include Mavenlink::Helper
+
     attr_accessor :oauth_token, :id, :created_at, :updated_at, :date_performed, :story_id, :time_in_minutes,
                   :billable, :notes, :rate_in_cents, :currency, :currency_symbol, :currency_base_unit,
                   :user_can_edit, :workspace_id, :user_id, :user_json, :workspace_json, :story_json
@@ -214,21 +221,12 @@ module Mavenlink
 
     def user
       self.reload if self.user_json.nil?
-      User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
-                self.user_json["email_address"], self.user_json["headline"])
+      get_user(self.user_json)
     end
 
     def workspace
       self.reload if self.workspace_json.nil?
-      wksp = self.workspace_json
-      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
-                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
-                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
-                    wksp["consultant_role_name"], wksp["client_role_name"], 
-                    wksp["can_create_line_items"], wksp["default_rate"], 
-                    wksp["currency_symbol"], wksp["currency_base_unit"], 
-                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
-                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
+      get_workspace(self.oauth_token, self.workspace_json)
     end
 
     def story
@@ -247,6 +245,8 @@ module Mavenlink
   end
 
   class Invoice < Base
+    include Mavenlink::Helper
+
     attr_accessor :oauth_token, :id, :created_at, :updated_at, :invoice_date, :due_date, :message, 
                   :draft, :status, :balance_in_cents, :currency, :currency_base_unit, :currency_symbol,
                   :payment_schedule, :workspace_ids, :user_id, :recipient_id, :user_json,
@@ -297,12 +297,7 @@ module Mavenlink
       self.reload if self.time_entries_json.nil?
       time_entry_list = []
       time_entries_json.each do |ent|
-        time_entry_list << TimeEntry.new(self.oauth_token, ent["id"], ent["created_at"], ent["updated_at"], 
-                                      ent["date_performed"], ent["story_id"], ent["time_in_minutes"],
-                                      ent["billable"], ent["notes"], ent["rate_in_cents"], 
-                                      ent["currency"], ent["currency_symbol"], ent["currency_base_unit"],
-                                      ent["user_can_edit"], ent["workspace_id"], ent["user_id"], 
-                                      nil, nil, nil)
+        time_entry_list << get_time_entry(self.oauth_token, ent)
       end
       time_entry_list
     end
@@ -317,25 +312,18 @@ module Mavenlink
 
     def workspaces
       self.reload if self.workspace_json.nil?
-      wksp = self.workspace_json
-      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
-                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
-                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
-                    wksp["consultant_role_name"], wksp["client_role_name"], 
-                    wksp["can_create_line_items"], wksp["default_rate"], 
-                    wksp["currency_symbol"], wksp["currency_base_unit"], 
-                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
-                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
+      get_workspace(self.oauth_token, self.workspace_json)
     end  
 
     def user
       self.reload if self.user_json.nil?
-      User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
-              self.user_json["email_address"], self.user_json["headline"])
+      get_user(self.user_json)
     end
   end
 
   class Story < Base
+    include Mavenlink::Helper
+
     attr_accessor :oauth_token, :id, :title, :description, :updated_at, :created_at, :due_date, :start_date,
                   :story_type, :state, :position, :archived, :deleted_at, :sub_story_count, :budget_estimate_in_cents,
                   :time_estimate_in_minutes, :workspace_id, :parent_id, :workspace_json, :parent_story_json,
@@ -398,27 +386,13 @@ module Mavenlink
 
     def workspace
       self.reload if self.workspace_json.nil?
-      wksp = self.workspace_json
-      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
-                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
-                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
-                    wksp["consultant_role_name"], wksp["client_role_name"], 
-                    wksp["can_create_line_items"], wksp["default_rate"], 
-                    wksp["currency_symbol"], wksp["currency_base_unit"], 
-                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
-                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
+      get_workspace(self.oauth_token, self.workspace_json)
     end
 
     def parent_story
       self.reload if self.parent_story_json.nil?
       return nil if self.parent_story_json.empty?
-      stry = self.parent_story_json
-      Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"], 
-                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"], 
-                stry["state"], stry["position"], stry["archived"], stry["deleted_at"], 
-                stry["sub_story_count"], stry["budget_estimate_in_cents"], 
-                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"], 
-                self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
+      get_story(self.oauth_token, self.parent_story_json)
     end
 
     def assignees
@@ -426,8 +400,7 @@ module Mavenlink
       return nil if self.assignees_json.empty?
       assignees_list = []
       self.assignees_json.each do |assg|
-        assignees_list <<  User.new(assg["id"], assg["full_name"], assg["photo_path"], 
-                                    assg["email_address"], assg["headline"])
+        assignees_list <<  get_user(assg)
       end
       assignees_list
     end
@@ -437,12 +410,7 @@ module Mavenlink
       return nil if self.sub_stories_json.empty?
       sub_stories_list = []
       self.sub_stories_json.each do |stry|
-        sub_stories_list << Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], 
-                                      stry["updated_at"], stry["created_at"], stry["due_date"], stry["start_date"], 
-                                      stry["story_type"], stry["state"], stry["position"], stry["archived"], 
-                                      stry["deleted_at"], stry["sub_story_count"], stry["budget_estimate_in_cents"], 
-                                      stry["time_estimate_in_cents"], stry["workspace_id"], stry["parent_id"], 
-                                      self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
+        sub_stories_list << get_story(self.oauth_token, stry)
       end
       sub_stories_list
     end
@@ -459,6 +427,8 @@ module Mavenlink
   end
 
   class Post < Base
+    include Mavenlink::Helper
+
     attr_accessor :oauth_token, :id, :newest_reply_at, :message, :has_attachment, :created_at, :updated_at, :reply_count,
                   :private_val, :user_id, :workspace_id, :workspace_type, :reply, :subject_id, :subject_type, :story_id,
                   :subject_json, :user_json, :workspace_json, :story_json, :replies_json, :newest_reply_json, 
@@ -529,43 +499,23 @@ module Mavenlink
     def parent_post
       self.reload if self.subject_json.nil?
       return nil if self.subject_json.empty?
-      pst = self.subject_json
-      Post.new(self.oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
-                pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
-                pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
-                pst["subject_type"], pst["story_id"], pst["subject_json"], nil, nil, nil, nil, nil, nil, 
-                nil, nil, nil)
+      get_post(self.oauth_token, self.subject_json)
     end
 
     def user
       self.reload if self.user_json.nil?
-      User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
-              self.user_json["email_address"], self.user_json["headline"])
+      get_user(self.user_json)
     end
 
     def workspace
       self.reload if self.workspace_json.nil?
-      wksp = self.workspace_json
-      Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
-                    wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
-                    wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
-                    wksp["consultant_role_name"], wksp["client_role_name"], 
-                    wksp["can_create_line_items"], wksp["default_rate"], 
-                    wksp["currency_symbol"], wksp["currency_base_unit"], 
-                    wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
-                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
+      get_workspace(self.oauth_token, self.workspace_json)
     end
 
     def story
       self.reload if self.story_json.nil?
       return nil if self.story_json.empty?
-      stry = self.story_json
-      Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"], 
-                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"], 
-                stry["state"], stry["position"], stry["archived"], stry["deleted_at"], 
-                stry["sub_story_count"], stry["budget_estimate_in_cents"], 
-                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"], 
-                self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
+      get_story(self.oauth_token, self.story_json)
     end
 
     def replies
@@ -573,11 +523,7 @@ module Mavenlink
       return [] if self.replies_json.empty?
       replies = []
       self.replies_json.each do |pst|
-        replies << Post.new(self.oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
-                            pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
-                            pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
-                            pst["subject_type"], pst["story_id"], pst["subject_json"], nil, nil, nil, nil, nil, nil, 
-                            nil, nil, nil)
+        replies << get_post(self.oauth_token, pst)
       end
       replies
     end
@@ -587,8 +533,7 @@ module Mavenlink
       return [] if self.recipients_json.empty?
       recipients = []
       self.recipients_json.each do |usr|
-        recipients << User.new(self.user_json["id"], self.user_json["full_name"], self.user_json["photo_path"], 
-                              self.user_json["email_address"], self.user_json["headline"])
+        recipients << get_user(usr)
       end
       recipients
     end

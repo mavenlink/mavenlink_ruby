@@ -1,5 +1,8 @@
+require_relative 'helper'
+
 module Mavenlink
   class Client < Base
+    include Mavenlink::Helper
 
     def initialize(oauth_token)
       super(oauth_token)
@@ -12,9 +15,7 @@ module Mavenlink
       users = []
       results.each do |result|
         if result["key"].eql? "users"
-          user = user_data[result["id"]]
-          users << User.new(user["id"], user["full_name"], user["photo_path"], 
-                  user["email_address"], user["headline"])
+          users << get_user(user_data[result["id"]])
         end
       end
       users
