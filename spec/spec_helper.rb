@@ -1,4 +1,5 @@
 require_relative '../lib/mavenlink'
+require_relative 'support/rspec_matchers'
  
 require 'rubygems'
 require 'rspec'

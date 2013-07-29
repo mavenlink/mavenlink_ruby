@@ -4,7 +4,7 @@ require_relative '../spec_helper'
 describe Mavenlink::Client do
 
   before do
-    @cl = Mavenlink::Client.new("76e3d087ce10f25f755968302b5e501f3d45a06447a70aa8bbdfef145014920d")  
+    @cl = Mavenlink::Client.new("09a072337943cdc00ceaf5b72f822a82978360e52c78ee19410491853d030b8e")  
   end
 
   describe "default attributes" do
@@ -18,13 +18,28 @@ describe Mavenlink::Client do
   end
   
   describe "expense categories" do
-    use_vcr_cassette "expense_categories"
+    use_vcr_cassette "expense_categories", :record => :new_episodes
 
-    it "should be an array of 5 strings" do
+    it "should be an array of 6 strings" do
       expense_categories = @cl.expense_categories
-      expense_categories.should be_an_instance_of(Array)
-      expense_categories.count.should eq(6)
+      expense_categories.should be_an_array_of(String, 6)
     end
+  end
+
+  describe "users" do
+    use_vcr_cassette "users", :record => :new_episodes
+
+    it "two users exist" do
+      users = @cl.users
+      users.should be_an_array_of(Mavenlink::User, 2)
+    end
+
+    it "1 user exists in particular workspace" do
+      users = @cl.users(:participant_in => 3448785)
+      users.should be_an_array_of(Mavenlink::User, 1)
+      users.first.email_address.should eql("mavenlinkapitest@gmail.com")
+    end
+
   end
 
 end

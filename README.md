@@ -1,6 +1,6 @@
 # Mavenlink
 
-TODO: Write a gem description
+Ruby gem for Mavenlink's API v1. 
 
 ## Installation
 
@@ -22,6 +22,7 @@ You will need your oauth_token, which can be found on your Mavenlink userpage, t
 
 ### Client
 Initialize a new client :
+
     $ cl = Mavenlink::Client.new(oauth_token)
 
 
