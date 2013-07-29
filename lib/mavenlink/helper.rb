@@ -40,6 +40,7 @@ module Mavenlink
                     ent["currency"], ent["currency_symbol"], ent["currency_base_unit"],
                     ent["user_can_edit"], ent["workspace_id"], ent["user_id"], 
                     nil, nil, nil) 
+    end
 
 	end
 end

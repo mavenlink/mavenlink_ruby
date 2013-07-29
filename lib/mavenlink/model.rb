@@ -1,13 +1,6 @@
 require_relative 'helper'
 
 module Mavenlink
-  
-  class ExpenseCategory < Base
-    attr_accessor :category
-    def initialize(category)
-      self.category = category
-    end
-  end
 
   class User < Base
     include Mavenlink::Helper

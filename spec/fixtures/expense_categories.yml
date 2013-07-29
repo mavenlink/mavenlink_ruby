@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/expense_categories.json?
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 76e3d087ce10f25f755968302b5e501f3d45a06447a70aa8bbdfef145014920d
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Mon, 29 Jul 2013 01:30:03 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - '"206d78d14388413b051d4d43b3d427d4"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 836332d68e67da09eaf59610875906d9
+      X-Runtime:
+      - '0.062376'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: UTF-8
+      string: '["Travel","Mileage","Lodging","Food","Entertainment","Other"]'
+    http_version: 
+  recorded_at: Mon, 29 Jul 2013 01:30:03 GMT
+recorded_with: VCR 2.5.0

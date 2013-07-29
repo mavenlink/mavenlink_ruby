@@ -25,7 +25,7 @@ module Mavenlink
       expense_categories = get_request("/expense_categories.json")
       categories = []
       expense_categories.each do |category|
-        categories << ExpenseCategory.new(category)
+        categories << category
       end
       categories
     end
