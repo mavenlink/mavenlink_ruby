@@ -78,7 +78,7 @@ exp.delete
 #####Get expense categories:
 ```ruby
 # Returns an array of expense category strings
-exp = cl.expense_categories
+categories = cl.expense_categories
 ```
 
 
