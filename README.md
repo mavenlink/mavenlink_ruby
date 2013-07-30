@@ -131,6 +131,20 @@ wks.create_workspace_invitation({ :full_name => "example name",
                                })
 ```
 
+#####Associated objects
+```ruby
+wks = cl.workspaces.first
+
+#Lead of opposite team
+counterpart_user = wks.primary_counterpart
+
+#Array of participating users
+participants = wks.participants
+
+#Creator of workspace
+creator = wks.creator
+```
+
 ## Contributing
 
 1. Fork it
