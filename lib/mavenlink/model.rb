@@ -76,7 +76,7 @@ module Mavenlink
 
     def primary_counterpart
       self.reload if self.primary_counterpart_json.nil?
-      return nil if self.primary_counterpart_json.empty?
+      return nil if self.primary_counterpart_json.nil? || self.primary_counterpart_json.empty?
       get_user(self.primary_counterpart_json)
     end
 
@@ -98,7 +98,7 @@ module Mavenlink
       options = {"title" => self.title, "budgeted" => self.budgeted,
                   "description" => self.description, "archived" => self.archived}
       options.keys.each {|key| options["workspace[#{key}]"] = options.delete(key)}
-      response = put_request("/workspaces/#{self.id}.json", options)
+      put_request("/workspaces/#{self.id}.json", options)
     end
 
     def reload
@@ -109,17 +109,21 @@ module Mavenlink
       self.participants_json = []
       result["participant_ids"].each {|k| self.participants_json << response["users"][k]}
       self.creator_json = response["users"][result["creator_id"]]
+      self.instance_variables.each do |var|
+        key = var.to_s.gsub("@", "")
+        instance_variable_set(var, result[key]) if result.has_key? key
+      end
     end
 
     def create_workspace_invitation(options)
-      unless ["full_name", "email_address", "invitee_role"].all? {|k| options.has_key? k}
+      unless [:full_name, :email_address, :invitee_role].all? {|k| options.has_key? k}
         raise "Missing required parameters"
       end 
-      unless ["buyer", "maven"].include? options["invitee_role"]
+      unless ["buyer", "maven"].include? options[:invitee_role]
         raise "invitee_role must be 'buyer' or 'maven'"
       end
       options.keys.each {|key| options["invitation[#{key}]"] = options.delete(key)}
-      response = post_request("/workspaces/#{self.id}/invite.json", options)
+      post_request("/workspaces/#{self.id}/invite.json", options)
     end
 
   end
@@ -145,9 +149,10 @@ module Mavenlink
       self.currency_symbol = currency_symbol
       self.currency_base_unit = currency_base_unit
       self.user_can_edit = user_can_edit
+      self.workspace_id = workspace_id
       self.is_invoiced = is_invoiced
       self.is_billable = is_billable
-      self.workspace_id = self.workspace_id
+      self.workspace_id = workspace_id
       self.user_id = user_id
       self.receipt_id = receipt_id
     end
@@ -159,12 +164,21 @@ module Mavenlink
         options["expense[#{inst}]"] = instance_variable_get("@#{inst.to_s}")
       end
       options["expense[billable]"] = instance_variable_get("@is_billable")
-      response = put_request("/expenses/#{self.id}.json", options)
+      put_request("/expenses/#{self.id}.json", options)
       true
     end
 
     def delete
-      response = delete_request("/expenses/#{self.id}.json")
+      delete_request("/expenses/#{self.id}.json")
+    end
+
+    def reload
+      response = get_request("/expenses/#{self.id}.json", {})
+      result = response["expenses"][response["results"].first["id"]]
+      self.instance_variables.each do |var|
+        key = var.to_s.gsub("@", "")
+        instance_variable_set(var, result[key]) if result.has_key? key
+      end
     end
   end
 
@@ -200,7 +214,7 @@ module Mavenlink
     end
 
     def delete
-      response = delete_request("/time_entries/#{self.id}.json")
+      delete_request("/time_entries/#{self.id}.json")
     end
 
     def save
@@ -210,7 +224,7 @@ module Mavenlink
       savable.each do |inst|
         options["time_entry[#{inst}]"] = instance_variable_get("@#{inst}")
       end
-      response = put_request("/time_entries/#{self.id}.json", options)
+      put_request("/time_entries/#{self.id}.json", options)
     end
 
     def user
@@ -463,18 +477,18 @@ module Mavenlink
       options = {"include" => "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"}
       response = get_request("/posts/#{self.id}.json", options)
       result = response["posts"].first[1]
-      subject_json = response["posts"][result["subject_id"]] unless result["subject_id"].nil?
-      user_json = response["users"][result["user_id"]]
-      workspace_json = response["workspaces"][result["workspace_id"]]
-      story_json = response["stories"][result["story_id"]] unless result["story_id"].nil?
-      newest_reply_json = response["posts"][result["newest_reply_id"]] unless result["newest_reply_id"].nil?
-      newest_reply_user_json = result["users"][response["newest_reply_user_id"]] unless result["newest_reply_user_id"].nil?
+      self.subject_json = response["posts"][result["subject_id"]] unless result["subject_id"].nil?
+      self.user_json = response["users"][result["user_id"]]
+      self.workspace_json = response["workspaces"][result["workspace_id"]]
+      self.story_json = response["stories"][result["story_id"]] unless result["story_id"].nil?
+      self.newest_reply_json = response["posts"][result["newest_reply_id"]] unless result["newest_reply_id"].nil?
+      self.newest_reply_user_json = result["users"][response["newest_reply_user_id"]] unless result["newest_reply_user_id"].nil?
       self.recipients_json, self.google_documents_json = [], []
       self.assets_json, self.replies_json = [], []
-      result["recipient_ids"].each {|k| self.recipients_json << resposne["users"][k]}
+      result["recipient_ids"].each {|k| self.recipients_json << response["users"][k]}
       self.google_documents_json = google_documents
       result["asset_ids"].each {|k| self.assets_json << response["assets"][k]}
-      result["reply_ids"].each {|k| self.replies_json << resposne["posts"][k]}
+      result["reply_ids"].each {|k| self.replies_json << response["posts"][k]}
     end
 
     def save

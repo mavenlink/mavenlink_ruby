@@ -50,6 +50,39 @@ module Mavenlink
       get_expense(self.oauth_token, response["expenses"][response["results"].first["id"]])
     end
 
+    def workspaces(options={})
+      options["include"] = "primary_counterpart,participants,creator"
+      response = get_request("/workspaces.json", options)
+      users = response["users"]
+      results = response["results"]
+      workspace_data = response["workspaces"]
+      workspaces = []
+      results.each do |result|
+        if result["key"].eql? "workspaces"
+          wksp = workspace_data[result["id"]]
+          primary_counterpart_json = users[wksp["primary_counterpart_id"]]
+          participants_json = []
+          wksp["participant_ids"].each {|k| participants_json << users[k]}
+          creator_json = users[wksp["creator_id"]]
+
+          workspaces << get_workspace(self.oauth_token, wksp, primary_counterpart_json, participants_json, creator_json)
+        end
+      end
+      workspaces
+    end
+
+    def create_workspace(options)
+      unless [:title, :creator_role].all? {|k| options.has_key? k}
+        raise "Missing required parameters"
+      end
+      unless ["buyer", "maven"].include? options[:creator_role]
+        raise "creator_role must be 'buyer' or 'maven'"
+      end
+      options.keys.each {|key| options["workspace[#{key}]"] = options.delete(key)}
+      response = post_request("/workspaces.json", options)
+      get_workspace(self.oauth_token, response["workspaces"][response["results"].first["id"]])
+    end
+
     def time_entries(options = {})
       options["include"] = "user,story,workspace"
       response = get_request("/time_entries.json", options)
@@ -81,7 +114,7 @@ module Mavenlink
         raise "Missing required parameters"
       end
       options.keys.each {|key| options["time_entry[#{key}]"] = options.delete(key)}
-      response = post_request("/time_entries.json", options)
+      post_request("/time_entries.json", options)
     end
 
     def invoices(options={})
@@ -123,47 +156,7 @@ module Mavenlink
       raise "Type of asset must be 'post' or 'expense'" unless ["post", "expense"].include? options["type"]
       options["data"] = "@" + options["data"]
       options.keys.each {|key| options["asset[#{key}]"] = options.delete(key)}
-      response = post_request("/assets.json", options)
-    end
-
-    def workspaces(options={})
-      options["include"] = "primary_counterpart,participants,creator"
-      response = get_request("/workspaces.json", options)
-      users = response["users"]
-      results = response["results"]
-      workspace_data = response["workspaces"]
-      workspaces = []
-      results.each do |result|
-        if result["key"].eql? "workspaces"
-          wksp = workspace_data[result["id"]]
-          primary_counterpart_json = users[wksp["primary_counterpart_id"]]
-          participants_json = []
-          wksp["participant_ids"].each {|k| participants_json << users[k]}
-          creator_json = users[wksp["creator_id"]]
-          workspaces << Workspace.new(self.oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
-                                      wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
-                                      wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
-                                      wksp["consultant_role_name"], wksp["client_role_name"], 
-                                      wksp["can_create_line_items"], wksp["default_rate"], 
-                                      wksp["currency_symbol"], wksp["currency_base_unit"], 
-                                      wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
-                                      wksp["price_in_cent"], wksp["budget_used"], 
-                                      wksp["over_budget"], wksp["currency"], primary_counterpart_json,
-                                      participants_json, creator_json)
-        end
-      end
-      workspaces
-    end
-
-    def create_workspace(options)
-      unless ["title", "creator_role"].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
-      end 
-      unless ["buyer", "maven"].include? options["creator_role"]
-        raise "creator_role must be 'buyer' or 'maven'"
-      end
-      options.keys.each {|key| options["workspace[#{key}]"] = options.delete(key)}
-      response = post_request("/workspaces.json", options)
+      post_request("/assets.json", options)
     end
 
     def stories(options={})

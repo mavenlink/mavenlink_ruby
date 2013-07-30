@@ -40,6 +40,12 @@ describe Mavenlink::Client do
       users.first.email_address.should eql("mavenlinkapitest@gmail.com")
     end
 
+    it "get a user by id" do
+      users = @cl.users(:only => "3847595")
+      users.should be_an_array_of Mavenlink::User, 1
+      users.first.full_name.should eql("API Test Account 1")
+    end
+
   end
 
   describe "expenses" do
@@ -71,29 +77,52 @@ describe Mavenlink::Client do
 
     end
 
-    it "raises error when creating workspace without required options" do
+    it "raises error when creating expense without required options" do
       expect {@cl.create_expense({:workspace_id => 3403465,
                                   :date => "2012/01/01",
                                   :category => "Travel",
                                   }) }.to raise_error
     end
 
-    it "save an existing expense" do
-      exp = @cl.expenses({:workspace_id => 3457635, :order => "date:asc" }).first
-      exp.category = "Random Category X"
-      exp.save
-      saved_exp = @cl.expenses({:workspace_id => 3457635, :order => "date:asc" }).first
-      saved_exp.category.should eql("Random Category X")
+  end
+
+  describe "workspaces" do
+    use_vcr_cassette "workspaces", :record => :new_episodes
+
+    it "3 active workspaces should exist" do
+      workspaces = @cl.workspaces
+      workspaces.should be_an_array_of(Mavenlink::Workspace, 3)
+      workspaces.first.title.should eql("API Test Project")
     end
 
-    it "delete an existing expense" do
-      exp = @cl.expenses({:workspace_id => 3403465, :order => "date:asc" }).first
-      exp_id = exp.id
-      exp.delete
-      new_exp = @cl.expenses({:workspace_id => 3403465, :order => "date:asc" }).first
-      new_exp.id.should_not eq(exp_id)
+    it "workspaces can be filtered" do
+      workspaces = @cl.workspaces({:include_archived => true})
+      workspaces.should be_an_array_of(Mavenlink::Workspace, 4)
     end
 
+    it "workspaces can be searched" do
+      workspaces = @cl.workspaces({:search => "API Test Project"})
+      workspaces.should be_an_array_of(Mavenlink::Workspace, 1)
+      workspaces.first.title.should eql("API Test Project")
+    end
+
+    it "create a new workspace" do
+      workspaces = @cl.workspaces({:search => "Random Workspace X"})
+      workspaces.should be_empty
+      @cl.create_workspace({ :title => "Random Workspace X",
+                             :creator_role => "maven"
+                           }).should be_an_instance_of Mavenlink::Workspace
+
+      workspaces = @cl.workspaces({:search => "Random Workspace"})
+      workspaces.should be_an_array_of(Mavenlink::Workspace, 1)
+      workspaces.first.title.should eql("Random Workspace X")
+    end
+
+    it "raises error when creating workspace without required options" do
+       expect { @cl.create_workspace({ :title => "Random Workspace X",
+                                       :creator_role => "invalid"
+                                       }) }.to raise_error
+    end
   end
 
 end

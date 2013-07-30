@@ -1,7 +1,7 @@
 module Mavenlink
 	module Helper
 
-		def get_workspace(oauth_token, wksp)
+		def get_workspace(oauth_token, wksp, primary_counterpart_json=nil, participants_json=nil, creator_json=nil)
       Workspace.new(oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
                     wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
                     wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
@@ -9,7 +9,8 @@ module Mavenlink
                     wksp["can_create_line_items"], wksp["default_rate"], 
                     wksp["currency_symbol"], wksp["currency_base_unit"], 
                     wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
-                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"], nil, nil, nil)
+                    wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"],
+                    primary_counterpart_json, participants_json, creator_json)
 		end
 
 		def get_user(usr)
