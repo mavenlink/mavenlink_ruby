@@ -21,9 +21,65 @@ You will need your oauth_token, which can be found on your Mavenlink userpage, t
 ## Usage
 
 ### Client
-Initialize a new client :
+#####Initialize a new client:
 
-    $ cl = Mavenlink::Client.new(oauth_token)
+```ruby
+    require 'mavenlink'
+    cl = Mavenlink::Client.new(oauth_token)
+```
+###User
+#####Get users:
+```ruby    
+    # All users
+    users = cl.users
+    
+    # Filter responses by participant_in
+    filtered_users = cl.users({:participant_in => 12345})
+```
+
+###Expense
+#####Get expenses:
+    
+```ruby    
+    # All expenses
+    expenses = cl.expenses
+    
+    # Filter responses by workspace_id and order by date
+    filtered_expenses = cl.expenses({:workspace_id => 12345, :order => "date:asc" })
+```
+
+#####Create a new expense:
+
+```ruby
+#Required parameters : workspace_id, date, category, amount_in_cents
+#Optional paramters : notes, currency
+cl.create_expense({ :workspace_id => 12345,
+                    :date => "2012/01/01",
+                    :category => "Travel",
+                    :amount_in_cents => 100 
+                    })
+```
+
+#####Save an expense:
+```ruby
+#Savable attributes : notes, category, date, amount_in_cents
+exp = cl.expenses.first
+exp.category = "Updated category"
+exp.save
+```
+
+#####Delete an expense:
+```ruby
+exp = cl.expenses.first
+exp.delete
+```
+
+###Expense Category
+#####Get expense categories:
+```ruby
+# Returns an array of expense category strings
+exp = cl.expense_categories
+```
 
 
 ## Contributing
