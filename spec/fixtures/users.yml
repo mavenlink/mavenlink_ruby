@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       Authorization:
-      - Bearer 09a072337943cdc00ceaf5b72f822a82978360e52c78ee19410491853d030b8e
+      - Bearer 999
   response:
     status:
       code: 200
@@ -17,7 +17,7 @@ http_interactions:
       Server:
       - nginx/1.2.0
       Date:
-      - Mon, 29 Jul 2013 02:55:51 GMT
+      - Mon, 29 Jul 2013 03:16:20 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -33,9 +33,9 @@ http_interactions:
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
-      - a03856a92c1ad001813c790903301408
+      - edb2d7d1c3da66c819b03f8f54c0d28e
       X-Runtime:
-      - '0.058527'
+      - '0.028876'
       X-Rack-Cache:
       - miss
     body:
@@ -43,7 +43,7 @@ http_interactions:
       string: '{"count":3,"users":{"3847595":{"full_name":"API Test Account 1","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"mavenlinkapitest@gmail.com","headline":null,"id":"3847595"},"3847585":{"full_name":"API
         Test Account 2","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"mavenlinkapitest2@gmail.com","headline":null,"id":"3847585"}},"results":[{"key":"users","id":"3847595"},{"key":"users","id":"3847585"}]}'
     http_version: 
-  recorded_at: Mon, 29 Jul 2013 02:55:51 GMT
+  recorded_at: Mon, 29 Jul 2013 03:16:19 GMT
 - request:
     method: get
     uri: https://api.mavenlink.com/api/v1/users.json?participant_in=3448785
@@ -52,7 +52,7 @@ http_interactions:
       string: ''
     headers:
       Authorization:
-      - Bearer 09a072337943cdc00ceaf5b72f822a82978360e52c78ee19410491853d030b8e
+      - Bearer 999
   response:
     status:
       code: 200
@@ -61,7 +61,7 @@ http_interactions:
       Server:
       - nginx/1.2.0
       Date:
-      - Mon, 29 Jul 2013 02:55:56 GMT
+      - Mon, 29 Jul 2013 03:16:21 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -77,14 +77,14 @@ http_interactions:
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
-      - 0a9ed5c6ccd0a39602ff9865b51095c5
+      - 420d5ca3bd3800d320392894a4aa74bd
       X-Runtime:
-      - '0.032074'
+      - '0.031419'
       X-Rack-Cache:
       - miss
     body:
       encoding: UTF-8
       string: '{"count":1,"users":{"3847595":{"full_name":"API Test Account 1","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"mavenlinkapitest@gmail.com","headline":null,"id":"3847595"}},"results":[{"key":"users","id":"3847595"}]}'
     http_version: 
-  recorded_at: Mon, 29 Jul 2013 02:55:55 GMT
+  recorded_at: Mon, 29 Jul 2013 03:16:21 GMT
 recorded_with: VCR 2.5.0

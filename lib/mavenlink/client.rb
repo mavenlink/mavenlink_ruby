@@ -8,7 +8,7 @@ module Mavenlink
       super(oauth_token)
     end
 
-    def users(options = {})
+    def users(options={})
       response = get_request("/users.json", options)
       user_data = response["users"]
       results = response["results"]
@@ -24,9 +24,7 @@ module Mavenlink
     def expense_categories
       expense_categories = get_request("/expense_categories.json")
       categories = []
-      expense_categories.each do |category|
-        categories << category
-      end
+      expense_categories.each {|category| categories << category}
       categories
     end
 
@@ -37,23 +35,19 @@ module Mavenlink
       expenses = []
       results.each do |result|
         if result["key"].eql? "expenses"
-          exp = expenses_data[result["id"]]
-          expenses << Expense.new(self.oauth_token, exp["id"], exp["created_at"], exp["updated_at"], exp["date"], 
-                      exp["notes"], exp["category"], exp["amount_in_cents"], exp["currency"], 
-                      exp["currency_symbol"], exp["currency_base_unit"], exp["user_can_edit"], 
-                      exp["is_invoiced"], exp["is_billable"], exp["workspace_id"], exp["user_id"],
-                      exp["receipt_id"])
+          expenses << get_expense(self.oauth_token, expenses_data[result["id"]])
         end
       end
       expenses
     end
 
     def create_expense(options)
-      unless ["workspace_id", "date", "category", "amount_in_cents"].all? {|k| options.has_key? k}
+      unless [:workspace_id, :date, :category, :amount_in_cents].all? {|k| options.has_key? k}
         raise "Missing required parameters"
       end
       options.keys.each {|key| options["expense[#{key}]"] = options.delete(key)}
       response = post_request("/expenses.json", options)
+      get_expense(self.oauth_token, response["expenses"][response["results"].first["id"]])
     end
 
     def time_entries(options = {})

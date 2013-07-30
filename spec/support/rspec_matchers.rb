@@ -16,3 +16,21 @@ RSpec::Matchers.define :be_an_array_of do |expected, count|
     "be an array of of #{expected}"
   end
 end
+
+RSpec::Matchers.define :be_before do |expected|
+  match do |actual|
+    Time.parse(actual) < Time.parse(expected)
+  end
+
+  failure_message_for_should do |actual|
+    "expected that #{actual} is before #{expected}"
+  end
+
+  failure_message_for_should_not do |actual|
+    "expected that #{actual} is not before of #{expected}"
+  end
+
+  description do
+    "be before #{expected}"
+  end
+end

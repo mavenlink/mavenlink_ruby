@@ -42,5 +42,13 @@ module Mavenlink
                     nil, nil, nil) 
     end
 
+    def get_expense(oauth_token, exp)
+      Expense.new(oauth_token, exp["id"], exp["created_at"], exp["updated_at"], exp["date"], 
+                      exp["notes"], exp["category"], exp["amount_in_cents"], exp["currency"], 
+                      exp["currency_symbol"], exp["currency_base_unit"], exp["user_can_edit"], 
+                      exp["is_invoiced"], exp["is_billable"], exp["workspace_id"], exp["user_id"],
+                      exp["receipt_id"])
+    end
+
 	end
 end

@@ -153,13 +153,14 @@ module Mavenlink
     end
 
     def save
-      savable = ["notes", "category", "date", "amount_in_cents"]
+      savable = [:notes, :category, :date, :amount_in_cents]
       options = {}
       savable.each do |inst|
-        options["expense[#{inst}]"] = instance_variable_get("@#{inst}")
+        options["expense[#{inst}]"] = instance_variable_get("@#{inst.to_s}")
       end
       options["expense[billable]"] = instance_variable_get("@is_billable")
       response = put_request("/expenses/#{self.id}.json", options)
+      true
     end
 
     def delete
