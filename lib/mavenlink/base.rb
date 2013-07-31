@@ -1,6 +1,14 @@
 require 'httparty'
 
 module Mavenlink
+  class ValidationError < StandardError
+    attr_accessor :errors
+
+    def initialize(errors)
+      @errors = errors
+    end
+  end
+
   class Base
     include HTTParty
     format :json
@@ -18,6 +26,8 @@ module Mavenlink
                   :headers => { "Authorization" => "Bearer #{self.oauth_token}"})
       if response.code == 200
         response.parsed_response
+      elsif response.code == 422
+        raise ValidationError.new(response.parsed_response["errors"])
       else
         raise "Server error code #{response.code}: #{response.parsed_response.inspect}"
       end

@@ -71,6 +71,7 @@ module Mavenlink
       self.currency = currency
       self.primary_counterpart_json = primary_counterpart_json
       self.participants_json = participants_json
+
       self.creator_json = creator_json
     end
 

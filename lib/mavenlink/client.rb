@@ -1,4 +1,5 @@
 require_relative 'helper'
+require 'rest_client'
 
 module Mavenlink
   class Client < Base
@@ -150,13 +151,20 @@ module Mavenlink
 
     # ERROR
     def create_asset(options)
-      unless ["data", "type"].all? {|k| options.has_key? k}
+      unless [:data, :type].all? {|k| options.has_key? k}
         raise "Missing required parameters"
       end
-      raise "Type of asset must be 'post' or 'expense'" unless ["post", "expense"].include? options["type"]
-      options["data"] = "@" + options["data"]
-      options.keys.each {|key| options["asset[#{key}]"] = options.delete(key)}
-      post_request("/assets.json", options)
+      raise "Type of asset must be 'post' or 'expense'" unless ["post", "expense"].include? options[:type]
+      request = RestClient::Request.new(
+                                        :method => :post,
+                                        :url => "https://api.mavenlink.com/api/v1/assets.json",
+                                        :headers => { "Authorization" => "Bearer #{self.oauth_token}"},
+                                        :payload => {
+                                                    :multipart => true,
+                                                    "asset[data]" => File.new(options[:data], 'rb'),
+                                                    "asset[type]" => options[:type]
+                                        })
+      res = request.execute
     end
 
     def stories(options={})
