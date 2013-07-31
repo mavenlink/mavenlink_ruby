@@ -152,3 +152,9 @@ creator = wks.creator
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+##### TODO:
+1. Finish tests
+2. Refactor and code cleanup
+3. Add custom exceptions and do better error handling
+4. Add options for lazy load vs eager load
