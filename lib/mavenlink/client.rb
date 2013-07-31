@@ -237,7 +237,7 @@ module Mavenlink
           posts << Post.new(self.oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
                             pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
                             pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
-                            pst["subject_type"], pst["story_id"], pst["subject_json"], user_json, workspace_json, 
+                            pst["subject_type"], pst["story_id"], subject_json, user_json, workspace_json,
                             story_json, replies_json, newest_reply_json, newest_reply_user_json, 
                             recipients_json, google_documents_json, assets_json)
         end
