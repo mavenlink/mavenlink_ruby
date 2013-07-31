@@ -105,7 +105,7 @@ categories = cl.expense_categories
                     }).
 ```
 
-#####Save and reload workspace:
+#####Save and reload a workspace:
 ```ruby
 #Savable attributes : title, budgeted, description, archived
 wks = cl.workspaces.first
@@ -143,6 +143,42 @@ participants = wks.participants
 
 #Creator of workspace
 creator = wks.creator
+```
+
+###Invoice
+#####Get invoices:
+```ruby
+    # All invoices
+    invoices = cl.invoices
+
+    # Filter invoices
+    invoices = @cl.invoices({:workspace_id => "12345,12346", :paid => "true"})
+```
+
+#####Reload a invoice:
+```ruby
+inv = cl.invoices.first
+inv.reload
+```
+
+#####Associated objects
+```ruby
+inv = cl.invoices.first
+
+#Time entries of an invoice
+time_entries = inv.time_entries
+
+#Expenses of an invoice
+expenses = inv.expenses
+
+#Additional items returned as a hash
+additional_items = inv.additional_items
+
+#Workspaces related to the invoice
+workspaces = inv.workspaces
+
+#Creator of the invoice
+user = inv.user
 ```
 
 ## Contributing

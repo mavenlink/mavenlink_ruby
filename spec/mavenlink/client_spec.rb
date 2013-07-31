@@ -125,4 +125,27 @@ describe Mavenlink::Client do
     end
   end
 
+  describe "invoices" do
+    use_vcr_cassette "invoices", :record => :new_episodes
+
+    it "2 invoices exist" do
+      invoices = @cl.invoices({:workspace_id => "3457635,3467515"})
+      invoices.should be_an_array_of(Mavenlink::Invoice, 2)
+      invoices.first.status.should eql("accepted payment")
+      invoices[1].status.should eql("new")
+    end
+
+    it "invoices can be filtered" do
+      invoices = @cl.invoices({:workspace_id => "3457635,3467515", :paid => "true"})
+      invoices.should be_an_array_of(Mavenlink::Invoice, 1)
+    end
+
+    it "can get invoice by id" do
+      invoices = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280315"})
+      invoices.should be_an_array_of(Mavenlink::Invoice, 1)
+      invoices.first.status.should eql("new")
+    end
+
+  end
+
 end

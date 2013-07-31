@@ -51,5 +51,14 @@ module Mavenlink
                       exp["receipt_id"])
     end
 
+    def get_invoice(oauth_token, inv, time_entries_json=nil, expenses_json=nil, additional_items_json=nil, workspaces_json=nil, user_json=nil)
+      Invoice.new(oauth_token, inv["id"], inv["created_at"], inv["updated_at"],
+                  inv["invoice_date"], inv["due_date"], inv["message"], inv["draft"], inv["status"],
+                  inv["balance_in_cents"], inv["currency"], inv["currency_base_unit"],
+                  inv["currency_symbol"], inv["payment_schedule"], inv["workspace_ids"],
+                  inv["user_id"], inv["recipient_id"], time_entries_json, expenses_json,
+                  additional_items_json, workspaces_json, user_json)
+    end
+
 	end
 end

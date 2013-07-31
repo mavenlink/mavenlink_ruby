@@ -1,0 +1,239 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/invoices.json?include=time_entries,expenses,additional_items,workspaces,user&workspace_id=3457635,3467515
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 31 Jul 2013 18:00:48 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"c0af8e4e3b06b0e65d3f7d6a03ba6d7b"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 6cd1bbf9639acf13730b6ed200c9c26d
+      X-Runtime:
+      - '0.163127'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":2,"invoices":{"280335":{"created_at":"2013-07-31T10:54:39-07:00","updated_at":"2013-07-31T10:54:50-07:00","invoice_date":"2013-07-24","due_date":"2013-08-23","status":"accepted
+        payment","title":"Invoice #00003","message":"","draft":false,"payment_schedule":30,"balance_in_cents":400,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"id":"280335","workspace_ids":["3467515"],"user_id":"3711195","recipient_id":null,"additional_item_ids":["8572395"],"time_entry_ids":[],"expense_ids":[]},"280315":{"created_at":"2013-07-31T10:45:24-07:00","updated_at":"2013-07-31T10:45:24-07:00","invoice_date":"2013-07-31","due_date":"2013-08-30","status":"new","title":"Invoice
+        #00002","message":"","draft":false,"payment_schedule":30,"balance_in_cents":32500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"id":"280315","workspace_ids":["3457635"],"user_id":"3711195","recipient_id":null,"additional_item_ids":[],"time_entry_ids":["8571785","8571775"],"expense_ids":["8509845"]}},"results":[{"key":"invoices","id":"280335"},{"key":"invoices","id":"280315"}],"time_entries":{"8571785":{"created_at":"2013-07-31T10:43:48-07:00","date_performed":"2013-07-03","time_in_minutes":60,"billable":false,"notes":"","rate_in_cents":0,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:48-07:00","user_can_edit":false,"id":"8571785","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"},"8571775":{"created_at":"2013-07-31T10:43:32-07:00","date_performed":"2013-07-01","time_in_minutes":300,"billable":true,"notes":"Additional
+        Notes Example","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:32-07:00","user_can_edit":false,"id":"8571775","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"}},"expenses":{"8509845":{"created_at":"2013-07-29T19:39:29-07:00","updated_at":"2013-07-30T14:09:03-07:00","date":"2013-07-31","notes":"Expense
+        Notes","category":"Random Category Y","amount_in_cents":20000,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"user_can_edit":false,"is_invoiced":true,"is_billable":true,"id":"8509845","workspace_id":"3457635","user_id":"3711195"}},"additional_items":{"8572395":{"created_at":"2013-07-31T10:54:39-07:00","notes":"Additional
+        Item 1","amount_in_cents":400,"currency":"USD","id":"8572395","creator_id":"3711195"}},"workspaces":{"3467515":{"title":"Random
+        Workspace MG","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-31T10:54:50-07:00","created_at":"2013-07-30T15:42:19-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$4","over_budget":false,"currency":"USD","id":"3467515","creator_id":"3711195"},"3457635":{"title":"Random
+        New Workspace","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-31T10:45:24-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$325","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"}},"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 31 Jul 2013 18:00:48 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/invoices.json?include=time_entries,expenses,additional_items,workspaces,user&paid=true&workspace_id=3457635,3467515
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 31 Jul 2013 18:04:23 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"5f28c398e3bcee9cb8826457dc956fba"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 53355f9d54ead1a0f2fa0eb26418a2cf
+      X-Runtime:
+      - '0.132240'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":1,"invoices":{"280335":{"created_at":"2013-07-31T10:54:39-07:00","updated_at":"2013-07-31T10:54:50-07:00","invoice_date":"2013-07-24","due_date":"2013-08-23","status":"accepted
+        payment","title":"Invoice #00003","message":"","draft":false,"payment_schedule":30,"balance_in_cents":400,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"id":"280335","workspace_ids":["3467515"],"user_id":"3711195","recipient_id":null,"additional_item_ids":["8572395"],"time_entry_ids":[],"expense_ids":[]}},"results":[{"key":"invoices","id":"280335"}],"time_entries":{},"expenses":{},"additional_items":{"8572395":{"created_at":"2013-07-31T10:54:39-07:00","notes":"Additional
+        Item 1","amount_in_cents":400,"currency":"USD","id":"8572395","creator_id":"3711195"}},"workspaces":{"3467515":{"title":"Random
+        Workspace MG","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-31T10:54:50-07:00","created_at":"2013-07-30T15:42:19-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$4","over_budget":false,"currency":"USD","id":"3467515","creator_id":"3711195"}},"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 31 Jul 2013 18:04:23 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/invoices.json?include=time_entries,expenses,additional_items,workspaces,user&only=280315&workspace_id=3457635,3467515
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 31 Jul 2013 18:06:13 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"3debf39f1fefd577fd191befc7e1ebcc"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 4efb74a87bf591b46b7ef7ab98a29690
+      X-Runtime:
+      - '0.121160'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":1,"invoices":{"280315":{"created_at":"2013-07-31T10:45:24-07:00","updated_at":"2013-07-31T10:45:24-07:00","invoice_date":"2013-07-31","due_date":"2013-08-30","status":"new","title":"Invoice
+        #00002","message":"","draft":false,"payment_schedule":30,"balance_in_cents":32500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"id":"280315","workspace_ids":["3457635"],"user_id":"3711195","recipient_id":null,"additional_item_ids":[],"time_entry_ids":["8571785","8571775"],"expense_ids":["8509845"]}},"results":[{"key":"invoices","id":"280315"}],"time_entries":{"8571785":{"created_at":"2013-07-31T10:43:48-07:00","date_performed":"2013-07-03","time_in_minutes":60,"billable":false,"notes":"","rate_in_cents":0,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:48-07:00","user_can_edit":false,"id":"8571785","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"},"8571775":{"created_at":"2013-07-31T10:43:32-07:00","date_performed":"2013-07-01","time_in_minutes":300,"billable":true,"notes":"Additional
+        Notes Example","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:32-07:00","user_can_edit":false,"id":"8571775","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"}},"expenses":{"8509845":{"created_at":"2013-07-29T19:39:29-07:00","updated_at":"2013-07-30T14:09:03-07:00","date":"2013-07-31","notes":"Expense
+        Notes","category":"Random Category Y","amount_in_cents":20000,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"user_can_edit":false,"is_invoiced":true,"is_billable":true,"id":"8509845","workspace_id":"3457635","user_id":"3711195"}},"additional_items":{},"workspaces":{"3457635":{"title":"Random
+        New Workspace","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-31T10:45:24-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$325","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"}},"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 31 Jul 2013 18:06:13 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/invoices.json?include=time_entries,expenses,additional_items,workspaces,user&only=280315&workspace_id=3457635,3467515
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 31 Jul 2013 18:22:08 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"3debf39f1fefd577fd191befc7e1ebcc"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 422a940292bacc0cf134b7106bdb11ca
+      X-Runtime:
+      - '0.135643'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":1,"invoices":{"280315":{"created_at":"2013-07-31T10:45:24-07:00","updated_at":"2013-07-31T10:45:24-07:00","invoice_date":"2013-07-31","due_date":"2013-08-30","status":"new","title":"Invoice
+        #00002","message":"","draft":false,"payment_schedule":30,"balance_in_cents":32500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"id":"280315","workspace_ids":["3457635"],"user_id":"3711195","recipient_id":null,"additional_item_ids":[],"time_entry_ids":["8571785","8571775"],"expense_ids":["8509845"]}},"results":[{"key":"invoices","id":"280315"}],"time_entries":{"8571785":{"created_at":"2013-07-31T10:43:48-07:00","date_performed":"2013-07-03","time_in_minutes":60,"billable":false,"notes":"","rate_in_cents":0,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:48-07:00","user_can_edit":false,"id":"8571785","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"},"8571775":{"created_at":"2013-07-31T10:43:32-07:00","date_performed":"2013-07-01","time_in_minutes":300,"billable":true,"notes":"Additional
+        Notes Example","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:32-07:00","user_can_edit":false,"id":"8571775","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"}},"expenses":{"8509845":{"created_at":"2013-07-29T19:39:29-07:00","updated_at":"2013-07-30T14:09:03-07:00","date":"2013-07-31","notes":"Expense
+        Notes","category":"Random Category Y","amount_in_cents":20000,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"user_can_edit":false,"is_invoiced":true,"is_billable":true,"id":"8509845","workspace_id":"3457635","user_id":"3711195"}},"additional_items":{},"workspaces":{"3457635":{"title":"Random
+        New Workspace","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-31T10:45:24-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$325","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"}},"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 31 Jul 2013 18:22:08 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/invoices.json?include=time_entries,expenses,additional_items,workspaces,user&only=280335&workspace_id=3457635,3467515
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 31 Jul 2013 18:26:14 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"5f28c398e3bcee9cb8826457dc956fba"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - cc015d88f81135925f2de25a753010ff
+      X-Runtime:
+      - '0.105456'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":1,"invoices":{"280335":{"created_at":"2013-07-31T10:54:39-07:00","updated_at":"2013-07-31T10:54:50-07:00","invoice_date":"2013-07-24","due_date":"2013-08-23","status":"accepted
+        payment","title":"Invoice #00003","message":"","draft":false,"payment_schedule":30,"balance_in_cents":400,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"id":"280335","workspace_ids":["3467515"],"user_id":"3711195","recipient_id":null,"additional_item_ids":["8572395"],"time_entry_ids":[],"expense_ids":[]}},"results":[{"key":"invoices","id":"280335"}],"time_entries":{},"expenses":{},"additional_items":{"8572395":{"created_at":"2013-07-31T10:54:39-07:00","notes":"Additional
+        Item 1","amount_in_cents":400,"currency":"USD","id":"8572395","creator_id":"3711195"}},"workspaces":{"3467515":{"title":"Random
+        Workspace MG","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-31T10:54:50-07:00","created_at":"2013-07-30T15:42:19-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$4","over_budget":false,"currency":"USD","id":"3467515","creator_id":"3711195"}},"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 31 Jul 2013 18:26:14 GMT
+recorded_with: VCR 2.5.0

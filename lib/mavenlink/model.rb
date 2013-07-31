@@ -292,6 +292,11 @@ module Mavenlink
     def reload
       options = {"include" => "time_entries,expenses,additional_items,workspaces,user"}
       response = get_request("/invoices/#{self.id}.json", options)
+      self.instance_variables.each do |var|
+        key = var.to_s.gsub("@", "")
+        instance_variable_set(var, result[key]) if result.has_key? key
+      end
+
       self.time_entries_json, self.expenses_json = [], [] 
       self.additional_items_json, self.workspaces_json = [], []
       result = response["invoices"].first[1]
@@ -305,7 +310,7 @@ module Mavenlink
     def time_entries
       self.reload if self.time_entries_json.nil?
       time_entry_list = []
-      time_entries_json.each do |ent|
+      self.time_entries_json.each do |ent|
         time_entry_list << get_time_entry(self.oauth_token, ent)
       end
       time_entry_list
@@ -313,16 +318,26 @@ module Mavenlink
 
     def expenses
       self.reload if self.expenses_json.nil?
+      expenses = []
+      self.expenses_json.each do |exp|
+        expenses << get_expense(self.oauth_token, exp)
+      end
+      expenses
     end
 
     def additional_items
       self.reload if self.additional_items_json.nil?
+      self.additional_items_json
     end
 
     def workspaces
-      self.reload if self.workspace_json.nil?
-      get_workspace(self.oauth_token, self.workspace_json)
-    end  
+      self.reload if self.workspaces_json.nil?
+      workspaces = []
+      self.workspaces_json.each do |wks|
+        workspaces << get_workspace(self.oauth_token, wks)
+      end
+      workspaces
+    end
 
     def user
       self.reload if self.user_json.nil?

@@ -138,12 +138,7 @@ module Mavenlink
           inv["expense_ids"].each{|k| expenses_json << expenses[k]}
           inv["workspace_ids"].each{|k| workspaces_json << workspaces[k]}
           user_json = users[inv["user_id"]]
-          invoices << Invoice.new(self.oauth_token, inv["id"], inv["created_at"], inv["updated_at"], 
-                              inv["invoice_date"], inv["due_date"], inv["message"], inv["draft"], inv["status"], 
-                              inv["balance_in_cents"], inv["currency"], inv["currency_base_unit"], 
-                              inv["currency_symbol"], inv["payment_schedule"], inv["workspace_ids"], 
-                              inv["user_id"], inv["recipient_id"], time_entries_json, expenses_json, 
-                              additional_items_json, workspaces_json, user_json)
+          invoices << get_invoice(self.oauth_token, inv, time_entries_json, expenses_json, additional_items_json, workspaces_json, user_json)
         end
       end
       invoices

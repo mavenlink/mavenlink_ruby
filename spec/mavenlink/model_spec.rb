@@ -89,4 +89,57 @@ describe Mavenlink do
     end
   end
 
+  describe "invoices" do
+    use_vcr_cassette "invoices", :record => :new_episodes
+
+    it "has time entries" do
+      inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280315"}).first
+      time_entries = inv.time_entries
+      time_entries.should be_an_array_of(Mavenlink::TimeEntry, 2)
+      time_entry = time_entries[1]
+      time_entry.notes.should eql("Additional Notes Example")
+      time_entry.time_in_minutes.should eq(300)
+    end
+
+    it "has expenses" do
+      inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280315"}).first
+      expenses = inv.expenses
+      expenses.should be_an_array_of(Mavenlink::Expense, 1)
+      exp = expenses.first
+      exp.is_invoiced.should be_true
+      exp.notes.should eql("Expense Notes")
+    end
+
+    it "returns empty array when no expenses exist" do
+      inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280335"}).first
+      inv.expenses.should be_empty
+    end
+
+    it "has additional items" do
+      inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280335"}).first
+      additional_items = inv.additional_items
+      additional_items.should be_an_array_of(Hash, 1)
+      itm = additional_items.first
+      itm["notes"].should eql("Additional Item 1")
+    end
+
+    it "has workspaces" do
+      inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280335"}).first
+      workspaces = inv.workspaces
+      workspaces.should be_an_array_of(Mavenlink::Workspace, 1)
+      wks = workspaces.first
+      wks.title.should eql("Random Workspace MG")
+      wks.archived.should be_false
+    end
+
+    it "has a user" do
+      inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280335"}).first
+      user = inv.user
+      user.should be_an_instance_of Mavenlink::User
+      user.full_name.should eql("Parth")
+      user.headline.should be_nil
+    end
+
+  end
+
 end
