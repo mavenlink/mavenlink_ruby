@@ -34,13 +34,13 @@ module Mavenlink
                 self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
 		end
 
-		def get_time_entry(oauth_token, ent)
+		def get_time_entry(oauth_token, ent, user_json=nil, workspace_json=nil, story_json=nil)
 			TimeEntry.new(oauth_token, ent["id"], ent["created_at"], ent["updated_at"], 
                     ent["date_performed"], ent["story_id"], ent["time_in_minutes"],
 										ent["billable"], ent["notes"], ent["rate_in_cents"], 
                     ent["currency"], ent["currency_symbol"], ent["currency_base_unit"],
-                    ent["user_can_edit"], ent["workspace_id"], ent["user_id"], 
-                    nil, nil, nil) 
+                    ent["user_can_edit"], ent["workspace_id"], ent["user_id"],
+                    user_json, workspace_json, story_json)
     end
 
     def get_expense(oauth_token, exp)

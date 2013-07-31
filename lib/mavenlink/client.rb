@@ -99,23 +99,19 @@ module Mavenlink
           user_json = users[ent["user_id"]]
           workspace_json = workspaces[ent["workspace_id"]]
           story_json = stories[ent["story_id"]]
-          time_entries << TimeEntry.new(self.oauth_token, ent["id"], ent["created_at"], ent["updated_at"], 
-                                        ent["date_performed"], ent["story_id"], ent["time_in_minutes"],
-                                        ent["billable"], ent["notes"], ent["rate_in_cents"], 
-                                        ent["currency"], ent["currency_symbol"], ent["currency_base_unit"],
-                                        ent["user_can_edit"], ent["workspace_id"], ent["user_id"], 
-                                        user_json, workspace_json, story_json)
+          time_entries << get_time_entry(self.oauth_token, ent, user_json, workspace_json, story_json)
         end
       end
       time_entries
     end
 
     def create_time_entry(options)
-      unless ["workspace_id", "date_performed", "time_in_minutes"].all? {|k| options.has_key? k}
+      unless [:workspace_id, :date_performed, :time_in_minutes].all? {|k| options.has_key? k}
         raise "Missing required parameters"
       end
       options.keys.each {|key| options["time_entry[#{key}]"] = options.delete(key)}
-      post_request("/time_entries.json", options)
+      response = post_request("/time_entries.json", options)
+      get_time_entry(self.oauth_token, response["time_entries"][response["results"].first["id"]])
     end
 
     def invoices(options={})

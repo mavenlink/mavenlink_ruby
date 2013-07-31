@@ -240,6 +240,8 @@ module Mavenlink
 
     def story
       self.reload if self.story_json.nil?
+      return nil if self.story_id.nil?
+      get_post(self.oauth_token, self.story_json)
     end
 
     def reload
@@ -249,6 +251,11 @@ module Mavenlink
       self.user_json = response["users"][result["user_id"]]
       self.workspace_json = response["workspaces"][result["workspace_id"]]
       self.story_json = response["stories"][result["story_id"]]
+
+      self.instance_variables.each do |var|
+        key = var.to_s.gsub("@", "")
+        instance_variable_set(var, result[key]) if result.has_key? key
+      end
     end
 
   end

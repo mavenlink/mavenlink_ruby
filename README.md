@@ -181,6 +181,55 @@ workspaces = inv.workspaces
 user = inv.user
 ```
 
+###TimeEntry
+#####Get time entries:
+```ruby
+    # All time entries
+    entries = cl.time_entries
+
+    # Filter invoices
+    entries = @cl.entries({:workspace_id => "12345"})
+```
+
+#####Create a new time entry
+```ruby
+#Required parameters: workspace_id, date_performed, time_in_minutes
+#Optional parameters: billable, notes, rate_in_cents, story_id
+ent = @cl.create_time_entry({
+                              :workspace_id => 12345,
+                              :date_performed => "2013-07-04",
+                              :time_in_minutes => 34,
+                              :notes => "Notes for TE"
+                            })
+```
+
+#####Reload and save a time entry
+```ruby
+ent = cl.time_entry.first
+ent.save
+
+ent.reload
+```
+#####Delete an existing time entry
+```ruby
+ent = cl.time_entry.first
+ent.delete
+```
+
+#####Associated objects
+```ruby
+ent = cl.time_entries.first
+
+#Workspace that the entry belongs to
+wks = ent.workspace
+
+#User that submitted the entry
+user = ent.user
+
+#Story associated with entry. nil if no story.
+story = ent.story
+```
+
 ## Contributing
 
 1. Fork it

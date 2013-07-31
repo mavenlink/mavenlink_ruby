@@ -142,4 +142,52 @@ describe Mavenlink do
 
   end
 
+  describe "time_entries" do
+    use_vcr_cassette "time_entries", :record => :new_episodes
+
+    it "has a user" do
+      entries = @cl.time_entries({:workspace_id => 3457635})
+      entry = entries.first
+      user = entry.user
+      user.should be_an_instance_of Mavenlink::User
+      user.full_name.should eql("Parth")
+    end
+
+    it "has a workspace" do
+      entry = @cl.time_entries({:workspace_id => 3457635}).first
+      workspace = entry.workspace
+      workspace.should be_an_instance_of Mavenlink::Workspace
+      workspace.title.should eql("Random New Workspace")
+    end
+
+    it "has a story" do
+      entry = @cl.time_entries({:workspace_id => 3457635}).first
+      story = entry.story
+      story.should be_an_instance_of Mavenlink::Post
+      story.created_at.should eql("2013-07-29T19:36:48-07:00")
+    end
+
+    it "returns nil if no story exists" do
+      entry = @cl.time_entries({:only => 8590085}).first
+      story = entry.story
+      story.should be_nil
+    end
+
+    it "can be deleted" do
+      ent = @cl.time_entries({:workspace_id => 3467515, :order => "date:asc" }).first
+      ent.delete
+      new_entries = @cl.expenses({:workspace_id => 3467515, :order => "date:asc" })
+      new_entries.should be_empty
+    end
+
+    it "can be saved" do
+      ent = @cl.time_entries({:only => 8590085}).first
+      ent.time_in_minutes = 75
+      ent.save
+      new_ent = @cl.time_entries({:only => ent.id}).first
+      new_ent.time_in_minutes.should eq(75)
+    end
+
+  end
+
 end
