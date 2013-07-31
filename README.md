@@ -21,14 +21,14 @@ You will need your oauth_token, which can be found on your Mavenlink userpage, t
 ## Usage
 
 ### Client
-#####Initialize a new client:
+#####Initialize a new client
 
 ```ruby
     require 'mavenlink'
     cl = Mavenlink::Client.new(oauth_token)
 ```
 ###User
-#####Get users:
+#####Get users
 ```ruby    
     # All users
     users = cl.users
@@ -38,7 +38,7 @@ You will need your oauth_token, which can be found on your Mavenlink userpage, t
 ```
 
 ###Expense
-#####Get expenses:
+#####Get expenses
     
 ```ruby    
     # All expenses
@@ -48,7 +48,7 @@ You will need your oauth_token, which can be found on your Mavenlink userpage, t
     filtered_expenses = cl.expenses({:workspace_id => 12345, :order => "date:asc" })
 ```
 
-#####Create a new expense:
+#####Create a new expense
 ```ruby
 #Required parameters : workspace_id, date, category, amount_in_cents
 #Optional paramters : notes, currency
@@ -59,7 +59,7 @@ cl.create_expense({ :workspace_id => 12345,
                     })
 ```
 
-#####Save and reload expense:
+#####Save and reload expense
 ```ruby
 #Savable attributes : notes, category, date, amount_in_cents
 exp = cl.expenses.first
@@ -73,21 +73,21 @@ exp.save
 exp_copy.reload
 ```
 
-#####Delete an expense:
+#####Delete an expense
 ```ruby
 exp = cl.expenses.first
 exp.delete
 ```
 
 ###Expense Category
-#####Get expense categories:
+#####Get expense categories
 ```ruby
 # Returns an array of expense category strings
 categories = cl.expense_categories
 ```
 
 ###Workspace
-#####Get workspaces:
+#####Get workspaces
 ```ruby
     # All workspaces
     workspaces = cl.workspaces
@@ -96,7 +96,7 @@ categories = cl.expense_categories
     workspaces = @cl.workspaces({:search => "API Test Project"})
 ```
 
-#####Create a new workspace:
+#####Create a new workspace
 ```ruby
 #Required parameters: title, creator_role(maven or buyer)
 #Optional parameters: budgeted, description, currency, price, due_date, project_tracker_template_id
@@ -105,7 +105,7 @@ categories = cl.expense_categories
                     }).
 ```
 
-#####Save and reload a workspace:
+#####Save and reload a workspace
 ```ruby
 #Savable attributes : title, budgeted, description, archived
 wks = cl.workspaces.first
@@ -146,7 +146,7 @@ creator = wks.creator
 ```
 
 ###Invoice
-#####Get invoices:
+#####Get invoices
 ```ruby
     # All invoices
     invoices = cl.invoices
@@ -155,7 +155,7 @@ creator = wks.creator
     invoices = @cl.invoices({:workspace_id => "12345,12346", :paid => "true"})
 ```
 
-#####Reload a invoice:
+#####Reload a invoice
 ```ruby
 inv = cl.invoices.first
 inv.reload
@@ -182,7 +182,7 @@ user = inv.user
 ```
 
 ###TimeEntry
-#####Get time entries:
+#####Get time entries
 ```ruby
     # All time entries
     entries = cl.time_entries
