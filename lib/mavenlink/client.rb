@@ -45,7 +45,7 @@ module Mavenlink
 
     def create_expense(options)
       unless [:workspace_id, :date, :category, :amount_in_cents].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
+        raise InvalidParametersError.new("Missing required parameters")
       end
       options.keys.each {|key| options["expense[#{key}]"] = options.delete(key)}
       response = post_request("/expenses.json", options)
@@ -75,10 +75,10 @@ module Mavenlink
 
     def create_workspace(options)
       unless [:title, :creator_role].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
+        raise InvalidParametersError.new("Missing required parameters")
       end
       unless ["buyer", "maven"].include? options[:creator_role]
-        raise "creator_role must be 'buyer' or 'maven'"
+        raise InvalidParametersError.new("creator_role must be 'buyer' or 'maven'")
       end
       options.keys.each {|key| options["workspace[#{key}]"] = options.delete(key)}
       response = post_request("/workspaces.json", options)
@@ -108,7 +108,7 @@ module Mavenlink
 
     def create_time_entry(options)
       unless [:workspace_id, :date_performed, :time_in_minutes].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
+        raise InvalidParametersError.new("Missing required parameters")
       end
       options.keys.each {|key| options["time_entry[#{key}]"] = options.delete(key)}
       response = post_request("/time_entries.json", options)
@@ -143,7 +143,7 @@ module Mavenlink
 
     def create_asset(options)
       unless [:data, :type].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
+        raise InvalidParametersError.new("Missing required parameters")
       end
       raise "Type of asset must be 'post' or 'expense'" unless ["post", "expense"].include? options[:type]
       request = RestClient::Request.new(
@@ -185,10 +185,10 @@ module Mavenlink
 
     def create_story(options)
       unless [:title, :story_type, :workspace_id ].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
+        raise InvalidParametersError.new("Missing required parameters")
       end 
       unless ["milestone", "task", "deliverable"].include? options[:story_type]
-        raise "story_type must be milestone, task or deliverable"
+        raise InvalidParametersError.new("story_type must be milestone, task or deliverable")
       end
       options.keys.each {|key| options["story[#{key}]"] = options.delete(key)}
       response = post_request("/stories.json", options)
@@ -232,7 +232,7 @@ module Mavenlink
 
     def create_post(options)
       unless [:message, :workspace_id].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
+        raise InvalidParametersError.new("Missing required parameters")
       end 
       options.keys.each {|key| options["post[#{key}]"] = options.delete(key)}
       response = post_request("/posts.json", options)

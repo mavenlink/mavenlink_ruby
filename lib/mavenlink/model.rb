@@ -122,10 +122,10 @@ module Mavenlink
 
     def create_workspace_invitation(options)
       unless [:full_name, :email_address, :invitee_role].all? {|k| options.has_key? k}
-        raise "Missing required parameters"
+        raise InvalidParametersError.new("Missing required parameters")
       end 
       unless ["buyer", "maven"].include? options[:invitee_role]
-        raise "invitee_role must be 'buyer' or 'maven'"
+        raise InvalidParametersError.new("invitee_role must be 'buyer' or 'maven'")
       end
       options.keys.each {|key| options["invitation[#{key}]"] = options.delete(key)}
       post_request("/workspaces/#{self.id}/invite.json", options)
