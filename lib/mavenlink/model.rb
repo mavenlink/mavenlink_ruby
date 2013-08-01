@@ -602,7 +602,7 @@ module Mavenlink
       return [] if self.google_documents_json.empty? || self.google_documents_json.nil?
       google_doc_urls = []
       self.google_documents_json.each do |doc|
-        google_doc_urls << doc[1]["url"]
+        google_doc_urls << doc["url"]
       end
       google_doc_urls
     end

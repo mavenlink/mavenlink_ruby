@@ -198,70 +198,37 @@ module Mavenlink
     def posts(options={})
       options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
       response = get_request("/posts.json", options)
-      users = response["users"]
-      workspaces = response["workspaces"]
-      stories = response["stories"]
-      assets = response["assets"]
-      posts_data = response["posts"]
       results = response["results"]
-      google_documents = response["google_documents"]
+      posts_data = response["posts"]
       posts = []
       results.each do |result|
         if result["key"].eql? "posts"
           pst = posts_data[result["id"]]
-          subject_json = posts_data[pst["subject_id"]] unless pst["subject_id"].nil?
-          user_json = users[pst["user_id"]]
 
-          workspace_json = workspaces[pst["workspace_id"]]
-
-          options = {}
-
-          options = extract_associstions_from result, :workspace => ["workspaces", "workspace_id"],
-                                                      :assets => ["assets", "asset_ids"],
-                                                      :users => ["users", "user_id"]
-          posts << Post.new(options)
-
+          post_options = {}
           {
             :workspace => ["workspaces", "workspace_id"],
             :assets => ["assets", "asset_ids"],
-            :users => ["users", "user_id"]
+            :user => ["users", "user_id"],
+            :subject => ["posts", "subject_id"],
+            :story => ["stories", "story_id"],
+            :newest_reply => ["posts", "newest_reply_id"],
+            :newest_reply_user => ["users", "newest_reply_user_id"],
+            :recipients => ["users", "recipient_ids"],
+            :replies => ["posts", "reply_ids"],
+            :google_documents => ["google_documents", "google_document_ids"]
           }.each do |name, (json_root_key, attribute_key)|
             if pst[attribute_key].is_a?(Array)
-              options[name] = []
+              post_options["#{name}_json"] = []
               pst[attribute_key].each do |id|
-                options[name].push response[json_root_key][id]
+                post_options["#{name}_json"].push response[json_root_key][id]
               end
             else
-              options[name] = response[json_root_key][pst[attribute_key]]
+              post_options["#{name}_json"] = response[json_root_key][pst[attribute_key]]
             end
           end
 
-          # options = {
-          #  :workspace => { :title => '...' },
-          #  :assets => [ { :path => '...' }, { :path => '...' }, ... ],
-          #  ...
-          # }
-
-
-          story_json = stories[pst["story_id"]] unless pst["story_id"].nil?
-          newest_reply_json = posts_data[pst["newest_reply_id"]] unless pst["newest_reply_id"].nil?
-          newest_reply_user_json = users[pst["newest_reply_user_id"]] unless pst["newest_reply_user_id"].nil?
-          recipients_json, google_documents_json = [], []
-          assets_json, replies_json = [], []
-          pst["recipient_ids"].each {|k| recipients_json << users[k]}
-          google_documents_json = google_documents
-          pst["asset_ids"].each {|k| assets_json << assets[k]}
-          pst["reply_ids"].each {|k| replies_json << posts_data[k]}
-
-          posts << get_post(self.oauth_token, pst, subject_json, user_json, workspace_json,
-                            story_json, replies_json, newest_reply_json, newest_reply_user_json, 
-                            recipients_json, google_documents_json, assets_json)
-
-          #posts << get_post(:token => oauth_token, :pst => pst, :subject => subject_json, user_json, workspace_json,
-          #                  story_json, replies_json, newest_reply_json, newest_reply_user_json,
-          #                  recipients_json, google_documents_json, assets_json)
-
-
+          posts << get_post(self.oauth_token, pst, post_options)
         end
       end
       posts

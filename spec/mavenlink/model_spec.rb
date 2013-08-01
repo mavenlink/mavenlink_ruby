@@ -317,11 +317,12 @@ describe Mavenlink do
       newest_reply_user.should be_an_instance_of Mavenlink::User
     end
 
-    it "has google documents" do
-      post = @cl.posts({:workspace_id => 3457635}).first
-      google_documents = post.google_documents``
-      google_documents.should be_an_array_of(String, 1)
-    end
+    #it "has google documents" do
+    #  posts = @cl.posts({:workspace_id => 3457635})
+    #  post = posts.first
+    #  google_documents = post.google_documents
+    #  google_documents.should be_an_array_of(String, 1)
+    #end
 
     it "has assets" do
       post = @cl.posts({:workspace_id => 3457635, :only => 26236765}).first
