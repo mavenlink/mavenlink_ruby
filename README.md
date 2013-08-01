@@ -16,10 +16,11 @@ Or install it yourself as:
 
     $ gem install mavenlink
 
-You will need your oauth_token, which can be found on your Mavenlink userpage, to use the client.
-
 ## Usage
 
+Please read the API documentation (http://developer.mavenlink.com/) before using the gem.  
+
+You will also need your oauth_token, which can be found on your Mavenlink userpage.
 ### Client
 #####Initialize a new client
 
