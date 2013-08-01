@@ -211,7 +211,38 @@ module Mavenlink
           pst = posts_data[result["id"]]
           subject_json = posts_data[pst["subject_id"]] unless pst["subject_id"].nil?
           user_json = users[pst["user_id"]]
+
           workspace_json = workspaces[pst["workspace_id"]]
+
+          options = {}
+
+          options = extract_associstions_from result, :workspace => ["workspaces", "workspace_id"],
+                                                      :assets => ["assets", "asset_ids"],
+                                                      :users => ["users", "user_id"]
+          posts << Post.new(options)
+
+          {
+            :workspace => ["workspaces", "workspace_id"],
+            :assets => ["assets", "asset_ids"],
+            :users => ["users", "user_id"]
+          }.each do |name, (json_root_key, attribute_key)|
+            if pst[attribute_key].is_a?(Array)
+              options[name] = []
+              pst[attribute_key].each do |id|
+                options[name].push response[json_root_key][id]
+              end
+            else
+              options[name] = response[json_root_key][pst[attribute_key]]
+            end
+          end
+
+          # options = {
+          #  :workspace => { :title => '...' },
+          #  :assets => [ { :path => '...' }, { :path => '...' }, ... ],
+          #  ...
+          # }
+
+
           story_json = stories[pst["story_id"]] unless pst["story_id"].nil?
           newest_reply_json = posts_data[pst["newest_reply_id"]] unless pst["newest_reply_id"].nil?
           newest_reply_user_json = users[pst["newest_reply_user_id"]] unless pst["newest_reply_user_id"].nil?
@@ -225,6 +256,12 @@ module Mavenlink
           posts << get_post(self.oauth_token, pst, subject_json, user_json, workspace_json,
                             story_json, replies_json, newest_reply_json, newest_reply_user_json, 
                             recipients_json, google_documents_json, assets_json)
+
+          posts << get_post(:token => oauth_token, :pst => pst, :subject => subject_json, user_json, workspace_json,
+                            story_json, replies_json, newest_reply_json, newest_reply_user_json,
+                            recipients_json, google_documents_json, assets_json)
+
+
         end
       end
       posts
