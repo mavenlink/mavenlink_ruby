@@ -25,13 +25,14 @@ module Mavenlink
                nil, nil, nil)
 		end
 
-		def get_story(oauth_token, stry)
-      Story.new(oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"], 
-                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"], 
-                stry["state"], stry["position"], stry["archived"], stry["deleted_at"], 
-                stry["sub_story_count"], stry["budget_estimate_in_cents"], 
-                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"], 
-                self.workspace_json, nil, nil, nil, nil, stry["percentage_complete"])
+		def get_story(oauth_token, stry, workspace_json=nil, parent_story_json=nil, assignees_json=nil, sub_stories_json=nil, tags_json=nil)
+      Story.new(oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"],
+                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"],
+                stry["state"], stry["position"], stry["archived"], stry["deleted_at"],
+                stry["sub_story_count"], stry["budget_estimate_in_cents"],
+                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"],
+                stry["percentage_complete"], workspace_json, parent_story_json, assignees_json,
+                sub_stories_json, tags_json)
 		end
 
 		def get_time_entry(oauth_token, ent, user_json=nil, workspace_json=nil, story_json=nil)

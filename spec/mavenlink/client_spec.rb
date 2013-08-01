@@ -150,7 +150,7 @@ describe Mavenlink::Client do
   describe "time_entries" do
     use_vcr_cassette "time_entries", :record => :new_episodes
 
-    it "time entries exist" do
+    it "2 time entries exist" do
       time_entries = @cl.time_entries({:workspace_id => 3457635})
       time_entries.should be_an_array_of(Mavenlink::TimeEntry, 2)
       entry = time_entries.first
@@ -181,6 +181,51 @@ describe Mavenlink::Client do
                                     :workspace_id => 3467515,
                                     :date_performed => "2013-07-04",
                                     })}.to raise_error
+    end
+  end
+
+  describe "stories" do
+    use_vcr_cassette "stories", :record => :new_episodes
+
+    it "3 stories exist" do
+      stories = @cl.stories({:workspace_id => 3403465})
+      stories.should be_an_array_of(Mavenlink::Story, 3)
+      stories.first.title.should eql("New Task")
+    end
+
+    it "can be filtered" do
+      stories = @cl.stories({:workspace_id => 3403465, :parents_only => true})
+      stories.should be_an_array_of(Mavenlink::Story, 2)
+    end
+
+    it "can be ordered" do
+      stories = @cl.stories(:workspace_id => 3403465, :order => "created_at:asc")
+      stories[0].created_at.should be_before stories[1].created_at
+    end
+
+    it "creates a new story" do
+      stry = @cl.create_story({
+                              :workspace_id => 3467515,
+                              :title => "New Task",
+                              :story_type => "task"
+                             })
+      stry.should be_an_instance_of Mavenlink::Story
+      stry.title.should eql("New Task")
+    end
+
+    it "raises error when creating story without required options" do
+      expect {@cl.create_story({
+                                :workspace_id => 3467515,
+                                :story_type => "task"
+                               })}.to raise_error
+    end
+
+    it "raises error when creating story with invalid story_type" do
+      expect {@cl.create_story({
+                                :workspace_id => 3467515,
+                                :story_type => "invalid",
+                                :title => "New Task"
+                               })}.to raise_error
     end
   end
 

@@ -190,4 +190,70 @@ describe Mavenlink do
 
   end
 
+  describe "stories" do
+    use_vcr_cassette "stories", :record => :new_episodes
+
+
+    it "has a workspace" do
+      story = @cl.stories({:workspace_id => 3403465}).first
+      workspace = story.workspace
+      workspace.should be_an_instance_of Mavenlink::Workspace
+      workspace.title.should eql("8105 Project")
+    end
+
+    it "has a parent" do
+      story = @cl.stories({:workspace_id => 3403465}).last
+      parent = story.parent_story
+      parent.should be_an_instance_of Mavenlink::Story
+      parent.title.should eql("Example Task")
+    end
+
+    it "returns nil if no parent" do
+      story = @cl.stories({:workspace_id => 3403465}).first
+      story.parent_story.should be_nil
+    end
+
+    it "has assignees" do
+      story = @cl.stories({:workspace_id => 3403465})[1]
+      assignees = story.assignees
+      assignees.should be_an_array_of(Mavenlink::User, 1)
+      assignees.first.full_name.should eql("Parth")
+    end
+
+    it "returns [] if no assignees exist" do
+      story = @cl.stories({:workspace_id => 3403465}).first
+      story.assignees.should be_empty
+    end
+
+    it "has sub_stories" do
+      story = @cl.stories({:workspace_id => 3403465})[1]
+      sub_stories = story.sub_stories
+      sub_stories.should be_an_array_of(Mavenlink::Story, 1)
+      sub_stories.first.title.should eql("Example sub-task")
+    end
+
+    it "has tags" do
+      story = @cl.stories({:workspace_id => 3457635}).first
+      tags = story.tags
+      tags.should be_an_array_of(String, 2)
+    end
+
+    it "can be deleted" do
+      story = @cl.stories({:workspace_id => 3484825}).first
+      story.deleted_at.should be_nil
+      story.delete
+      deleted_story = @cl.stories({:search => "Test Project Meh"}).first
+      deleted_story.deleted_at.should_not be_nil
+    end
+
+    it "can be saved" do
+      story = @cl.stories({:workspace_id => 3403465,}).first
+      story.percentage_complete.should eq(0)
+      story.percentage_complete = 10
+      story.save
+      story = @cl.stories({:workspace_id => 3403465, :only => 26593185}).first
+      story.percentage_complete.should eq(10)
+    end
+  end
+
 end

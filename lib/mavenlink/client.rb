@@ -176,27 +176,22 @@ module Mavenlink
           stry["assignee_ids"].each {|k| assignees_json << users[k]}
           stry["sub_story_ids"].each {|k| sub_stories_json << story_data[k]}
           stry["tag_ids"].each {|k| tags_json << tags[k]}
-          stories << Story.new(self.oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"], 
-                                stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"], 
-                                stry["state"], stry["position"], stry["archived"], stry["deleted_at"], 
-                                stry["sub_story_count"], stry["budget_estimate_in_cents"], 
-                                stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"], 
-                                workspace_json, parent_story_json, assignees_json, sub_stories_json, tags_json,
-                                stry["percentage_complete"])
+          stories << get_story(self.oauth_token, stry, workspace_json, parent_story_json, assignees_json, sub_stories_json, tags_json)
         end
       end
       stories
     end
 
     def create_story(options)
-      unless ["title", "story_type", "workspace_id" ].all? {|k| options.has_key? k}
+      unless [:title, :story_type, :workspace_id ].all? {|k| options.has_key? k}
         raise "Missing required parameters"
       end 
-      unless ["milestone", "task", "deliverable"].include? options["story_type"]
+      unless ["milestone", "task", "deliverable"].include? options[:story_type]
         raise "story_type must be milestone, task or deliverable"
       end
       options.keys.each {|key| options["story[#{key}]"] = options.delete(key)}
       response = post_request("/stories.json", options)
+      get_story(self.oauth_token, response["stories"][response["results"].first["id"]])
     end
 
     def posts(options={})

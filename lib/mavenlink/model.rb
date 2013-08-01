@@ -299,6 +299,7 @@ module Mavenlink
     def reload
       options = {"include" => "time_entries,expenses,additional_items,workspaces,user"}
       response = get_request("/invoices/#{self.id}.json", options)
+      result = response["invoices"].first[1]
       self.instance_variables.each do |var|
         key = var.to_s.gsub("@", "")
         instance_variable_set(var, result[key]) if result.has_key? key
@@ -361,8 +362,8 @@ module Mavenlink
                   :assignees_json, :sub_stories_json, :tags_json, :percentage_complete
     def initialize(oauth_token, id, title, description, updated_at, created_at, due_date, start_date,
                   story_type, state, position, archived, deleted_at, sub_story_count, budget_estimate_in_cents,
-                  time_estimate_in_minutes, workspace_id, parent_id, workspace_json, parent_story_json, 
-                  assignees_json, sub_stories_json, tags_json, percentage_complete)
+                  time_estimate_in_minutes, workspace_id, parent_id, percentage_complete, workspace_json, parent_story_json,
+                  assignees_json, sub_stories_json, tags_json)
       self.oauth_token = oauth_token
       self.id = id
       self.title = title
@@ -396,16 +397,22 @@ module Mavenlink
       savable.each do |inst|
         options["story[#{inst}]"] = instance_variable_get("@#{inst}")
       end
-      response = put_request("/stories/#{self.id}.json", options)
+      put_request("/stories/#{self.id}.json", options)
     end
 
     def delete
-      response = delete_request("/stories/#{self.id}.json")
+      delete_request("/stories/#{self.id}.json")
     end
 
     def reload
       options = {"include" => "workspace,assignees,parent,sub_stories,tags"}
       response = get_request("/stories/#{self.id}.json", options)
+      result = response["stories"].first[1]
+      self.instance_variables.each do |var|
+        key = var.to_s.gsub("@", "")
+        instance_variable_set(var, result[key]) if result.has_key? key
+      end
+
       self.workspace_json, self.parent_story_json = [], [] 
       self.sub_stories_json, self.assignees_json = [], []
       result = response["stories"].first[1]
@@ -416,19 +423,19 @@ module Mavenlink
     end
 
     def workspace
-      self.reload if self.workspace_json.nil?
+      self.reload if self.workspace_json.nil? or workspace_json.empty?
       get_workspace(self.oauth_token, self.workspace_json)
     end
 
     def parent_story
       self.reload if self.parent_story_json.nil?
-      return nil if self.parent_story_json.empty?
+      return nil if self.parent_story_json.nil?
       get_story(self.oauth_token, self.parent_story_json)
     end
 
     def assignees
       self.reload if self.assignees_json.nil?
-      return nil if self.assignees_json.empty?
+      return [] if self.assignees_json.empty?
       assignees_list = []
       self.assignees_json.each do |assg|
         assignees_list <<  get_user(assg)
@@ -438,7 +445,7 @@ module Mavenlink
 
     def sub_stories
       self.reload if self.sub_stories_json.nil?
-      return nil if self.sub_stories_json.empty?
+      return [] if self.sub_stories_json.empty?
       sub_stories_list = []
       self.sub_stories_json.each do |stry|
         sub_stories_list << get_story(self.oauth_token, stry)
@@ -448,7 +455,7 @@ module Mavenlink
 
     def tags
       self.reload if self.tags_json.nil?
-      return nil if self.tags_json.empty?
+      return [] if self.tags_json.empty?
       tags_list = []
       self.tags_json.each do |tag|
         tags_list << tag["name"]
@@ -520,11 +527,11 @@ module Mavenlink
       savable.each do |inst|
         options["post[#{inst}]"] = instance_variable_get("@#{inst}")
       end
-      response = put_request("/posts/#{self.id}.json", options)
+      put_request("/posts/#{self.id}.json", options)
     end
 
     def delete
-      response = delete_request("/posts/#{self.id}.json")
+      delete_request("/posts/#{self.id}.json")
     end
 
     def parent_post
