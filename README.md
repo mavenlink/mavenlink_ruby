@@ -360,6 +360,7 @@ google_documents = pst.google_documents
 
 # A list of assets linked to this pst
 assets = pst.assets
+```
 
 ###Asset
 #####Create a new asset
