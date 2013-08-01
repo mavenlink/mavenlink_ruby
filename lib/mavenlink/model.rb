@@ -219,8 +219,7 @@ module Mavenlink
     end
 
     def save
-      savable = ["date_performed", "story_id", "time_in_minutes", "notes",
-                "rate_in_cents", "billable"]
+      savable = ["date_performed", "time_in_minutes", "notes", "rate_in_cents", "billable"]
       options = {}
       savable.each do |inst|
         options["time_entry[#{inst}]"] = instance_variable_get("@#{inst}")
@@ -391,7 +390,7 @@ module Mavenlink
     end
 
     def save
-      savable = [ "title", "description", "parent_id", "story_type", "start_date", "due_date",
+      savable = [ "title", "description", "story_type", "start_date", "due_date",
                   "state", "budget_estimate_in_cents", "time_estimate_in_minutes", "percentage_complete" ]
       options = {}
       savable.each do |inst|

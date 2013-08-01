@@ -61,7 +61,7 @@ cl.create_expense({ :workspace_id => 12345,
 
 #####Save and reload expense
 ```ruby
-#Savable attributes : notes, category, date, amount_in_cents
+#Savable attributes: notes, category, date, amount_in_cents
 exp = cl.expenses.first
 exp_copy = cl.expenses.first
 exp.category = "Updated category"
@@ -107,7 +107,7 @@ categories = cl.expense_categories
 
 #####Save and reload a workspace
 ```ruby
-#Savable attributes : title, budgeted, description, archived
+#Savable attributes: title, budgeted, description, archived
 wks = cl.workspaces.first
 wks_copy = cl.workspaces.first
 exp.titile = "Updated title"
@@ -188,7 +188,7 @@ user = inv.user
     entries = cl.time_entries
 
     # Filter invoices
-    entries = @cl.entries({:workspace_id => "12345"})
+    entries = @cl.entries({:workspace_id => 12345})
 ```
 
 #####Create a new time entry
@@ -205,10 +205,16 @@ ent = @cl.create_time_entry({
 
 #####Reload and save a time entry
 ```ruby
-ent = cl.time_entry.first
+Savable attributes: date_performed, time_in_minutes, notes, rate_in_cents, billable
+ent = cl.time_entries.first
+ent_copy = cl.time_entries.first
+ent.time_in_minutes = 10
+
+# ent.category != ent_copy.time_in_minutes
 ent.save
 
-ent.reload
+# exp.category == exp_copy.category
+ent_copy.reload
 ```
 #####Delete an existing time entry
 ```ruby
@@ -228,6 +234,64 @@ user = ent.user
 
 #Story associated with entry. nil if no story.
 story = ent.story
+```
+
+###Story
+#####Get stories
+```ruby
+    # All stories
+    stories = cl.stories
+
+    # Filter and order stories
+    stories = @cl.stories({:workspace_id => 12345, :order => "created_at:asc", :parents_only => true})
+```
+
+#####Create a new story
+```ruby
+#Required parameters: workspace_id, title, story_type(task, milestone or deliverable)
+#Optional parameters: description, parent_id, start_date, due_date, assignees, budget_estimate_in_cents,
+#                     time_estimate_in_minutes, tag_list
+stry = @cl.create_story({
+                          :workspace_id => 3467515,
+                          :title => "New Task",
+                          :story_type => "task"
+                       })
+```
+
+#####Reload and save a story
+```ruby
+#Savable attributes: title, description, story_type, start_date, due_date,
+#                    state, budget_estimate_in_cents, time_estimate_in_minutes, percentage_complete
+stry = cl.stories.first
+stry_copy = cl.stories.first
+stry.description = "Updated description"
+
+# stry.description != stry_copy.description
+stry.save
+
+# stry.description == stry_copy.description
+stry_copy.reload
+```
+
+#####Associated objects
+```ruby
+stry = cl.stories.first
+
+#Workspace that the story belongs to
+workspace = story.workspace
+
+#Parent story, if exists. Nil, otherwise
+parent = stry.parent_story
+
+#Array of Users assigned to the story
+assignees = stry.assignees
+
+#Sub-stories of this story"title", "description", "parent_id", "story_type", "start_date", "due_date",
+                  "state", "budget_estimate_in_cents", "time_estimate_in_minutes", "percentage_complete"
+sub_stories = stry.sub_stories
+
+#Array of tags as strings
+tags = stry.tags
 ```
 
 ## Contributing
