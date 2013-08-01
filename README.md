@@ -286,8 +286,7 @@ parent = stry.parent_story
 #Array of Users assigned to the story
 assignees = stry.assignees
 
-#Sub-stories of this story"title", "description", "parent_id", "story_type", "start_date", "due_date",
-                  "state", "budget_estimate_in_cents", "time_estimate_in_minutes", "percentage_complete"
+#Sub-stories of this story
 sub_stories = stry.sub_stories
 
 #Array of tags as strings
