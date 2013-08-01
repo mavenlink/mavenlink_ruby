@@ -257,9 +257,9 @@ module Mavenlink
                             story_json, replies_json, newest_reply_json, newest_reply_user_json, 
                             recipients_json, google_documents_json, assets_json)
 
-          posts << get_post(:token => oauth_token, :pst => pst, :subject => subject_json, user_json, workspace_json,
-                            story_json, replies_json, newest_reply_json, newest_reply_user_json,
-                            recipients_json, google_documents_json, assets_json)
+          #posts << get_post(:token => oauth_token, :pst => pst, :subject => subject_json, user_json, workspace_json,
+          #                  story_json, replies_json, newest_reply_json, newest_reply_user_json,
+          #                  recipients_json, google_documents_json, assets_json)
 
 
         end

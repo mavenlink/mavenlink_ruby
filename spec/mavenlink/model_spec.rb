@@ -319,7 +319,7 @@ describe Mavenlink do
 
     it "has google documents" do
       post = @cl.posts({:workspace_id => 3457635}).first
-      google_documents = post.google_documents
+      google_documents = post.google_documents``
       google_documents.should be_an_array_of(String, 1)
     end
 
