@@ -17,12 +17,15 @@ module Mavenlink
 			User.new(usr["id"], usr["full_name"], usr["photo_path"], usr["email_address"], usr["headline"])
 		end
 
-		def get_post(oauth_token, pst)
+		def get_post(oauth_token, pst, subject_json=nil, user_json=nil, workspace_json=nil, story_json=nil,
+                replies_json=nil, newest_reply_json=nil, newest_reply_user_json=nil, recipients_json=nil,
+                google_documents_json=nil, assets_json=nil)
 			Post.new(oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
                pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
                pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
-               pst["subject_type"], pst["story_id"], pst["subject_json"], nil, nil, nil, nil, nil, nil, 
-               nil, nil, nil)
+               pst["subject_type"], pst["story_id"], subject_json, user_json, workspace_json,
+               story_json, replies_json, newest_reply_json, newest_reply_user_json,
+               recipients_json, google_documents_json, assets_json)
 		end
 
 		def get_story(oauth_token, stry, workspace_json=nil, parent_story_json=nil, assignees_json=nil, sub_stories_json=nil, tags_json=nil)

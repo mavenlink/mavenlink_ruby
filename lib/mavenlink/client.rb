@@ -1,5 +1,6 @@
 require_relative 'helper'
 require 'rest_client'
+require 'json'
 
 module Mavenlink
   class Client < Base
@@ -140,7 +141,6 @@ module Mavenlink
       invoices
     end
 
-    # ERROR
     def create_asset(options)
       unless [:data, :type].all? {|k| options.has_key? k}
         raise "Missing required parameters"
@@ -155,7 +155,8 @@ module Mavenlink
                                                     "asset[data]" => File.new(options[:data], 'rb'),
                                                     "asset[type]" => options[:type]
                                         })
-      res = request.execute
+      response = JSON.parse(request.execute)
+      Asset.new(self.oauth_token, response["id"], options[:data])
     end
 
     def stories(options={})
@@ -220,10 +221,8 @@ module Mavenlink
           google_documents_json = google_documents
           pst["asset_ids"].each {|k| assets_json << assets[k]}
           pst["reply_ids"].each {|k| replies_json << posts_data[k]}
-          posts << Post.new(self.oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"], 
-                            pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
-                            pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
-                            pst["subject_type"], pst["story_id"], subject_json, user_json, workspace_json,
+
+          posts << get_post(self.oauth_token, pst, subject_json, user_json, workspace_json,
                             story_json, replies_json, newest_reply_json, newest_reply_user_json, 
                             recipients_json, google_documents_json, assets_json)
         end
@@ -232,11 +231,12 @@ module Mavenlink
     end
 
     def create_post(options)
-      unless ["message", "workspace_id"].all? {|k| options.has_key? k}
+      unless [:message, :workspace_id].all? {|k| options.has_key? k}
         raise "Missing required parameters"
       end 
       options.keys.each {|key| options["post[#{key}]"] = options.delete(key)}
       response = post_request("/posts.json", options)
+      get_post(self.oauth_token, response["posts"][response["results"].first["id"]])
     end
 
   end

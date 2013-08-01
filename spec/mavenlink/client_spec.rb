@@ -229,4 +229,46 @@ describe Mavenlink::Client do
     end
   end
 
+  describe "posts" do
+    use_vcr_cassette "posts", :record => :new_episodes
+
+    it "3 posts exist" do
+      posts = @cl.posts({:workspace_id => 3484825})
+      posts.should be_an_array_of(Mavenlink::Post, 3)
+      posts.first.message.should eq("Test Post 2")
+    end
+
+    it "can be filtered" do
+      posts = @cl.posts({:workspace_id => 3484825, :parents_only => true})
+      posts.should be_an_array_of(Mavenlink::Post, 2)
+    end
+
+    it "creates a new post" do
+      pst = @cl.create_post({
+                            :message => "Created new post",
+                            :workspace_id => 3484825
+                            })
+      pst.should be_an_instance_of Mavenlink::Post
+      pst.message.should eql("Created new post")
+    end
+
+    it "raises error when creating post without required options" do
+      expect {@cl.create_post({
+                                :message => "Created new post",
+                             })}.to raise_error
+    end
+  end
+
+  describe "assets" do
+    use_vcr_cassette "assets", :record => :new_episodes
+
+    it "creates a new asset" do
+      asset = @cl.create_asset({
+                                :data => "/Users/mavenlink/Desktop/png.png",
+                                :type => "expense"
+                              })
+      asset.should be_an_instance_of Mavenlink::Asset
+    end
+  end
+
 end

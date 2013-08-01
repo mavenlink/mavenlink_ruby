@@ -256,4 +256,79 @@ describe Mavenlink do
     end
   end
 
+  describe "posts" do
+    use_vcr_cassette "posts", :record => :new_episodes
+
+    it "has a parent_post" do
+      post = @cl.posts({:workspace_id => 3457635})[1]
+      parent_post = post.parent_post
+      parent_post.should be_an_instance_of Mavenlink::Post
+      parent_post.message.should eql("TestPost2")
+    end
+
+    it "returns nil if no parent post" do
+      post = @cl.posts({:workspace_id => 3457635}).last
+      post.parent_post.should be_nil
+    end
+
+    it "has a user" do
+      post = @cl.posts({:workspace_id => 3457635}).last
+      user = post.user
+      user.should be_an_instance_of Mavenlink::User
+      user.full_name.should eql("Parth")
+    end
+
+    it "has a workspace" do
+      post = @cl.posts({:workspace_id => 3457635}).last
+      workspace = post.workspace
+      workspace.should be_an_instance_of Mavenlink::Workspace
+      workspace.title.should eql("Random New Workspace")
+    end
+
+    it "has a story" do
+      post = @cl.posts({:workspace_id => 3457635}).first
+      story = post.story
+      story.should be_an_instance_of Mavenlink::Story
+      story.title.should eql("New Task")
+    end
+
+    it "has replies" do
+      post = @cl.posts({:workspace_id => 3457635}).first
+      replies = post.replies
+      replies.should be_an_array_of(Mavenlink::Post, 1)
+      replies.first.message.should eql("TestReplyPost1")
+    end
+
+    it "has recipients" do
+      post = @cl.posts({:workspace_id => 3457635, :only => 26239615}).first
+      recipients = post.recipients
+      recipients.should be_an_array_of(Mavenlink::User, 2)
+    end
+
+    it "has a newest reply" do
+      post = @cl.posts({:workspace_id => 3457635}).first
+      newest_reply = post.newest_reply
+      newest_reply.should be_an_instance_of Mavenlink::Post
+    end
+
+    it "has a newest user" do
+      post = @cl.posts({:workspace_id => 3457635}).first
+      newest_reply_user = post.newest_reply_user
+      newest_reply_user.should be_an_instance_of Mavenlink::User
+    end
+
+    it "has google documents" do
+      post = @cl.posts({:workspace_id => 3457635}).first
+      google_documents = post.google_documents
+      google_documents.should be_an_array_of(String, 1)
+    end
+
+    it "has assets" do
+      post = @cl.posts({:workspace_id => 3457635, :only => 26236765}).first
+      assets = post.assets
+      assets.should be_an_array_of(Mavenlink::Asset, 1)
+      assets.first.file_name.should eql("png.png")
+    end
+  end
+
 end

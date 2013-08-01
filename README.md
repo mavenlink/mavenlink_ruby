@@ -293,6 +293,95 @@ sub_stories = stry.sub_stories
 tags = stry.tags
 ```
 
+###Post
+#####Get posts
+```ruby
+    # All stories
+    posts = cl.posts
+
+    # Filter and order posts
+    posts = @cl.posts({:workspace_id => 3484825, :parents_only => true})
+```
+
+#####Create a new post
+```ruby
+#Required parameters: message, workspace_id
+#Optional parameters: subject_id, subject_type, story_id, recipient_ids, file_ids
+pst = @cl.create_post({
+                       :message => "Created new post",
+                       :workspace_id => 3484825
+                      })
+```
+
+#####Reload and save a post
+```ruby
+#Savable attributes: message, story_id
+pst = cl.posts.first
+pst_copy = cl.posts.first
+pst.message = "Updated message"
+
+# pst.message != pst_copy.message
+stry.save
+
+# pst.message == pst_copy.message
+pst_copy.reload
+```
+
+#####Associated objects
+```ruby
+pst = cl.posts.first
+
+#Workspace that the story belongs to
+workspace = pst.workspace
+
+#Parent post, if exists. Nil, otherwise
+parent = pst.parent_post
+
+#User who created the post
+user = pst.user
+
+#Story associated with this post
+story = pst.story
+
+#Replies to this post as an array of Posts
+replies = pst.replies
+
+#Recipients of this post as an array of Users
+recipients = pst.recipients
+
+#Newest reply to this post, if exists. Nil otherwise.
+newest_reply = pst.newest_reply
+
+#User who posted the newest reply
+newest_reply_user = pst.newest_reply_user
+
+# An array of urls to associated google docs
+google_documents = pst.google_documents
+
+# A list of assets linked to this pst
+assets = pst.assets
+
+###Asset
+#####Create a new asset
+```ruby
+# Required parameters: data (filepath of asset), type (expense or post)
+@cl.create_asset({
+                  :data => "example_file_path",
+                  :type => "expense"
+                 })
+```
+
+#####Save an asset
+```ruby
+#Savable attributes: file_name
+asset.file_name = "updated_file_name"
+asset.save
+```
+
+#####Delete an asset
+```ruby
+asset.delete
+```
 ## Contributing
 
 1. Fork it
@@ -300,9 +389,3 @@ tags = stry.tags
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
-
-##### TODO:
-1. Finish tests
-2. Refactor and code cleanup
-3. Add custom exceptions and do better error handling
-4. Add options for lazy load vs eager load

@@ -17,17 +17,21 @@ module Mavenlink
   class Asset < Base
     include Mavenlink::Helper
     
-    attr_accessor :oauth_token, :type, :data
-    def initialize(oauth_token, type, data)
+    attr_accessor :oauth_token, :id, :file_name
+    def initialize(oauth_token, id, file_name)
       self.oauth_token = oauth_token
-      self.type = type
-      self.data = data
+      self.id = id
+      self.file_name = file_name
     end
 
     def save
+      options = {}
+      options["asset[filename]"] = self.file_name
+      put_request("/assets/#{self.id}.json", options)
     end
 
     def delete
+      delete_request("/assets/#{self.id}.json")
     end
   end
 
@@ -506,6 +510,12 @@ module Mavenlink
       options = {"include" => "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"}
       response = get_request("/posts/#{self.id}.json", options)
       result = response["posts"].first[1]
+
+      self.instance_variables.each do |var|
+        key = var.to_s.gsub("@", "")
+        instance_variable_set(var, result[key]) if result.has_key? key
+      end
+
       self.subject_json = response["posts"][result["subject_id"]] unless result["subject_id"].nil?
       self.user_json = response["users"][result["user_id"]]
       self.workspace_json = response["workspaces"][result["workspace_id"]]
@@ -514,10 +524,10 @@ module Mavenlink
       self.newest_reply_user_json = result["users"][response["newest_reply_user_id"]] unless result["newest_reply_user_id"].nil?
       self.recipients_json, self.google_documents_json = [], []
       self.assets_json, self.replies_json = [], []
-      result["recipient_ids"].each {|k| self.recipients_json << response["users"][k]}
+      result["recipient_ids"].each {|k| self.recipients_json << response["users"][k]} unless result["recipient_ids"].nil?
       self.google_documents_json = google_documents
-      result["asset_ids"].each {|k| self.assets_json << response["assets"][k]}
-      result["reply_ids"].each {|k| self.replies_json << response["posts"][k]}
+      result["asset_ids"].each {|k| self.assets_json << response["assets"][k]} unless result["reply_ids"].nil?
+      result["reply_ids"].each {|k| self.replies_json << response["posts"][k]} unless result["reply_ids"].nil?
     end
 
     def save
@@ -535,7 +545,7 @@ module Mavenlink
 
     def parent_post
       self.reload if self.subject_json.nil?
-      return nil if self.subject_json.empty?
+      return nil if self.subject_json.nil?
       get_post(self.oauth_token, self.subject_json)
     end
 
@@ -551,13 +561,13 @@ module Mavenlink
 
     def story
       self.reload if self.story_json.nil?
-      return nil if self.story_json.empty?
+      return nil if self.story_json.nil?
       get_story(self.oauth_token, self.story_json)
     end
 
     def replies
       self.reload if self.replies_json.nil?
-      return [] if self.replies_json.empty?
+      return [] if self.replies_json.nil?
       replies = []
       self.replies_json.each do |pst|
         replies << get_post(self.oauth_token, pst)
@@ -567,7 +577,7 @@ module Mavenlink
 
     def recipients
       self.reload if self.recipients_json.nil?
-      return [] if self.recipients_json.empty?
+      return [] if self.recipients_json.nil?
       recipients = []
       self.recipients_json.each do |usr|
         recipients << get_user(usr)
@@ -575,10 +585,36 @@ module Mavenlink
       recipients
     end
 
+    def newest_reply
+      self.reload if self.newest_reply_json.nil?
+      return nil if self.newest_reply_json.nil?
+      get_post(self.oauth_token, self.newest_reply_json)
+    end
+
+    def newest_reply_user
+      self.reload if self.newest_reply_user_json.nil?
+      return nil if self.newest_reply_user_json.nil?
+      get_user(self.newest_reply_user_json)
+    end
+
     def google_documents
+      self.reload if self.google_documents_json.nil?
+      return [] if self.google_documents_json.empty? || self.google_documents_json.nil?
+      google_doc_urls = []
+      self.google_documents_json.each do |doc|
+        google_doc_urls << doc[1]["url"]
+      end
+      google_doc_urls
     end
 
     def assets
+      self.reload if self.assets_json.nil?
+      return [] if self.assets_json.nil? || self.assets_json.empty?
+      assets = []
+      self.assets_json.each do |asset|
+        assets << Asset.new(self.oauth_token, asset["id"], asset["filename"])
+      end
+      assets
     end
   end
 
