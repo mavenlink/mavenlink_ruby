@@ -1,7 +1,7 @@
 module Mavenlink
 	module Helper
 
-		def get_workspace(oauth_token, wksp, primary_counterpart_json=nil, participants_json=nil, creator_json=nil)
+		def get_workspace(oauth_token, wksp, opts={})
       Workspace.new(oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
                     wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
                     wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
@@ -10,7 +10,7 @@ module Mavenlink
                     wksp["currency_symbol"], wksp["currency_base_unit"], 
                     wksp["can_invite"], wksp["has_budget_access"], wksp["price"], 
                     wksp["price_in_cent"], wksp["budget_used"], wksp["over_budget"], wksp["currency"],
-                    primary_counterpart_json, participants_json, creator_json)
+                    opts["primary_counterpart_json"], opts["participants_json"], opts["creator_json"])
 		end
 
 		def get_user(usr)
@@ -26,23 +26,23 @@ module Mavenlink
                opts["recipients_json"], opts["google_documents_json"], opts["assets_json"])
 		end
 
-		def get_story(oauth_token, stry, workspace_json=nil, parent_story_json=nil, assignees_json=nil, sub_stories_json=nil, tags_json=nil)
+		def get_story(oauth_token, stry, opts={})
       Story.new(oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"],
                 stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"],
                 stry["state"], stry["position"], stry["archived"], stry["deleted_at"],
                 stry["sub_story_count"], stry["budget_estimate_in_cents"],
                 stry["time_estimate_in_minutes"], stry["workspace_id"], stry["parent_id"],
-                stry["percentage_complete"], workspace_json, parent_story_json, assignees_json,
-                sub_stories_json, tags_json)
+                stry["percentage_complete"], opts["workspace_json"], opts["parent_story_json"], opts["assignees_json"],
+                opts["sub_stories_json"], opts["tags_json"])
 		end
 
-		def get_time_entry(oauth_token, ent, user_json=nil, workspace_json=nil, story_json=nil)
+		def get_time_entry(oauth_token, ent, opts={})
 			TimeEntry.new(oauth_token, ent["id"], ent["created_at"], ent["updated_at"], 
                     ent["date_performed"], ent["story_id"], ent["time_in_minutes"],
 										ent["billable"], ent["notes"], ent["rate_in_cents"], 
                     ent["currency"], ent["currency_symbol"], ent["currency_base_unit"],
                     ent["user_can_edit"], ent["workspace_id"], ent["user_id"],
-                    user_json, workspace_json, story_json)
+                    opts["user_json"], opts["workspace_json"], opts["story_json"])
     end
 
     def get_expense(oauth_token, exp)
@@ -53,13 +53,28 @@ module Mavenlink
                       exp["receipt_id"])
     end
 
-    def get_invoice(oauth_token, inv, time_entries_json=nil, expenses_json=nil, additional_items_json=nil, workspaces_json=nil, user_json=nil)
+    def get_invoice(oauth_token, inv, opts={})
       Invoice.new(oauth_token, inv["id"], inv["created_at"], inv["updated_at"],
                   inv["invoice_date"], inv["due_date"], inv["message"], inv["draft"], inv["status"],
                   inv["balance_in_cents"], inv["currency"], inv["currency_base_unit"],
                   inv["currency_symbol"], inv["payment_schedule"], inv["workspace_ids"],
-                  inv["user_id"], inv["recipient_id"], time_entries_json, expenses_json,
-                  additional_items_json, workspaces_json, user_json)
+                  inv["user_id"], inv["recipient_id"], opts["time_entries_json"], opts["expenses_json"],
+                  opts["additional_items_json"], opts["workspaces_json"], opts["user_json"])
+    end
+
+    def parse_associated_objects(assoc_hash, pst, response)
+      post_options = {}
+      assoc_hash.each do |name, (json_root_key, attribute_key)|
+        if pst[attribute_key].is_a?(Array)
+          post_options["#{name}_json"] = []
+          pst[attribute_key].each do |id|
+            post_options["#{name}_json"].push response[json_root_key][id]
+          end
+        else
+          post_options["#{name}_json"] = response[json_root_key][pst[attribute_key]]
+        end
+      end
+      post_options
     end
 
 	end

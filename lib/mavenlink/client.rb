@@ -55,19 +55,19 @@ module Mavenlink
     def workspaces(options={})
       options["include"] = "primary_counterpart,participants,creator"
       response = get_request("/workspaces.json", options)
-      users = response["users"]
       results = response["results"]
       workspace_data = response["workspaces"]
       workspaces = []
       results.each do |result|
         if result["key"].eql? "workspaces"
           wksp = workspace_data[result["id"]]
-          primary_counterpart_json = users[wksp["primary_counterpart_id"]]
-          participants_json = []
-          wksp["participant_ids"].each {|k| participants_json << users[k]}
-          creator_json = users[wksp["creator_id"]]
-
-          workspaces << get_workspace(self.oauth_token, wksp, primary_counterpart_json, participants_json, creator_json)
+          assoc_hash =  {
+                          :primary_counterpart => ["users", "primary_counterpart_id"],
+                          :participants => ["users", "participant_ids"],
+                          :creator => ["users", "creator_id"]
+                        }
+          wksp_options = parse_associated_objects(assoc_hash, wksp, response)
+          workspaces << get_workspace(self.oauth_token, wksp, wksp_options)
         end
       end
       workspaces
@@ -88,19 +88,19 @@ module Mavenlink
     def time_entries(options = {})
       options["include"] = "user,story,workspace"
       response = get_request("/time_entries.json", options)
-      users = response["users"]
-      stories = response["stories"]
-      workspaces = response["workspaces"]
       time_entry_data = response["time_entries"]
       results = response["results"]
       time_entries = []
       results.each do |result|
         if result["key"].eql? "time_entries"
           ent = time_entry_data[result["id"]]
-          user_json = users[ent["user_id"]]
-          workspace_json = workspaces[ent["workspace_id"]]
-          story_json = stories[ent["story_id"]]
-          time_entries << get_time_entry(self.oauth_token, ent, user_json, workspace_json, story_json)
+          assoc_hash =  {
+                          :user => ["users", "user_id"],
+                          :workspace => ["workspaces", "workspace_id"],
+                          :story => ["stories", "story_id"]
+                        }
+          ent_options = parse_associated_objects(assoc_hash, ent, response)
+          time_entries << get_time_entry(self.oauth_token, ent, ent_options)
         end
       end
       time_entries
@@ -119,23 +119,20 @@ module Mavenlink
       options["include"] = "time_entries,expenses,additional_items,workspaces,user"
       response = get_request("/invoices.json", options)
       invoices_data = response["invoices"]
-      time_entries = response["time_entries"]
-      expenses = response["expenses"]
-      additional_items = response["additional_items"]
-      workspaces = response["workspaces"]
-      users = response["users"]
       results = response["results"]
       invoices = []
       results.each do |result|
         if result["key"].eql? "invoices"
           inv = invoices_data[result["id"]]
-          time_entries_json, expenses_json, additional_items_json, workspaces_json = [], [], [], []
-          inv["time_entry_ids"].each {|k| time_entries_json << time_entries[k]}
-          inv["additional_item_ids"].each{|k| additional_items_json << additional_items[k]}
-          inv["expense_ids"].each{|k| expenses_json << expenses[k]}
-          inv["workspace_ids"].each{|k| workspaces_json << workspaces[k]}
-          user_json = users[inv["user_id"]]
-          invoices << get_invoice(self.oauth_token, inv, time_entries_json, expenses_json, additional_items_json, workspaces_json, user_json)
+          assoc_hash =  {
+                          :workspaces => ["workspaces", "workspace_ids"],
+                          :time_entries => ["time_entries", "time_entry_ids"],
+                          :additional_items => ["additional_items", "additional_item_ids"],
+                          :expenses => ["expenses", "expense_ids"],
+                          :user => ["users", "user_id"]
+                        }
+          inv_options = parse_associated_objects(assoc_hash, inv, response)
+          invoices << get_invoice(self.oauth_token, inv, inv_options)
         end
       end
       invoices
@@ -162,22 +159,22 @@ module Mavenlink
     def stories(options={})
       options["include"] = "workspace,assignees,parent,sub_stories,tags"
       response = get_request("/stories.json", options)
-      users = response["users"]
-      workspaces = response["workspaces"]
       story_data = response["stories"]
-      tags = response["tags"]
       results = response["results"]
       stories = []
       results.each do |result|
         if result["key"].eql? "stories"
           stry = story_data[result["id"]]
-          workspace_json = workspaces[stry["workspace_id"]]
-          parent_story_json = story_data[stry["parent_id"]]
-          assignees_json, sub_stories_json, tags_json = [], [], []
-          stry["assignee_ids"].each {|k| assignees_json << users[k]}
-          stry["sub_story_ids"].each {|k| sub_stories_json << story_data[k]}
-          stry["tag_ids"].each {|k| tags_json << tags[k]}
-          stories << get_story(self.oauth_token, stry, workspace_json, parent_story_json, assignees_json, sub_stories_json, tags_json)
+          assoc_hash =  {
+                          :workspace => ["workspaces", "workspace_id"],
+                          :parent_story => ["stories", "parent_id"],
+                          :assignees => ["users", "assignee_ids"],
+                          :sub_stories => ["stories", "sub_story_ids"],
+                          :tags => ["tags", "tag_ids"]
+                        }
+
+          story_options = parse_associated_objects(assoc_hash, stry, response)
+          stories << get_story(self.oauth_token, stry, story_options)
         end
       end
       stories
@@ -205,29 +202,19 @@ module Mavenlink
         if result["key"].eql? "posts"
           pst = posts_data[result["id"]]
 
-          post_options = {}
-          {
-            :workspace => ["workspaces", "workspace_id"],
-            :assets => ["assets", "asset_ids"],
-            :user => ["users", "user_id"],
-            :subject => ["posts", "subject_id"],
-            :story => ["stories", "story_id"],
-            :newest_reply => ["posts", "newest_reply_id"],
-            :newest_reply_user => ["users", "newest_reply_user_id"],
-            :recipients => ["users", "recipient_ids"],
-            :replies => ["posts", "reply_ids"],
-            :google_documents => ["google_documents", "google_document_ids"]
-          }.each do |name, (json_root_key, attribute_key)|
-            if pst[attribute_key].is_a?(Array)
-              post_options["#{name}_json"] = []
-              pst[attribute_key].each do |id|
-                post_options["#{name}_json"].push response[json_root_key][id]
-              end
-            else
-              post_options["#{name}_json"] = response[json_root_key][pst[attribute_key]]
-            end
-          end
-
+          assoc_hash =  {
+                          :workspace => ["workspaces", "workspace_id"],
+                          :assets => ["assets", "asset_ids"],
+                          :user => ["users", "user_id"],
+                          :subject => ["posts", "subject_id"],
+                          :story => ["stories", "story_id"],
+                          :newest_reply => ["posts", "newest_reply_id"],
+                          :newest_reply_user => ["users", "newest_reply_user_id"],
+                          :recipients => ["users", "recipient_ids"],
+                          :replies => ["posts", "reply_ids"],
+                          :google_documents => ["google_documents", "google_document_ids"]
+                        }
+          post_options = parse_associated_objects(assoc_hash, pst, response)
           posts << get_post(self.oauth_token, pst, post_options)
         end
       end
