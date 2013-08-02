@@ -689,4 +689,124 @@ http_interactions:
         ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-30T16:11:11-07:00","created_at":"2013-07-30T15:42:19-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$0","over_budget":false,"currency":"USD","id":"3467515","creator_id":"3711195","primary_counterpart_id":null,"participant_ids":["3711195"]}},"results":[{"key":"workspaces","id":"3467515"}],"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
     http_version: 
   recorded_at: Tue, 30 Jul 2013 23:11:11 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces/3403465.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Fri, 02 Aug 2013 18:02:17 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 401 Unauthorized
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Cache-Control:
+      - no-cache, private
+      X-Request-Id:
+      - f19ce5fb4e17e012ad46a262867b4090
+      X-Runtime:
+      - '0.010923'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"errors":[{"type":"oauth","message":"Invalid OAuth 2 Request"}]}'
+    http_version: 
+  recorded_at: Fri, 02 Aug 2013 18:02:17 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces/3467515.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Fri, 02 Aug 2013 18:02:17 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 401 Unauthorized
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Cache-Control:
+      - no-cache, private
+      X-Request-Id:
+      - 0dbd66d73efee38d2c621df594d75001
+      X-Runtime:
+      - '0.032672'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"errors":[{"type":"oauth","message":"Invalid OAuth 2 Request"}]}'
+    http_version: 
+  recorded_at: Fri, 02 Aug 2013 18:02:17 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces/3403465.json?include=primary_counterpart
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Fri, 02 Aug 2013 18:05:46 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"5ff2606cc8815bcffa6c15d7e5a47b43"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - c11d4bfd156870d6fe7ccf95c50b1bff
+      X-Runtime:
+      - '0.079019'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+        ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195","primary_counterpart_id":null}},"results":[{"key":"workspaces","id":"3403465"}],"users":{}}'
+    http_version: 
+  recorded_at: Fri, 02 Aug 2013 18:05:46 GMT
 recorded_with: VCR 2.5.0

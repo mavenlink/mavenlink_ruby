@@ -26,7 +26,7 @@ describe Mavenlink do
       new_exp.id.should_not eq(exp_id)
     end
 
-    it "reloads an existing workspace" do
+    it "reloads an existing expense" do
       exp = @cl.expenses({:workspace_id => 3457635, :order => "date:asc" })[1]
       exp_copy = @cl.expenses({:workspace_id => 3457635, :order => "date:asc" })[1]
       exp.category.should eq(exp_copy.category)
@@ -84,7 +84,7 @@ describe Mavenlink do
       workspace.title = "Random Workspace MG"
       workspace.save
       workspace_copy.title.should_not eq(workspace.title)
-      workspace_copy.reload
+      workspace_copy.reload("all")
       workspace_copy.title.should eq(workspace_copy.title)
     end
   end

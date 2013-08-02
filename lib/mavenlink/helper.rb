@@ -62,19 +62,21 @@ module Mavenlink
                   opts["additional_items_json"], opts["workspaces_json"], opts["user_json"])
     end
 
-    def parse_associated_objects(assoc_hash, pst, response)
-      post_options = {}
+    def parse_associated_objects(assoc_hash, data, response)
+      assoc_objs = {}
       assoc_hash.each do |name, (json_root_key, attribute_key)|
-        if pst[attribute_key].is_a?(Array)
-          post_options["#{name}_json"] = []
-          pst[attribute_key].each do |id|
-            post_options["#{name}_json"].push response[json_root_key][id]
+        if response.has_key? json_root_key
+          if data[attribute_key].is_a?(Array)
+            assoc_objs["#{name}_json"] = []
+            data[attribute_key].each do |id|
+              assoc_objs["#{name}_json"].push response[json_root_key][id]
+            end
+          else
+            assoc_objs["#{name}_json"] = response[json_root_key][data[attribute_key]]
           end
-        else
-          post_options["#{name}_json"] = response[json_root_key][pst[attribute_key]]
         end
       end
-      post_options
+      assoc_objs
     end
 
 	end

@@ -41,13 +41,13 @@ module Mavenlink
     attr_accessor :oauth_token, :id, :title, :archived, :description, :effective_due_date,
                   :budgeted, :change_orders_enabled, :updated_at, :created_at, :consultant_role_name,
                   :client_role_name, :can_create_line_items, :default_rate, :currency_symbol, 
-                  :currency_base_unit, :can_invite, :has_budget_access, :price, :price_in_cent,
+                  :currency_base_unit, :can_invite, :has_budget_access, :price, :price_in_cents,
                   :budget_used, :over_budget, :currency, :primary_counterpart_json,
                   :participants_json, :creator_json
     def initialize(oauth_token, id, title, archived, description, effective_due_date,
                   budgeted, change_orders_enabled, updated_at, created_at, consultant_role_name,
                   client_role_name, can_create_line_items, default_rate, currency_symbol, 
-                  currency_base_unit, can_invite, has_budget_access, price, price_in_cent,
+                  currency_base_unit, can_invite, has_budget_access, price, price_in_cents,
                   budget_used, over_budget, currency, primary_counterpart_json, participants_json,
                   creator_json)
       self.oauth_token = oauth_token
@@ -69,7 +69,7 @@ module Mavenlink
       self.can_invite = can_invite
       self.has_budget_access = has_budget_access
       self.price = price
-      self.price_in_cent = price_in_cent
+      self.price_in_cents = price_in_cents
       self.budget_used = budget_used
       self.over_budget = over_budget
       self.currency = currency
@@ -79,13 +79,13 @@ module Mavenlink
     end
 
     def primary_counterpart
-      self.reload if self.primary_counterpart_json.nil?
+      self.reload("primary_counterpart") if self.primary_counterpart_json.nil?
       return nil if self.primary_counterpart_json.nil? || self.primary_counterpart_json.empty?
       parse_user(self.primary_counterpart_json)
     end
 
     def participants
-      self.reload if self.participants_json.nil?
+      self.reload("participants") if self.participants_json.nil?
       participants_list = []
       participants_json.each do |ptct|
         participants_list <<  parse_user(ptct)
@@ -94,7 +94,7 @@ module Mavenlink
     end
 
     def creator
-      self.reload if self.creator_json.nil?
+      self.reload("creator") if self.creator_json.nil?
       parse_user(self.creator_json)
     end
 
@@ -105,17 +105,25 @@ module Mavenlink
       put_request("/workspaces/#{self.id}.json", options)
     end
 
-    def reload
-      options = {"include" => "primary_counterpart,participants,creator"}
+    def reload(include_opt="")
+      include_opt = include_opt.delete(' ')
+      include_opt = "primary_counterpart,participants,creator" if include_opt.eql? "all"
+      options = {"include" => include_opt} unless include_opt.empty?
       response = get_request("/workspaces/#{self.id}.json", options)
       result = response["workspaces"].first[1]
-      self.primary_counterpart_json = response["users"][result["primary_counterpart_id"]]
-      self.participants_json = []
-      result["participant_ids"].each {|k| self.participants_json << response["users"][k]}
-      self.creator_json = response["users"][result["creator_id"]]
+      assoc_hash =  {
+          :primary_counterpart => ["users", "primary_counterpart_id"],
+          :participants => ["users", "participant_ids"],
+          :creator => ["users", "creator_id"]
+      }
+      wksp_opts = parse_associated_objects(assoc_hash, result, response)
       self.instance_variables.each do |var|
         key = var.to_s.gsub("@", "")
-        instance_variable_set(var, result[key]) if result.has_key? key
+        if result.has_key? key
+          instance_variable_set(var, result[key])
+        elsif
+          instance_variable_set(var, wksp_opts[key])
+        end
       end
     end
 

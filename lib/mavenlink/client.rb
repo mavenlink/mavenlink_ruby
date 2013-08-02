@@ -6,8 +6,9 @@ module Mavenlink
   class Client < Base
     include Mavenlink::Helper
 
-    def initialize(oauth_token)
+    def initialize(oauth_token, lazy_load=false)
       super(oauth_token)
+      $lazy_load = lazy_load
     end
 
     def users(options={})
@@ -53,7 +54,7 @@ module Mavenlink
     end
 
     def workspaces(options={})
-      options["include"] = "primary_counterpart,participants,creator"
+      options["include"] = "primary_counterpart,participants,creator" if !$lazy_load
       response = get_request("/workspaces.json", options)
       results = response["results"]
       workspace_data = response["workspaces"]
