@@ -75,28 +75,27 @@ module Mavenlink
       self.currency = currency
       self.primary_counterpart_json = primary_counterpart_json
       self.participants_json = participants_json
-
       self.creator_json = creator_json
     end
 
     def primary_counterpart
       self.reload if self.primary_counterpart_json.nil?
       return nil if self.primary_counterpart_json.nil? || self.primary_counterpart_json.empty?
-      get_user(self.primary_counterpart_json)
+      parse_user(self.primary_counterpart_json)
     end
 
     def participants
       self.reload if self.participants_json.nil?
       participants_list = []
       participants_json.each do |ptct|
-        participants_list <<  get_user(ptct)
+        participants_list <<  parse_user(ptct)
       end
       participants_list
     end
 
     def creator
       self.reload if self.creator_json.nil?
-      get_user(self.creator_json)
+      parse_user(self.creator_json)
     end
 
     def save
@@ -233,18 +232,18 @@ module Mavenlink
 
     def user
       self.reload if self.user_json.nil?
-      get_user(self.user_json)
+      parse_user(self.user_json)
     end
 
     def workspace
       self.reload if self.workspace_json.nil?
-      get_workspace(self.oauth_token, self.workspace_json)
+      parse_workspace(self.oauth_token, self.workspace_json)
     end
 
     def story
       self.reload if self.story_json.nil?
       return nil if self.story_id.nil?
-      get_post(self.oauth_token, self.story_json)
+      parse_post(self.oauth_token, self.story_json)
     end
 
     def reload
@@ -322,7 +321,7 @@ module Mavenlink
       self.reload if self.time_entries_json.nil?
       time_entry_list = []
       self.time_entries_json.each do |ent|
-        time_entry_list << get_time_entry(self.oauth_token, ent)
+        time_entry_list << parse_time_entry(self.oauth_token, ent)
       end
       time_entry_list
     end
@@ -331,7 +330,7 @@ module Mavenlink
       self.reload if self.expenses_json.nil?
       expenses = []
       self.expenses_json.each do |exp|
-        expenses << get_expense(self.oauth_token, exp)
+        expenses << parse_expense(self.oauth_token, exp)
       end
       expenses
     end
@@ -345,14 +344,14 @@ module Mavenlink
       self.reload if self.workspaces_json.nil?
       workspaces = []
       self.workspaces_json.each do |wks|
-        workspaces << get_workspace(self.oauth_token, wks)
+        workspaces << parse_workspace(self.oauth_token, wks)
       end
       workspaces
     end
 
     def user
       self.reload if self.user_json.nil?
-      get_user(self.user_json)
+      parse_user(self.user_json)
     end
   end
 
@@ -427,13 +426,13 @@ module Mavenlink
 
     def workspace
       self.reload if self.workspace_json.nil? or workspace_json.empty?
-      get_workspace(self.oauth_token, self.workspace_json)
+      parse_workspace(self.oauth_token, self.workspace_json)
     end
 
     def parent_story
       self.reload if self.parent_story_json.nil?
       return nil if self.parent_story_json.nil?
-      get_story(self.oauth_token, self.parent_story_json)
+      parse_story(self.oauth_token, self.parent_story_json)
     end
 
     def assignees
@@ -441,7 +440,7 @@ module Mavenlink
       return [] if self.assignees_json.empty?
       assignees_list = []
       self.assignees_json.each do |assg|
-        assignees_list <<  get_user(assg)
+        assignees_list <<  parse_user(assg)
       end
       assignees_list
     end
@@ -451,7 +450,7 @@ module Mavenlink
       return [] if self.sub_stories_json.empty?
       sub_stories_list = []
       self.sub_stories_json.each do |stry|
-        sub_stories_list << get_story(self.oauth_token, stry)
+        sub_stories_list << parse_story(self.oauth_token, stry)
       end
       sub_stories_list
     end
@@ -546,23 +545,23 @@ module Mavenlink
     def parent_post
       self.reload if self.subject_json.nil?
       return nil if self.subject_json.nil?
-      get_post(self.oauth_token, self.subject_json)
+      parse_post(self.oauth_token, self.subject_json)
     end
 
     def user
       self.reload if self.user_json.nil?
-      get_user(self.user_json)
+      parse_user(self.user_json)
     end
 
     def workspace
       self.reload if self.workspace_json.nil?
-      get_workspace(self.oauth_token, self.workspace_json)
+      parse_workspace(self.oauth_token, self.workspace_json)
     end
 
     def story
       self.reload if self.story_json.nil?
       return nil if self.story_json.nil?
-      get_story(self.oauth_token, self.story_json)
+      parse_story(self.oauth_token, self.story_json)
     end
 
     def replies
@@ -570,7 +569,7 @@ module Mavenlink
       return [] if self.replies_json.nil?
       replies = []
       self.replies_json.each do |pst|
-        replies << get_post(self.oauth_token, pst)
+        replies << parse_post(self.oauth_token, pst)
       end
       replies
     end
@@ -580,7 +579,7 @@ module Mavenlink
       return [] if self.recipients_json.nil?
       recipients = []
       self.recipients_json.each do |usr|
-        recipients << get_user(usr)
+        recipients << parse_user(usr)
       end
       recipients
     end
@@ -588,13 +587,13 @@ module Mavenlink
     def newest_reply
       self.reload if self.newest_reply_json.nil?
       return nil if self.newest_reply_json.nil?
-      get_post(self.oauth_token, self.newest_reply_json)
+      parse_post(self.oauth_token, self.newest_reply_json)
     end
 
     def newest_reply_user
       self.reload if self.newest_reply_user_json.nil?
       return nil if self.newest_reply_user_json.nil?
-      get_user(self.newest_reply_user_json)
+      parse_user(self.newest_reply_user_json)
     end
 
     def google_documents

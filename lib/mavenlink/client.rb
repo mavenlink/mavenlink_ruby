@@ -17,7 +17,7 @@ module Mavenlink
       users = []
       results.each do |result|
         if result["key"].eql? "users"
-          users << get_user(user_data[result["id"]])
+          users << parse_user(user_data[result["id"]])
         end
       end
       users
@@ -37,7 +37,7 @@ module Mavenlink
       expenses = []
       results.each do |result|
         if result["key"].eql? "expenses"
-          expenses << get_expense(self.oauth_token, expenses_data[result["id"]])
+          expenses << parse_expense(self.oauth_token, expenses_data[result["id"]])
         end
       end
       expenses
@@ -49,7 +49,7 @@ module Mavenlink
       end
       options.keys.each {|key| options["expense[#{key}]"] = options.delete(key)}
       response = post_request("/expenses.json", options)
-      get_expense(self.oauth_token, response["expenses"][response["results"].first["id"]])
+      parse_expense(self.oauth_token, response["expenses"][response["results"].first["id"]])
     end
 
     def workspaces(options={})
@@ -67,7 +67,7 @@ module Mavenlink
                           :creator => ["users", "creator_id"]
                         }
           wksp_options = parse_associated_objects(assoc_hash, wksp, response)
-          workspaces << get_workspace(self.oauth_token, wksp, wksp_options)
+          workspaces << parse_workspace(self.oauth_token, wksp, wksp_options)
         end
       end
       workspaces
@@ -82,7 +82,7 @@ module Mavenlink
       end
       options.keys.each {|key| options["workspace[#{key}]"] = options.delete(key)}
       response = post_request("/workspaces.json", options)
-      get_workspace(self.oauth_token, response["workspaces"][response["results"].first["id"]])
+      parse_workspace(self.oauth_token, response["workspaces"][response["results"].first["id"]])
     end
 
     def time_entries(options = {})
@@ -100,7 +100,7 @@ module Mavenlink
                           :story => ["stories", "story_id"]
                         }
           ent_options = parse_associated_objects(assoc_hash, ent, response)
-          time_entries << get_time_entry(self.oauth_token, ent, ent_options)
+          time_entries << parse_time_entry(self.oauth_token, ent, ent_options)
         end
       end
       time_entries
@@ -112,7 +112,7 @@ module Mavenlink
       end
       options.keys.each {|key| options["time_entry[#{key}]"] = options.delete(key)}
       response = post_request("/time_entries.json", options)
-      get_time_entry(self.oauth_token, response["time_entries"][response["results"].first["id"]])
+      parse_time_entry(self.oauth_token, response["time_entries"][response["results"].first["id"]])
     end
 
     def invoices(options={})
@@ -132,7 +132,7 @@ module Mavenlink
                           :user => ["users", "user_id"]
                         }
           inv_options = parse_associated_objects(assoc_hash, inv, response)
-          invoices << get_invoice(self.oauth_token, inv, inv_options)
+          invoices << parse_invoice(self.oauth_token, inv, inv_options)
         end
       end
       invoices
@@ -174,7 +174,7 @@ module Mavenlink
                         }
 
           story_options = parse_associated_objects(assoc_hash, stry, response)
-          stories << get_story(self.oauth_token, stry, story_options)
+          stories << parse_story(self.oauth_token, stry, story_options)
         end
       end
       stories
@@ -189,7 +189,7 @@ module Mavenlink
       end
       options.keys.each {|key| options["story[#{key}]"] = options.delete(key)}
       response = post_request("/stories.json", options)
-      get_story(self.oauth_token, response["stories"][response["results"].first["id"]])
+      parse_story(self.oauth_token, response["stories"][response["results"].first["id"]])
     end
 
     def posts(options={})
@@ -215,7 +215,7 @@ module Mavenlink
                           :google_documents => ["google_documents", "google_document_ids"]
                         }
           post_options = parse_associated_objects(assoc_hash, pst, response)
-          posts << get_post(self.oauth_token, pst, post_options)
+          posts << parse_post(self.oauth_token, pst, post_options)
         end
       end
       posts
@@ -227,7 +227,7 @@ module Mavenlink
       end 
       options.keys.each {|key| options["post[#{key}]"] = options.delete(key)}
       response = post_request("/posts.json", options)
-      get_post(self.oauth_token, response["posts"][response["results"].first["id"]])
+      parse_post(self.oauth_token, response["posts"][response["results"].first["id"]])
     end
 
   end

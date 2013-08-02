@@ -1,7 +1,7 @@
 module Mavenlink
 	module Helper
 
-		def get_workspace(oauth_token, wksp, opts={})
+		def parse_workspace(oauth_token, wksp, opts={})
       Workspace.new(oauth_token, wksp["id"], wksp["title"], wksp["archived"], 
                     wksp["description"], wksp["effective_due_date"], wksp["budgeted"], 
                     wksp["change_orders_enabled"], wksp["updated_at"], wksp["created_at"], 
@@ -13,11 +13,11 @@ module Mavenlink
                     opts["primary_counterpart_json"], opts["participants_json"], opts["creator_json"])
 		end
 
-		def get_user(usr)
+		def parse_user(usr)
 			User.new(usr["id"], usr["full_name"], usr["photo_path"], usr["email_address"], usr["headline"])
 		end
 
-		def get_post(oauth_token, pst, opts={})
+		def parse_post(oauth_token, pst, opts={})
 			Post.new(oauth_token, pst["id"], pst["newest_reply_at"], pst["message"], pst["has_attachment"],
                pst["created_at"], pst["updated_at"], pst["reply_count"], pst["private"], pst["user_id"], 
                pst["workspace_id"], pst["workspace_type"], pst["reply"], pst["subject_id"], 
@@ -26,7 +26,7 @@ module Mavenlink
                opts["recipients_json"], opts["google_documents_json"], opts["assets_json"])
 		end
 
-		def get_story(oauth_token, stry, opts={})
+		def parse_story(oauth_token, stry, opts={})
       Story.new(oauth_token, stry["id"], stry["title"], stry["description"], stry["updated_at"],
                 stry["created_at"], stry["due_date"], stry["start_date"], stry["story_type"],
                 stry["state"], stry["position"], stry["archived"], stry["deleted_at"],
@@ -36,7 +36,7 @@ module Mavenlink
                 opts["sub_stories_json"], opts["tags_json"])
 		end
 
-		def get_time_entry(oauth_token, ent, opts={})
+		def parse_time_entry(oauth_token, ent, opts={})
 			TimeEntry.new(oauth_token, ent["id"], ent["created_at"], ent["updated_at"], 
                     ent["date_performed"], ent["story_id"], ent["time_in_minutes"],
 										ent["billable"], ent["notes"], ent["rate_in_cents"], 
@@ -45,7 +45,7 @@ module Mavenlink
                     opts["user_json"], opts["workspace_json"], opts["story_json"])
     end
 
-    def get_expense(oauth_token, exp)
+    def parse_expense(oauth_token, exp)
       Expense.new(oauth_token, exp["id"], exp["created_at"], exp["updated_at"], exp["date"], 
                       exp["notes"], exp["category"], exp["amount_in_cents"], exp["currency"], 
                       exp["currency_symbol"], exp["currency_base_unit"], exp["user_can_edit"], 
@@ -53,7 +53,7 @@ module Mavenlink
                       exp["receipt_id"])
     end
 
-    def get_invoice(oauth_token, inv, opts={})
+    def parse_invoice(oauth_token, inv, opts={})
       Invoice.new(oauth_token, inv["id"], inv["created_at"], inv["updated_at"],
                   inv["invoice_date"], inv["due_date"], inv["message"], inv["draft"], inv["status"],
                   inv["balance_in_cents"], inv["currency"], inv["currency_base_unit"],
