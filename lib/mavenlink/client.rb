@@ -1,13 +1,11 @@
-require_relative 'helper'
 require 'rest_client'
 require 'json'
 
 module Mavenlink
   class Client < Base
-    include Mavenlink::Helper
 
     def initialize(oauth_token, lazy_load=false)
-      super(oauth_token)
+      super(oauth_token, {}, {})
       $lazy_load = lazy_load
     end
 
@@ -18,7 +16,7 @@ module Mavenlink
       users = []
       results.each do |result|
         if result["key"].eql? "users"
-          users << parse_user(user_data[result["id"]])
+          users << User.new(self.oauth_token, user_data[result["id"]])
         end
       end
       users
@@ -38,7 +36,7 @@ module Mavenlink
       expenses = []
       results.each do |result|
         if result["key"].eql? "expenses"
-          expenses << parse_expense(self.oauth_token, expenses_data[result["id"]])
+          expenses << Expense.new(self.oauth_token, expenses_data[result["id"]])
         end
       end
       expenses
@@ -50,7 +48,7 @@ module Mavenlink
       end
       options.keys.each {|key| options["expense[#{key}]"] = options.delete(key)}
       response = post_request("/expenses.json", options)
-      parse_expense(self.oauth_token, response["expenses"][response["results"].first["id"]])
+      Expense.new(self.oauth_token, response["expenses"][response["results"].first["id"]])
     end
 
     def workspaces(options={})
@@ -68,7 +66,7 @@ module Mavenlink
                           :creator => ["users", "creator_id"]
                         }
           wksp_options = parse_associated_objects(assoc_hash, wksp, response)
-          workspaces << parse_workspace(self.oauth_token, wksp, wksp_options)
+          workspaces << Workspace.new(self.oauth_token, wksp, wksp_options)
         end
       end
       workspaces
@@ -83,7 +81,7 @@ module Mavenlink
       end
       options.keys.each {|key| options["workspace[#{key}]"] = options.delete(key)}
       response = post_request("/workspaces.json", options)
-      parse_workspace(self.oauth_token, response["workspaces"][response["results"].first["id"]])
+      Workspace.new(self.oauth_token, response["workspaces"][response["results"].first["id"]])
     end
 
     def time_entries(options = {})
@@ -101,7 +99,7 @@ module Mavenlink
                           :story => ["stories", "story_id"]
                         }
           ent_options = parse_associated_objects(assoc_hash, ent, response)
-          time_entries << parse_time_entry(self.oauth_token, ent, ent_options)
+          time_entries << TimeEntry.new(self.oauth_token, ent, ent_options)
         end
       end
       time_entries
@@ -113,7 +111,7 @@ module Mavenlink
       end
       options.keys.each {|key| options["time_entry[#{key}]"] = options.delete(key)}
       response = post_request("/time_entries.json", options)
-      parse_time_entry(self.oauth_token, response["time_entries"][response["results"].first["id"]])
+      TimeEntry.new(self.oauth_token, response["time_entries"][response["results"].first["id"]])
     end
 
     def invoices(options={})
@@ -133,7 +131,7 @@ module Mavenlink
                           :user => ["users", "user_id"]
                         }
           inv_options = parse_associated_objects(assoc_hash, inv, response)
-          invoices << parse_invoice(self.oauth_token, inv, inv_options)
+          invoices << Invoice.new(oauth_token, inv, inv_options)
         end
       end
       invoices
@@ -154,7 +152,7 @@ module Mavenlink
                                                     "asset[type]" => options[:type]
                                         })
       response = JSON.parse(request.execute)
-      Asset.new(self.oauth_token, response["id"], options[:data])
+      Asset.new(oauth_token, {"id" => response["id"], "file_name" =>options[:data]})
     end
 
     def stories(options={})
@@ -165,7 +163,7 @@ module Mavenlink
       stories = []
       results.each do |result|
         if result["key"].eql? "stories"
-          stry = story_data[result["id"]]
+          story = story_data[result["id"]]
           assoc_hash =  {
                           :workspace => ["workspaces", "workspace_id"],
                           :parent_story => ["stories", "parent_id"],
@@ -174,8 +172,8 @@ module Mavenlink
                           :tags => ["tags", "tag_ids"]
                         }
 
-          story_options = parse_associated_objects(assoc_hash, stry, response)
-          stories << parse_story(self.oauth_token, stry, story_options)
+          story_options = parse_associated_objects(assoc_hash, story, response)
+          stories << Story.new(oauth_token, story, story_options)
         end
       end
       stories
@@ -185,12 +183,12 @@ module Mavenlink
       unless [:title, :story_type, :workspace_id ].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end 
-      unless ["milestone", "task", "deliverable"].include? options[:story_type]
+      unless %w[milestone task deliverable].include? options[:story_type]
         raise InvalidParametersError.new("story_type must be milestone, task or deliverable")
       end
       options.keys.each {|key| options["story[#{key}]"] = options.delete(key)}
       response = post_request("/stories.json", options)
-      parse_story(self.oauth_token, response["stories"][response["results"].first["id"]])
+      Story.new(oauth_token, response["stories"][response["results"].first["id"]])
     end
 
     def posts(options={})
@@ -201,7 +199,7 @@ module Mavenlink
       posts = []
       results.each do |result|
         if result["key"].eql? "posts"
-          pst = posts_data[result["id"]]
+          post = posts_data[result["id"]]
 
           assoc_hash =  {
                           :workspace => ["workspaces", "workspace_id"],
@@ -215,8 +213,8 @@ module Mavenlink
                           :replies => ["posts", "reply_ids"],
                           :google_documents => ["google_documents", "google_document_ids"]
                         }
-          post_options = parse_associated_objects(assoc_hash, pst, response)
-          posts << parse_post(self.oauth_token, pst, post_options)
+          post_options = parse_associated_objects(assoc_hash, post, response)
+          posts << Post.new(oauth_token, post, post_options)
         end
       end
       posts
@@ -228,7 +226,7 @@ module Mavenlink
       end 
       options.keys.each {|key| options["post[#{key}]"] = options.delete(key)}
       response = post_request("/posts.json", options)
-      parse_post(self.oauth_token, response["posts"][response["results"].first["id"]])
+      Post.new(self.oauth_token, response["posts"][response["results"].first["id"]])
     end
 
   end

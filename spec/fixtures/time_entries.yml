@@ -689,4 +689,45 @@ http_interactions:
         New Workspace","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-07-31T15:52:42-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$356","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"}}}'
     http_version: 
   recorded_at: Wed, 31 Jul 2013 22:52:42 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/time_entries/8590085.json?include=story
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Fri, 02 Aug 2013 23:29:35 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"2f3cc947e6a36a7e25a7e4bef74d5909"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - c9a4e863ae9b678ed41ba6cb1c0af9c6
+      X-Runtime:
+      - '0.047445'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":1,"time_entries":{"8590085":{"created_at":"2013-07-31T15:50:39-07:00","date_performed":"2013-07-31","time_in_minutes":75,"billable":true,"notes":"asdfasdfasfd","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T15:52:42-07:00","user_can_edit":true,"id":"8590085","story_id":null,"workspace_id":"3457635","user_id":"3711195"}},"results":[{"key":"time_entries","id":"8590085"}],"stories":{}}'
+    http_version: 
+  recorded_at: Fri, 02 Aug 2013 23:29:35 GMT
 recorded_with: VCR 2.5.0

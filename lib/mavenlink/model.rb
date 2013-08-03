@@ -1,28 +1,9 @@
-require_relative 'helper'
-
 module Mavenlink
 
   class User < Base
-    include Mavenlink::Helper
-    attr_accessor :user_id, :full_name, :photo_path, :email_address, :headline
-    def initialize(user_id, full_name, photo_path, email_address, headline)
-      self.user_id = user_id
-      self.full_name = full_name
-      self.photo_path = photo_path
-      self.email_address = email_address
-      self.headline = headline
-    end
   end
 
   class Asset < Base
-    include Mavenlink::Helper
-    
-    attr_accessor :oauth_token, :id, :file_name
-    def initialize(oauth_token, id, file_name)
-      self.oauth_token = oauth_token
-      self.id = id
-      self.file_name = file_name
-    end
 
     def save
       options = {}
@@ -36,66 +17,25 @@ module Mavenlink
   end
 
   class Workspace < Base
-    include Mavenlink::Helper
-
-    attr_accessor :oauth_token, :id, :title, :archived, :description, :effective_due_date,
-                  :budgeted, :change_orders_enabled, :updated_at, :created_at, :consultant_role_name,
-                  :client_role_name, :can_create_line_items, :default_rate, :currency_symbol, 
-                  :currency_base_unit, :can_invite, :has_budget_access, :price, :price_in_cents,
-                  :budget_used, :over_budget, :currency, :primary_counterpart_json,
-                  :participants_json, :creator_json
-    def initialize(oauth_token, id, title, archived, description, effective_due_date,
-                  budgeted, change_orders_enabled, updated_at, created_at, consultant_role_name,
-                  client_role_name, can_create_line_items, default_rate, currency_symbol, 
-                  currency_base_unit, can_invite, has_budget_access, price, price_in_cents,
-                  budget_used, over_budget, currency, primary_counterpart_json, participants_json,
-                  creator_json)
-      self.oauth_token = oauth_token
-      self.id = id
-      self.title = title
-      self.archived = archived
-      self.description = description,
-      self.effective_due_date = effective_due_date
-      self.budgeted = budgeted
-      self.change_orders_enabled = change_orders_enabled
-      self.updated_at = updated_at
-      self.created_at = created_at
-      self.consultant_role_name = consultant_role_name
-      self.client_role_name = client_role_name
-      self.can_create_line_items = can_create_line_items
-      self.default_rate = default_rate
-      self.currency_symbol = currency_symbol
-      self.currency_base_unit = currency_base_unit
-      self.can_invite = can_invite
-      self.has_budget_access = has_budget_access
-      self.price = price
-      self.price_in_cents = price_in_cents
-      self.budget_used = budget_used
-      self.over_budget = over_budget
-      self.currency = currency
-      self.primary_counterpart_json = primary_counterpart_json
-      self.participants_json = participants_json
-      self.creator_json = creator_json
-    end
 
     def primary_counterpart
-      self.reload("primary_counterpart") if self.primary_counterpart_json.nil?
-      return nil if self.primary_counterpart_json.nil? || self.primary_counterpart_json.empty?
-      parse_user(self.primary_counterpart_json)
+      reload("primary_counterpart") if primary_counterpart_json.nil? # <-- there should really be a distinction between not having asked, and having asked and determined that no primary_counterpart exists.
+      return nil if primary_counterpart_json.nil? || primary_counterpart_json.empty?
+      User.new(oauth_token, primary_counterpart_json)
     end
 
     def participants
-      self.reload("participants") if self.participants_json.nil?
+      reload("participants") if participants_json.nil?
       participants_list = []
       participants_json.each do |ptct|
-        participants_list <<  parse_user(ptct)
+        participants_list <<  User.new(oauth_token, ptct)
       end
       participants_list
     end
 
     def creator
-      self.reload("creator") if self.creator_json.nil?
-      parse_user(self.creator_json)
+      reload("creator") if creator_json.nil?
+      User.new(oauth_token, creator_json)
     end
 
     def save
@@ -117,14 +57,8 @@ module Mavenlink
           :creator => ["users", "creator_id"]
       }
       wksp_opts = parse_associated_objects(assoc_hash, result, response)
-      self.instance_variables.each do |var|
-        key = var.to_s.gsub("@", "")
-        if result.has_key? key
-          instance_variable_set(var, result[key])
-        elsif
-          instance_variable_set(var, wksp_opts[key])
-        end
-      end
+      self.attributes = result
+      self.associated_objects = wksp_opts
     end
 
     def create_workspace_invitation(options)
@@ -141,33 +75,6 @@ module Mavenlink
   end
 
   class Expense < Base
-    include Mavenlink::Helper
-
-    attr_accessor :oauth_token, :id, :created_at, :updated_at, :date, :notes, :category, :amount_in_cents, :currency,
-                  :currency_symbol, :currency_base_unit, :user_can_edit, :is_invoiced, :is_billable, 
-                  :workspace_id, :user_id, :receipt_id
-    def initialize(oauth_token, id, created_at, updated_at, date, notes, category, amount_in_cents, currency,
-                  currency_symbol, currency_base_unit, user_can_edit, is_invoiced, is_billable, 
-                  workspace_id, user_id, receipt_id)
-      self.oauth_token = oauth_token
-      self.id = id
-      self.created_at = created_at
-      self.updated_at = updated_at
-      self.date = date
-      self.notes = notes
-      self.category = category
-      self.amount_in_cents = amount_in_cents
-      self.currency = currency
-      self.currency_symbol = currency_symbol
-      self.currency_base_unit = currency_base_unit
-      self.user_can_edit = user_can_edit
-      self.workspace_id = workspace_id
-      self.is_invoiced = is_invoiced
-      self.is_billable = is_billable
-      self.workspace_id = workspace_id
-      self.user_id = user_id
-      self.receipt_id = receipt_id
-    end
 
     def save
       savable = [:notes, :category, :date, :amount_in_cents]
@@ -184,46 +91,14 @@ module Mavenlink
       delete_request("/expenses/#{self.id}.json")
     end
 
-    def reload
+    def reload(include_opt="")
       response = get_request("/expenses/#{self.id}.json", {})
       result = response["expenses"][response["results"].first["id"]]
-      self.instance_variables.each do |var|
-        key = var.to_s.gsub("@", "")
-        instance_variable_set(var, result[key]) if result.has_key? key
-      end
+      self.attributes = result
     end
   end
 
   class TimeEntry < Base
-    include Mavenlink::Helper
-
-    attr_accessor :oauth_token, :id, :created_at, :updated_at, :date_performed, :story_id, :time_in_minutes,
-                  :billable, :notes, :rate_in_cents, :currency, :currency_symbol, :currency_base_unit,
-                  :user_can_edit, :workspace_id, :user_id, :user_json, :workspace_json, :story_json
-
-    def initialize(oauth_token, id, created_at, updated_at, date_performed, story_id, time_in_minutes,
-                  billable, notes, rate_in_cents, currency, currency_symbol, currency_base_unit,
-                  user_can_edit, workspace_id, user_id, user_json, workspace_json, story_json)
-      self.oauth_token = oauth_token
-      self.id = id
-      self.created_at = created_at
-      self.updated_at = updated_at
-      self.date_performed = date_performed
-      self.story_id = story_id
-      self.time_in_minutes = time_in_minutes
-      self.billable = billable
-      self.notes = notes
-      self.rate_in_cents = rate_in_cents
-      self.currency = currency
-      self.currency_symbol = currency_symbol
-      self.currency_base_unit = currency_base_unit
-      self.user_can_edit = user_can_edit
-      self.workspace_id = workspace_id
-      self.user_id = user_id
-      self.user_json = user_json
-      self.workspace_json = workspace_json
-      self.story_json = story_json
-    end
 
     def delete
       delete_request("/time_entries/#{self.id}.json")
@@ -239,97 +114,63 @@ module Mavenlink
     end
 
     def user
-      self.reload if self.user_json.nil?
-      parse_user(self.user_json)
+      reload("user") if user_json.nil?
+      User.new(oauth_token, user_json)
     end
 
     def workspace
-      self.reload if self.workspace_json.nil?
-      parse_workspace(self.oauth_token, self.workspace_json)
+      self.reload("workspace") if self.workspace_json.nil?
+      Workspace.new(self.oauth_token, self.workspace_json)
     end
 
     def story
-      self.reload if self.story_json.nil?
+      self.reload("story") if self.story_json.nil?
       return nil if self.story_id.nil?
-      parse_post(self.oauth_token, self.story_json)
+      Post.new(self.oauth_token, self.story_json)
     end
 
-    def reload
-      options = {"include" => "user,story,workspace"}
+    def reload(include_opt="")
+      include_opt = include_opt.delete(' ')
+      include_opt = "user,story,workspace" if include_opt.eql? "all"
+      options = {"include" => include_opt} unless include_opt.empty?
+
       response = get_request("/time_entries/#{self.id}.json", options)
       result = response["time_entries"].first[1]
-      self.user_json = response["users"][result["user_id"]]
-      self.workspace_json = response["workspaces"][result["workspace_id"]]
-      self.story_json = response["stories"][result["story_id"]]
-
-      self.instance_variables.each do |var|
-        key = var.to_s.gsub("@", "")
-        instance_variable_set(var, result[key]) if result.has_key? key
-      end
+      assoc_hash = {
+          :user => ["users", "user_id"],
+          :workspace => ["workspaces", "workspace_id"],
+          :story => ["stories", "story_id"]
+      }
+      ent_opts = parse_associated_objects(assoc_hash, result, response)
+      self.attributes = result
+      self.associated_objects = ent_opts
     end
 
   end
 
   class Invoice < Base
-    include Mavenlink::Helper
-
-    attr_accessor :oauth_token, :id, :created_at, :updated_at, :invoice_date, :due_date, :message, 
-                  :draft, :status, :balance_in_cents, :currency, :currency_base_unit, :currency_symbol,
-                  :payment_schedule, :workspace_ids, :user_id, :recipient_id, :user_json,
-                  :time_entries_json, :expenses_json, :additional_items_json, :workspaces_json 
-                  
-    def initialize(oauth_token, id, created_at, updated_at, invoice_date, due_date, message, 
-                  draft, status, balance_in_cents, currency, currency_base_unit, currency_symbol,
-                  payment_schedule, workspace_ids, user_id, recipient_id, time_entries_json,
-                  expenses_json, additional_items_json, workspaces_json, user_json)
-      self.oauth_token = oauth_token
-      self.id = id
-      self.created_at = created_at
-      self.updated_at = updated_at
-      self.invoice_date = invoice_date
-      self.due_date = due_date
-			self.message = message
-      self.draft = draft
-      self.status = status
-      self.balance_in_cents = balance_in_cents
-      self.currency = currency
-      self.currency_base_unit = currency_base_unit
-      self.currency_symbol = currency_symbol
-      self.payment_schedule = payment_schedule
-    	self.workspace_ids = workspace_ids
-    	self.user_id = user_id
-    	self.recipient_id = recipient_id
-      self.time_entries_json = time_entries_json
-      self.expenses_json = expenses_json
-      self.additional_items_json = additional_items_json
-      self.workspaces_json = workspaces_json
-      self.user_json = user_json
-    end
-
-    def reload
-      options = {"include" => "time_entries,expenses,additional_items,workspaces,user"}
+    def reload(include_opt="")
+      include_opt = include_opt.delete(' ')
+      include_opt = "time_entries,expenses,additional_items,workspaces,user" if include_opt.eql? "all"
+      options = {"include" => include_opt} unless include_opt.empty?
       response = get_request("/invoices/#{self.id}.json", options)
       result = response["invoices"].first[1]
-      self.instance_variables.each do |var|
-        key = var.to_s.gsub("@", "")
-        instance_variable_set(var, result[key]) if result.has_key? key
-      end
-
-      self.time_entries_json, self.expenses_json = [], [] 
-      self.additional_items_json, self.workspaces_json = [], []
-      result = response["invoices"].first[1]
-      result["time_entry_ids"].each {|k| self.time_entries_json << response["time_entries"][k]}
-      result["additional_item_ids"].each{|k| self.additional_items_json << response["additional_items"][k]}
-      result["expense_ids"].each{|k| self.expenses_json << response["expenses"][k]}
-      result["workspace_ids"].each{|k| self.workspaces_json << response["workspaces"][k]}
-      self.user_json = response["users"][result["user_id"]]
+      assoc_hash = {
+          :workspaces => ["workspaces", "workspace_ids"],
+          :time_entries => ["time_entries", "time_entry_ids"],
+          :expenses => ["expenses", "expense_ids"],
+          :additional_items => ["additional_items", "additional_item_ids"]
+      }
+      inv_opts = parse_associated_objects(assoc_hash, result, response)
+      self.attributes = result
+      self.associated_objects = inv_opts
     end
 
     def time_entries
       self.reload if self.time_entries_json.nil?
       time_entry_list = []
       self.time_entries_json.each do |ent|
-        time_entry_list << parse_time_entry(self.oauth_token, ent)
+        time_entry_list << TimeEntry.new(self.oauth_token, ent)
       end
       time_entry_list
     end
@@ -338,7 +179,7 @@ module Mavenlink
       self.reload if self.expenses_json.nil?
       expenses = []
       self.expenses_json.each do |exp|
-        expenses << parse_expense(self.oauth_token, exp)
+        expenses << Expense.new(self.oauth_token, exp)
       end
       expenses
     end
@@ -352,95 +193,57 @@ module Mavenlink
       self.reload if self.workspaces_json.nil?
       workspaces = []
       self.workspaces_json.each do |wks|
-        workspaces << parse_workspace(self.oauth_token, wks)
+        workspaces << Workspace.new(self.oauth_token, wks)
       end
       workspaces
     end
 
     def user
       self.reload if self.user_json.nil?
-      parse_user(self.user_json)
+      User.new(self.oauth_token, self.user_json)
     end
   end
 
   class Story < Base
-    include Mavenlink::Helper
-
-    attr_accessor :oauth_token, :id, :title, :description, :updated_at, :created_at, :due_date, :start_date,
-                  :story_type, :state, :position, :archived, :deleted_at, :sub_story_count, :budget_estimate_in_cents,
-                  :time_estimate_in_minutes, :workspace_id, :parent_id, :workspace_json, :parent_story_json,
-                  :assignees_json, :sub_stories_json, :tags_json, :percentage_complete
-    def initialize(oauth_token, id, title, description, updated_at, created_at, due_date, start_date,
-                  story_type, state, position, archived, deleted_at, sub_story_count, budget_estimate_in_cents,
-                  time_estimate_in_minutes, workspace_id, parent_id, percentage_complete, workspace_json, parent_story_json,
-                  assignees_json, sub_stories_json, tags_json)
-      self.oauth_token = oauth_token
-      self.id = id
-      self.title = title
-      self.description = description
-      self.updated_at = updated_at
-      self.created_at = created_at
-      self.due_date = due_date
-      self.start_date = start_date
-      self.story_type = story_type
-      self.state = state
-      self.position = position
-      self.archived = archived
-      self.deleted_at = deleted_at
-      self.sub_story_count = sub_story_count
-      self.budget_estimate_in_cents = budget_estimate_in_cents
-      self.time_estimate_in_minutes = time_estimate_in_minutes
-      self.workspace_id = workspace_id
-      self.parent_id = parent_id
-      self.workspace_json = workspace_json
-      self.parent_story_json = parent_story_json
-      self.assignees_json = assignees_json
-      self.tags_json = tags_json
-      self.sub_stories_json = sub_stories_json
-      self.percentage_complete = percentage_complete
-    end
-
     def save
-      savable = [ "title", "description", "story_type", "start_date", "due_date",
-                  "state", "budget_estimate_in_cents", "time_estimate_in_minutes", "percentage_complete" ]
+      savable = %w[title description story_type start_date due_date state budget_estimate_in_cents time_estimate_in_minutes percentage_complete]
       options = {}
       savable.each do |inst|
-        options["story[#{inst}]"] = instance_variable_get("@#{inst}")
+        options["story[#{inst}]"] = attributes[inst] #instance_variable_get("@#{inst}")
       end
-      put_request("/stories/#{self.id}.json", options)
+      put_request("/stories/#{id}.json", options)
     end
 
     def delete
-      delete_request("/stories/#{self.id}.json")
+      delete_request("/stories/#{id}.json")
     end
 
-    def reload
-      options = {"include" => "workspace,assignees,parent,sub_stories,tags"}
+    def reload(include_opt="")
+      include_opt = include_opt.delete(' ')
+      include_opt = "workspace,assignees,parent,sub_stories,tags" if include_opt.eql? "all"
+      options = {"include" => include_opt} unless include_opt.empty?
       response = get_request("/stories/#{self.id}.json", options)
       result = response["stories"].first[1]
-      self.instance_variables.each do |var|
-        key = var.to_s.gsub("@", "")
-        instance_variable_set(var, result[key]) if result.has_key? key
-      end
-
-      self.workspace_json, self.parent_story_json = [], [] 
-      self.sub_stories_json, self.assignees_json = [], []
-      result = response["stories"].first[1]
-      result["assignee_ids"].each {|k| self.assignees_json << response["users"][k]} unless result["assignee_ids"].nil?
-      result["sub_story_ids"].each {|k| self.sub_stories_json << response["stories"][k]} unless result["sub_story_ids"].nil?
-      self.parent_story_json = response["users"][result["parent_id"]]
-      self.workspace_json = response["workspaces"][result["workspace_id"]]
+      assoc_hash = {
+          :workspace => ["workspaces", "workspace_id"],
+          :parent_story => ["stories", "parent_id"],
+          :assignees => ["users", "assignee_ids"],
+          :sub_stories => ["stories", "sub_story_ids"]
+      }
+      stry_opts = parse_associated_objects(assoc_hash, result, response)
+      self.attributes = result
+      self.associated_objects = stry_opts
     end
 
     def workspace
       self.reload if self.workspace_json.nil? or workspace_json.empty?
-      parse_workspace(self.oauth_token, self.workspace_json)
+      Workspace.new(self.oauth_token, self.workspace_json)
     end
 
     def parent_story
       self.reload if self.parent_story_json.nil?
       return nil if self.parent_story_json.nil?
-      parse_story(self.oauth_token, self.parent_story_json)
+      Story.new(self.oauth_token, self.parent_story_json)
     end
 
     def assignees
@@ -448,7 +251,7 @@ module Mavenlink
       return [] if self.assignees_json.empty?
       assignees_list = []
       self.assignees_json.each do |assg|
-        assignees_list <<  parse_user(assg)
+        assignees_list <<  User.new(self.oauth_token, assg)
       end
       assignees_list
     end
@@ -458,7 +261,7 @@ module Mavenlink
       return [] if self.sub_stories_json.empty?
       sub_stories_list = []
       self.sub_stories_json.each do |stry|
-        sub_stories_list << parse_story(self.oauth_token, stry)
+        sub_stories_list << Story.new(self.oauth_token, stry)
       end
       sub_stories_list
     end
@@ -475,66 +278,29 @@ module Mavenlink
   end
 
   class Post < Base
-    include Mavenlink::Helper
-
-    attr_accessor :oauth_token, :id, :newest_reply_at, :message, :has_attachment, :created_at, :updated_at, :reply_count,
-                  :private_val, :user_id, :workspace_id, :workspace_type, :reply, :subject_id, :subject_type, :story_id,
-                  :subject_json, :user_json, :workspace_json, :story_json, :replies_json, :newest_reply_json, 
-                  :newest_reply_user_json, :recipients_json, :google_documents_json, :assets_json
-    def initialize(oauth_token, id, newest_reply_at, message, has_attachment, created_at, updated_at, reply_count,
-                  private_val, user_id, workspace_id, workspace_type, reply, subject_id, subject_type, story_id,
-                  subject_json, user_json, workspace_json, story_json, replies_json, newest_reply_json, 
-                  newest_reply_user_json, recipients_json, google_documents_json, assets_json)
-      self.oauth_token = oauth_token
-      self.id = id
-      self.newest_reply_at = newest_reply_at
-      self.message = message
-      self.has_attachment = has_attachment
-      self.created_at = created_at
-      self.updated_at = updated_at
-      self.reply_count = reply_count
-      self.private_val = private_val
-      self.user_id = user_id
-      self.workspace_id = workspace_id
-      self.workspace_type = workspace_type
-      self.reply = reply
-      self.subject_id = subject_id
-      self.subject_type = subject_type
-      self.story_id = story_id
-      self.subject_json = subject_json
-      self.user_json = user_json
-      self.workspace_json = workspace_json
-      self.story_json = story_json
-      self.replies_json = replies_json
-      self.newest_reply_json = newest_reply_json
-      self.newest_reply_user_json = newest_reply_user_json
-      self.recipients_json = recipients_json
-      self.google_documents_json = google_documents_json
-      self.assets_json = assets_json
-    end
-
-    def reload
-      options = {"include" => "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"}
+    def reload(include_opt="")
+      include_opt = include_opt.delete(' ')
+      if include_opt.eql? "all"
+        include_opt =  "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
+      end
+      options = {"include" => include_opt} unless include_opt.empty?
       response = get_request("/posts/#{self.id}.json", options)
       result = response["posts"].first[1]
-
-      self.instance_variables.each do |var|
-        key = var.to_s.gsub("@", "")
-        instance_variable_set(var, result[key]) if result.has_key? key
-      end
-
-      self.subject_json = response["posts"][result["subject_id"]] unless result["subject_id"].nil?
-      self.user_json = response["users"][result["user_id"]]
-      self.workspace_json = response["workspaces"][result["workspace_id"]]
-      self.story_json = response["stories"][result["story_id"]] unless result["story_id"].nil?
-      self.newest_reply_json = response["posts"][result["newest_reply_id"]] unless result["newest_reply_id"].nil?
-      self.newest_reply_user_json = result["users"][response["newest_reply_user_id"]] unless result["newest_reply_user_id"].nil?
-      self.recipients_json, self.google_documents_json = [], []
-      self.assets_json, self.replies_json = [], []
-      result["recipient_ids"].each {|k| self.recipients_json << response["users"][k]} unless result["recipient_ids"].nil?
-      self.google_documents_json = google_documents
-      result["asset_ids"].each {|k| self.assets_json << response["assets"][k]} unless result["reply_ids"].nil?
-      result["reply_ids"].each {|k| self.replies_json << response["posts"][k]} unless result["reply_ids"].nil?
+      assoc_hash = {
+          :subject => ["posts", "subject_id"],
+          :user => ["users", "user_id"],
+          :workspace => ["workspaces", "workspace_id"],
+          :story => ["stories", "story_id"],
+          :newest_reply => ["posts", "newest_reply_id"],
+          :newest_reply_user => ["users", "newest_reply_user_id"],
+          :recipients => ["users", "recipient_ids"],
+          :assets => ["assets", "asset_ids"],
+          :replies => ["posts", "reply_ids"],
+          :google_documents => ["google_documents", "google_document_ids"]
+      }
+      pst_opts = parse_associated_objects(assoc_hash, result, response)
+      self.attributes = result
+      self.associated_objects = pst_opts
     end
 
     def save
@@ -553,23 +319,23 @@ module Mavenlink
     def parent_post
       self.reload if self.subject_json.nil?
       return nil if self.subject_json.nil?
-      parse_post(self.oauth_token, self.subject_json)
+      Post.new(self.oauth_token, self.subject_json)
     end
 
     def user
       self.reload if self.user_json.nil?
-      parse_user(self.user_json)
+      User.new(self.oauth_token, self.user_json)
     end
 
     def workspace
       self.reload if self.workspace_json.nil?
-      parse_workspace(self.oauth_token, self.workspace_json)
+      Workspace.new(self.oauth_token, self.workspace_json)
     end
 
     def story
       self.reload if self.story_json.nil?
       return nil if self.story_json.nil?
-      parse_story(self.oauth_token, self.story_json)
+      Story.new(self.oauth_token, self.story_json)
     end
 
     def replies
@@ -577,7 +343,7 @@ module Mavenlink
       return [] if self.replies_json.nil?
       replies = []
       self.replies_json.each do |pst|
-        replies << parse_post(self.oauth_token, pst)
+        replies << Post.new(self.oauth_token, pst)
       end
       replies
     end
@@ -587,7 +353,7 @@ module Mavenlink
       return [] if self.recipients_json.nil?
       recipients = []
       self.recipients_json.each do |usr|
-        recipients << parse_user(usr)
+        recipients << User.new(self.oauth_token, usr)
       end
       recipients
     end
@@ -595,13 +361,13 @@ module Mavenlink
     def newest_reply
       self.reload if self.newest_reply_json.nil?
       return nil if self.newest_reply_json.nil?
-      parse_post(self.oauth_token, self.newest_reply_json)
+      Post.new(self.oauth_token, self.newest_reply_json)
     end
 
     def newest_reply_user
       self.reload if self.newest_reply_user_json.nil?
       return nil if self.newest_reply_user_json.nil?
-      parse_user(self.newest_reply_user_json)
+      User.new(self.oauth_token, self.newest_reply_user_json)
     end
 
     def google_documents
@@ -619,7 +385,7 @@ module Mavenlink
       return [] if self.assets_json.nil? || self.assets_json.empty?
       assets = []
       self.assets_json.each do |asset|
-        assets << Asset.new(self.oauth_token, asset["id"], asset["filename"])
+        assets << Asset.new(self.oauth_token, { "id" => asset["id"], "file_name" => asset["filename"]})
       end
       assets
     end

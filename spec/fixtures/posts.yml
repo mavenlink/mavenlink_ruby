@@ -374,4 +374,45 @@ http_interactions:
         Test Doc","type":"google_document_document","url":"https://docs.google.com/document/d/1v6Rk-uscc7d0fVYwjkZii1MeGH5I2TPbSpuGvufYpxk/edit?usp=docslist_api","deleted_at":null,"id":"690995"}},"assets":{"11475485":{"updated_at":"2013-08-01T12:08:56-07:00","created_at":"2013-08-01T12:08:56-07:00","filename":"png.png","deleted_at":null,"url":"https://app.mavenlink.com/assets/secure_assets/283/853/589/11475485/original/png.png?login=true","filesize":34300,"id":"11475485"}}}'
     http_version: 
   recorded_at: Thu, 01 Aug 2013 20:21:07 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/posts/26236725.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Fri, 02 Aug 2013 23:29:36 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"62a6f2dd79e7d9600a888097a5db9af8"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 10a228fd4b6e63d35b676574a3041409
+      X-Runtime:
+      - '0.028550'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":1,"posts":{"26236725":{"newest_reply_at":null,"message":"TestPost1","has_attachments":false,"created_at":"2013-08-01T12:08:12-07:00","updated_at":"2013-08-01T12:08:30-07:00","reply_count":0,"reply":false,"private":false,"id":"26236725","subject_id":null,"subject_type":null,"user_id":"3711195","workspace_id":"3457635","workspace_type":"Workspace","story_id":"26596455"}},"results":[{"key":"posts","id":"26236725"}]}'
+    http_version: 
+  recorded_at: Fri, 02 Aug 2013 23:29:36 GMT
 recorded_with: VCR 2.5.0
