@@ -1,5 +1,6 @@
 require 'rest_client'
 require 'json'
+require 'active_support/core_ext/hash/indifferent_access'
 
 module Mavenlink
   class Client < Base
@@ -10,6 +11,7 @@ module Mavenlink
     end
 
     def users(options={})
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       response = get_request("/users.json", options)
       user_data = response["users"]
       results = response["results"]
@@ -30,6 +32,7 @@ module Mavenlink
     end
 
     def expenses(options={})
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       response = get_request("/expenses.json", options)
       results = response["results"]
       expenses_data = response["expenses"]
@@ -43,6 +46,7 @@ module Mavenlink
     end
 
     def create_expense(options)
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:workspace_id, :date, :category, :amount_in_cents].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end
@@ -52,6 +56,7 @@ module Mavenlink
     end
 
     def workspaces(options={})
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       options["include"] = "primary_counterpart,participants,creator" if !$lazy_load
       response = get_request("/workspaces.json", options)
       results = response["results"]
@@ -73,6 +78,7 @@ module Mavenlink
     end
 
     def create_workspace(options)
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:title, :creator_role].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end
@@ -84,7 +90,8 @@ module Mavenlink
       Workspace.new(self.oauth_token, response["workspaces"][response["results"].first["id"]])
     end
 
-    def time_entries(options = {})
+    def time_entries(options={})
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       options["include"] = "user,story,workspace"
       response = get_request("/time_entries.json", options)
       time_entry_data = response["time_entries"]
@@ -106,6 +113,7 @@ module Mavenlink
     end
 
     def create_time_entry(options)
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:workspace_id, :date_performed, :time_in_minutes].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end
@@ -115,6 +123,7 @@ module Mavenlink
     end
 
     def invoices(options={})
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       options["include"] = "time_entries,expenses,additional_items,workspaces,user"
       response = get_request("/invoices.json", options)
       invoices_data = response["invoices"]
@@ -138,6 +147,7 @@ module Mavenlink
     end
 
     def create_asset(options)
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:data, :type].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end
@@ -156,6 +166,7 @@ module Mavenlink
     end
 
     def stories(options={})
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       options["include"] = "workspace,assignees,parent,sub_stories,tags"
       response = get_request("/stories.json", options)
       story_data = response["stories"]
@@ -180,6 +191,7 @@ module Mavenlink
     end
 
     def create_story(options)
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:title, :story_type, :workspace_id ].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end 
@@ -192,6 +204,7 @@ module Mavenlink
     end
 
     def posts(options={})
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
       response = get_request("/posts.json", options)
       results = response["results"]
@@ -221,6 +234,7 @@ module Mavenlink
     end
 
     def create_post(options)
+      options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:message, :workspace_id].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end 

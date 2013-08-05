@@ -79,28 +79,28 @@ module Mavenlink
       elsif associated_objects.has_key? method
         associated_objects[method]
       elsif attributes.has_key?(method[0...-1]) && method[-1] == '='
-        attributes[method[0...-1]] = arguments.first
+        self.attributes[method[0...-1]] = arguments.first
       else
         super
       end
     end
 
     # Please show example input and output structures, since this is complex.
-    def parse_associated_objects(assoc_hash, data, response)
-      assoc_objs = {}
-      assoc_hash.each do |name, (json_root_key, attribute_key)|
+    def parse_associated_objects(associated_hash, data, response)
+      associated_objects = {}
+      associated_hash.each do |name, (json_root_key, attribute_key)|
         if response.has_key? json_root_key
           if data[attribute_key].is_a?(Array)
-            assoc_objs["#{name}_json"] = []
+            associated_objects["#{name}_json"] = []
             data[attribute_key].each do |id|
-              assoc_objs["#{name}_json"].push response[json_root_key][id]
+              associated_objects["#{name}_json"].push response[json_root_key][id]
             end
           else
-            assoc_objs["#{name}_json"] = response[json_root_key][data[attribute_key]]
+            associated_objects["#{name}_json"] = response[json_root_key][data[attribute_key]]
           end
         end
       end
-      assoc_objs
+      associated_objects
     end
 
   end
