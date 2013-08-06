@@ -1,7 +1,6 @@
 require 'httparty'
 
 # switch to https://github.com/lostisland/faraday  - will probably have to require 'json' and do JSON.parse on the result.
-# HashWithIndifferentAccess from ActiveSupport (add to Gemfile and require 'activesupport')
 # Don't use instance_variable_get, use attributes
 
 #include = options["include"] || options[:include] <-- this is better with HWIA

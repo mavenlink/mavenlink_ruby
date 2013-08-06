@@ -64,14 +64,14 @@ module Mavenlink
       workspaces = []
       results.each do |result|
         if result["key"].eql? "workspaces"
-          wksp = workspace_data[result["id"]]
-          assoc_hash =  {
+          workspace = workspace_data[result["id"]]
+          associated_hash =  {
                           :primary_counterpart => ["users", "primary_counterpart_id"],
                           :participants => ["users", "participant_ids"],
                           :creator => ["users", "creator_id"]
                         }
-          wksp_options = parse_associated_objects(assoc_hash, wksp, response)
-          workspaces << Workspace.new(self.oauth_token, wksp, wksp_options)
+          associated_objects = parse_associated_objects(associated_hash, workspace, response)
+          workspaces << Workspace.new(self.oauth_token, workspace, associated_objects)
         end
       end
       workspaces
@@ -99,14 +99,14 @@ module Mavenlink
       time_entries = []
       results.each do |result|
         if result["key"].eql? "time_entries"
-          ent = time_entry_data[result["id"]]
-          assoc_hash =  {
+          entry = time_entry_data[result["id"]]
+          associated_hash =  {
                           :user => ["users", "user_id"],
                           :workspace => ["workspaces", "workspace_id"],
                           :story => ["stories", "story_id"]
                         }
-          ent_options = parse_associated_objects(assoc_hash, ent, response)
-          time_entries << TimeEntry.new(self.oauth_token, ent, ent_options)
+          associated_objects = parse_associated_objects(associated_hash, entry, response)
+          time_entries << TimeEntry.new(self.oauth_token, entry, associated_objects)
         end
       end
       time_entries
@@ -131,16 +131,16 @@ module Mavenlink
       invoices = []
       results.each do |result|
         if result["key"].eql? "invoices"
-          inv = invoices_data[result["id"]]
-          assoc_hash =  {
+          invoice = invoices_data[result["id"]]
+          associated_hash =  {
                           :workspaces => ["workspaces", "workspace_ids"],
                           :time_entries => ["time_entries", "time_entry_ids"],
                           :additional_items => ["additional_items", "additional_item_ids"],
                           :expenses => ["expenses", "expense_ids"],
                           :user => ["users", "user_id"]
                         }
-          inv_options = parse_associated_objects(assoc_hash, inv, response)
-          invoices << Invoice.new(oauth_token, inv, inv_options)
+          associated_objects = parse_associated_objects(associated_hash, invoice, response)
+          invoices << Invoice.new(oauth_token, invoice, associated_objects)
         end
       end
       invoices
@@ -175,7 +175,7 @@ module Mavenlink
       results.each do |result|
         if result["key"].eql? "stories"
           story = story_data[result["id"]]
-          assoc_hash =  {
+          associated_hash =  {
                           :workspace => ["workspaces", "workspace_id"],
                           :parent_story => ["stories", "parent_id"],
                           :assignees => ["users", "assignee_ids"],
@@ -183,8 +183,8 @@ module Mavenlink
                           :tags => ["tags", "tag_ids"]
                         }
 
-          story_options = parse_associated_objects(assoc_hash, story, response)
-          stories << Story.new(oauth_token, story, story_options)
+          associated_objects = parse_associated_objects(associated_hash, story, response)
+          stories << Story.new(oauth_token, story, associated_objects)
         end
       end
       stories
@@ -213,8 +213,7 @@ module Mavenlink
       results.each do |result|
         if result["key"].eql? "posts"
           post = posts_data[result["id"]]
-
-          assoc_hash =  {
+          associated_hash =  {
                           :workspace => ["workspaces", "workspace_id"],
                           :assets => ["assets", "asset_ids"],
                           :user => ["users", "user_id"],
@@ -226,8 +225,8 @@ module Mavenlink
                           :replies => ["posts", "reply_ids"],
                           :google_documents => ["google_documents", "google_document_ids"]
                         }
-          post_options = parse_associated_objects(assoc_hash, post, response)
-          posts << Post.new(oauth_token, post, post_options)
+          associated_objects = parse_associated_objects(associated_hash, post, response)
+          posts << Post.new(oauth_token, post, associated_objects)
         end
       end
       posts
@@ -240,7 +239,7 @@ module Mavenlink
       end 
       options.keys.each {|key| options["post[#{key}]"] = options.delete(key)}
       response = post_request("/posts.json", options)
-      Post.new(self.oauth_token, response["posts"][response["results"].first["id"]])
+      Post.new(oauth_token, response["posts"][response["results"].first["id"]])
     end
 
   end
