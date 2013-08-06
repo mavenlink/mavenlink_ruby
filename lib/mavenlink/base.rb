@@ -1,4 +1,4 @@
-require 'httparty'
+require 'httmultiparty'
 
 # switch to https://github.com/lostisland/faraday  - will probably have to require 'json' and do JSON.parse on the result.
 # Don't use instance_variable_get, use attributes
@@ -8,7 +8,7 @@ require 'httparty'
 
 module Mavenlink
   class Base
-    include HTTParty
+    include HTTMultiParty
     format :json
     base_uri "https://api.mavenlink.com/api/v1/"
 

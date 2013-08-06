@@ -152,16 +152,10 @@ module Mavenlink
         raise InvalidParametersError.new("Missing required parameters")
       end
       raise "Type of asset must be 'post' or 'expense'" unless ["post", "expense"].include? options[:type]
-      request = RestClient::Request.new(
-                                        :method => :post,
-                                        :url => "https://api.mavenlink.com/api/v1/assets.json",
-                                        :headers => { "Authorization" => "Bearer #{self.oauth_token}"},
-                                        :payload => {
-                                                    :multipart => true,
-                                                    "asset[data]" => File.new(options[:data], 'rb'),
-                                                    "asset[type]" => options[:type]
-                                        })
-      response = JSON.parse(request.execute)
+      response = post_request('/assets.json', {
+                                    "asset[data]" => File.new(options[:data], 'rb'),
+                                    "asset[type]" => options[:type]
+                                    })
       Asset.new(oauth_token, {"id" => response["id"], "file_name" =>options[:data]})
     end
 
