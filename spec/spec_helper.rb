@@ -1,5 +1,6 @@
 require_relative '../lib/mavenlink'
 require_relative 'support/rspec_matchers'
+require_relative 'support/httmultiparty'
  
 require 'rubygems'
 require 'rspec'

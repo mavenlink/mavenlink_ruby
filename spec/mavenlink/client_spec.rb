@@ -264,7 +264,7 @@ describe Mavenlink::Client do
 
     it "creates a new asset" do
       asset = @cl.create_asset({
-                                :data => "/Users/mavenlink/Desktop/png.png",
+                                :data => "spec/fixtures/mavenlink-logo.jpg",
                                 :type => "expense"
                               })
       asset.should be_an_instance_of Mavenlink::Asset
