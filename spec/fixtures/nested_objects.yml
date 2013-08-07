@@ -1,0 +1,171 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces.json?include=creator&search=8105
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 07 Aug 2013 01:57:28 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - '"761229de2c21fbbcb2d2aad337a1bb7c"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - c61d4648a902d9a8aa2e931ddad8b317
+      X-Runtime:
+      - '0.160482'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: UTF-8
+      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+        ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3403465"}],"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 07 Aug 2013 01:57:28 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces.json?search=8105
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 07 Aug 2013 01:57:29 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - '"66ef2566757216af21e95cf235d7750a"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 166dbe57f1333306dcd3933587bf17b1
+      X-Runtime:
+      - '0.147576'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: UTF-8
+      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+        ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3403465"}]}'
+    http_version: 
+  recorded_at: Wed, 07 Aug 2013 01:57:29 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces/3403465.json?include=creator
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 07 Aug 2013 01:57:32 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - '"761229de2c21fbbcb2d2aad337a1bb7c"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - e66dde2ed8a28446709c7f0fcc854f38
+      X-Runtime:
+      - '0.047303'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: UTF-8
+      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+        ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3403465"}],"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 07 Aug 2013 01:57:32 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces/3403465.json?include=primary_counterpart
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 07 Aug 2013 01:57:32 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - '"5ff2606cc8815bcffa6c15d7e5a47b43"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - 03a7a849cec77eb3ab827f45a0b3eaf4
+      X-Runtime:
+      - '0.040673'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: UTF-8
+      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+        ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195","primary_counterpart_id":null}},"results":[{"key":"workspaces","id":"3403465"}],"users":{}}'
+    http_version: 
+  recorded_at: Wed, 07 Aug 2013 01:57:32 GMT
+recorded_with: VCR 2.5.0

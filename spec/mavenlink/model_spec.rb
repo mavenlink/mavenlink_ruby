@@ -324,4 +324,37 @@ describe Mavenlink do
     end
   end
 
+  describe "nested attribute objects" do
+    use_vcr_cassette "nested_objects", :record => :new_episodes
+
+    it "workspace should include creator" do
+      workspace = @cl.workspaces({:search => "8105", :include => "creator"}).first
+      workspace.should_not_receive(:reload).with("creator").and_call_original
+      creator = workspace.creator
+      creator.should be_an_instance_of Mavenlink::User
+      creator.full_name.should eql("Parth")
+    end
+
+    it "workspace should reload creator when not included" do
+      workspace = @cl.workspaces({:search => "8105"}).first
+      workspace.should_receive(:reload).with("creator").and_call_original
+      creator = workspace.creator
+      creator.should be_an_instance_of Mavenlink::User
+      creator.full_name.should eql("Parth")
+      workspace.participants_json.should be_nil
+    end
+
+    it "workspace should not call reload twice with no primary counterpart" do
+      workspace = @cl.workspaces({:search => "8105"}).first
+      workspace.should_receive(:reload).with("primary_counterpart").once.and_call_original
+      primary_counterpart = workspace.primary_counterpart
+      primary_counterpart.should be_nil
+
+      # Second call to primary counterpart should not reload
+      primary_counterpart = workspace.primary_counterpart
+      primary_counterpart.should be_nil
+    end
+
+  end
+
 end
