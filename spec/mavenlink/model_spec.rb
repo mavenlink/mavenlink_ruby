@@ -43,43 +43,43 @@ describe Mavenlink do
     use_vcr_cassette "workspaces", :record => :new_episodes
 
     it "has a creator" do
-      workspace = @cl.workspaces({:search => "8105"}).first
+      workspace = @cl.workspaces({:search => "8105", :include => "all"}).first
       workspace.creator.should be_an_instance_of Mavenlink::User
       workspace.creator.full_name.should eql("Parth")
     end
 
     it "has participants" do
-      workspace = @cl.workspaces({:search => "API Test Project"}).first
+      workspace = @cl.workspaces({:search => "API Test Project", :include => "all"}).first
       participants = workspace.participants
       participants.should be_an_array_of(Mavenlink::User, 2)
       participants[1].full_name.should eql("API Test Account 1")
     end
 
     it "has a primary counterpart" do
-      workspace = @cl.workspaces({:search => "API Test Project"}).first
+      workspace = @cl.workspaces({:search => "API Test Project", :include => "all"}).first
       primary_counterpart = workspace.primary_counterpart
       primary_counterpart.should be_an_instance_of Mavenlink::User
       primary_counterpart.full_name.should eql("API Test Account 1")
     end
 
     it "doesn't have a primary counterpart" do
-      workspace = @cl.workspaces({:search => "8105"}).first
+      workspace = @cl.workspaces({:search => "8105", :include => "all"}).first
       primary_counterpart = workspace.primary_counterpart
       primary_counterpart.should be_nil
     end
 
     it "saves an existing workspace" do
-      workspace = @cl.workspaces.first
+      workspace = @cl.workspaces({:include => "all"}).first
       workspace_title = "Random New Workspace"
       workspace.title = workspace_title
       workspace.save
-      workspace_new = @cl.workspaces.first
+      workspace_new = @cl.workspaces({:include => "all"}).first
       workspace_new.title.should eql("Random New Workspace")
     end
 
     it "reloads an existing workspace" do
-      workspace = @cl.workspaces({:only => "3467515"}).first
-      workspace_copy = @cl.workspaces({:only => "3467515"}).first
+      workspace = @cl.workspaces({:only => "3467515", :include => "all"}).first
+      workspace_copy = @cl.workspaces({:only => "3467515", :include => "all"}).first
       workspace.title.should eq(workspace_copy.title)
       workspace.title = "Random Workspace MG"
       workspace.save
@@ -192,8 +192,7 @@ describe Mavenlink do
 
   describe "stories" do
     use_vcr_cassette "stories", :record => :new_episodes
-
-
+    
     it "has a workspace" do
       story = @cl.stories({:workspace_id => 3403465}).first
       workspace = story.workspace

@@ -90,30 +90,30 @@ describe Mavenlink::Client do
     use_vcr_cassette "workspaces", :record => :new_episodes
 
     it "3 active workspaces should exist" do
-      workspaces = @cl.workspaces
+      workspaces = @cl.workspaces({:include => "all"})
       workspaces.should be_an_array_of(Mavenlink::Workspace, 3)
       workspaces.first.title.should eql("API Test Project")
     end
 
     it "workspaces can be filtered" do
-      workspaces = @cl.workspaces({:include_archived => true})
+      workspaces = @cl.workspaces({:include_archived => true, :include => "all"})
       workspaces.should be_an_array_of(Mavenlink::Workspace, 4)
     end
 
     it "workspaces can be searched" do
-      workspaces = @cl.workspaces({:search => "API Test Project"})
+      workspaces = @cl.workspaces({:search => "API Test Project", :include => "all"})
       workspaces.should be_an_array_of(Mavenlink::Workspace, 1)
       workspaces.first.title.should eql("API Test Project")
     end
 
     it "create a new workspace" do
-      workspaces = @cl.workspaces({:search => "Random Workspace X"})
+      workspaces = @cl.workspaces({:search => "Random Workspace X", :include => "all"})
       workspaces.should be_empty
       @cl.create_workspace({ :title => "Random Workspace X",
                              :creator_role => "maven"
                            }).should be_an_instance_of Mavenlink::Workspace
 
-      workspaces = @cl.workspaces({:search => "Random Workspace"})
+      workspaces = @cl.workspaces({:search => "Random Workspace", :include => "all"})
       workspaces.should be_an_array_of(Mavenlink::Workspace, 1)
       workspaces.first.title.should eql("Random Workspace X")
     end

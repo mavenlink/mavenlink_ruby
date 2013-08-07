@@ -95,8 +95,14 @@ module Mavenlink
               associated_objects["#{name}_json"].push response[json_root_key][id]
             end
           else
-            associated_objects["#{name}_json"] = response[json_root_key][data[attribute_key]]
+            if response[json_root_key][data[attribute_key]].nil?
+              associated_objects["#{name}_json"] = {}
+            else  
+              associated_objects["#{name}_json"] = response[json_root_key][data[attribute_key]]
+            end
           end
+        else
+          associated_objects["#{name}_json"] = nil
         end
       end
       associated_objects

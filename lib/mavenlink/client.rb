@@ -5,9 +5,8 @@ require 'active_support/core_ext/hash/indifferent_access'
 module Mavenlink
   class Client < Base
 
-    def initialize(oauth_token, lazy_load=false)
+    def initialize(oauth_token)
       super(oauth_token, {}, {})
-      $lazy_load = lazy_load
     end
 
     def users(options={})
@@ -57,7 +56,7 @@ module Mavenlink
 
     def workspaces(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
-      options["include"] = "primary_counterpart,participants,creator" if !$lazy_load
+      options["include"] = "primary_counterpart,participants,creator" if options["include"].eql? "all"
       response = get_request("/workspaces.json", options)
       results = response["results"]
       workspace_data = response["workspaces"]

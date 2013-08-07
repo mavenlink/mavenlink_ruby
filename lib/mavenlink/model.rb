@@ -19,13 +19,14 @@ module Mavenlink
   class Workspace < Base
 
     def primary_counterpart
-      reload("primary_counterpart") if primary_counterpart_json.nil? # <-- there should really be a distinction between not having asked, and having asked and determined that no primary_counterpart exists.
-      return nil if primary_counterpart_json.nil? || primary_counterpart_json.empty?
+      reload("primary_counterpart") if primary_counterpart_json.nil?
+      return nil if primary_counterpart_json.empty?
       User.new(oauth_token, primary_counterpart_json)
     end
 
     def participants
       reload("participants") if participants_json.nil?
+      return [] if participants_json.empty?
       participants = []
       participants_json.each do |participant|
         participants <<  User.new(oauth_token, participant)
@@ -115,17 +116,19 @@ module Mavenlink
 
     def user
       reload("user") if user_json.nil?
+      return nil if user_json.empty?
       User.new(oauth_token, user_json)
     end
 
     def workspace
       reload("workspace") if workspace_json.nil?
+      return nil if workspace_json.empty?
       Workspace.new(oauth_token, workspace_json)
     end
 
     def story
       reload("story") if story_json.nil?
-      return nil if story_id.nil?
+      return nil if story_json.empty?
       Post.new(self.oauth_token, self.story_json)
     end
 
@@ -166,7 +169,8 @@ module Mavenlink
     end
 
     def time_entries
-      reload if time_entries_json.nil?
+      reload("time_entries") if time_entries_json.nil?
+      return [] if time_entries_json.empty?
       time_entries = []
       time_entries_json.each do |entry|
         time_entries << TimeEntry.new(oauth_token, entry)
@@ -175,7 +179,8 @@ module Mavenlink
     end
 
     def expenses
-      reload if expenses_json.nil?
+      reload("expenses") if expenses_json.nil?
+      return [] if expenses_json.empty?
       expenses = []
       expenses_json.each do |expense|
         expenses << Expense.new(self.oauth_token, expense)
@@ -184,12 +189,14 @@ module Mavenlink
     end
 
     def additional_items
-      reload if additional_items_json.nil?
+      reload("additional_items") if additional_items_json.nil?
+      return [] if additional_items_json.empty?
       additional_items_json
     end
 
     def workspaces
-      reload if workspaces_json.nil?
+      reload("workspaces") if workspaces_json.nil?
+      return [] if workspaces_json.empty?
       workspaces = []
       workspaces_json.each do |workspace|
         workspaces << Workspace.new(oauth_token, workspace)
@@ -198,7 +205,8 @@ module Mavenlink
     end
 
     def user
-      reload if user_json.nil?
+      reload("user") if user_json.nil?
+      return nil if user_json.empty?
       User.new(oauth_token, user_json)
     end
   end
@@ -235,13 +243,14 @@ module Mavenlink
     end
 
     def workspace
-      reload if workspace_json.nil? or workspace_json.empty?
+      reload if workspace_json.nil?
+      return nil if workspace_json.empty?
       Workspace.new(oauth_token, workspace_json)
     end
 
     def parent_story
       reload if parent_story_json.nil?
-      return nil if parent_story_json.nil?
+      return nil if parent_story_json.empty?
       Story.new(oauth_token, parent_story_json)
     end
 
@@ -316,30 +325,32 @@ module Mavenlink
     end
 
     def parent_post
-      reload if subject_json.nil?
-      return nil if subject_json.nil?
+      reload("subject") if subject_json.nil?
+      return nil if subject_json.empty?
       Post.new(oauth_token, subject_json)
     end
 
     def user
-      reload if user_json.nil?
+      reload("user") if user_json.nil?
+      return nil if user_json.empty?
       User.new(oauth_token, user_json)
     end
 
     def workspace
-      reload if workspace_json.nil?
+      reload("workspace") if workspace_json.nil?
+      return [] if workspace_json.empty?
       Workspace.new(oauth_token, workspace_json)
     end
 
     def story
-      reload if story_json.nil?
-      return nil if story_json.nil?
+      reload("story") if story_json.nil?
+      return nil if story_json.empty?
       Story.new(oauth_token, story_json)
     end
 
     def replies
       reload if replies_json.nil?
-      return [] if replies_json.nil?
+      return [] if replies_json.empty?
       replies = []
       replies_json.each do |post|
         replies << Post.new(oauth_token, post)
@@ -348,8 +359,8 @@ module Mavenlink
     end
 
     def recipients
-      reload if recipients_json.nil?
-      return [] if self.recipients_json.nil?
+      reload("recipients") if recipients_json.nil?
+      return [] if self.recipients_json.empty?
       recipients = []
       recipients_json.each do |user|
         recipients << User.new(oauth_token, user)
@@ -358,20 +369,20 @@ module Mavenlink
     end
 
     def newest_reply
-      reload if newest_reply_json.nil?
-      return nil if newest_reply_json.nil?
+      reload("newest_reply") if newest_reply_json.nil?
+      return nil if newest_reply_json.empty?
       Post.new(oauth_token, newest_reply_json)
     end
 
     def newest_reply_user
-      reload if newest_reply_user_json.nil?
-      return nil if newest_reply_user_json.nil?
+      reload("newest_reply_user") if newest_reply_user_json.nil?
+      return nil if newest_reply_user_json.empty?
       User.new(oauth_token, newest_reply_user_json)
     end
 
     def google_documents
-      reload if google_documents_json.nil?
-      return [] if google_documents_json.empty? || google_documents_json.nil?
+      reload("google_documents") if google_documents_json.nil?
+      return [] if google_documents_json.empty?
       google_doc_urls = []
       google_documents_json.each do |doc|
         google_doc_urls << doc["url"]
@@ -380,8 +391,8 @@ module Mavenlink
     end
 
     def assets
-      reload if assets_json.nil?
-      return [] if assets_json.nil? || assets_json.empty?
+      reload("assets") if assets_json.nil?
+      return [] if assets_json.empty?
       assets = []
       assets_json.each do |asset|
         assets << Asset.new(self.oauth_token, { "id" => asset["id"], "file_name" => asset["filename"]})
