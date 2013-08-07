@@ -91,7 +91,7 @@ module Mavenlink
 
     def time_entries(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
-      options["include"] = "user,story,workspace"
+      options["include"] = "user,story,workspace" if options["include"].eql? "all"
       response = get_request("/time_entries.json", options)
       time_entry_data = response["time_entries"]
       results = response["results"]
@@ -123,7 +123,7 @@ module Mavenlink
 
     def invoices(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
-      options["include"] = "time_entries,expenses,additional_items,workspaces,user"
+      options["include"] = "time_entries,expenses,additional_items,workspaces,user" if options["include"].eql? "all"
       response = get_request("/invoices.json", options)
       invoices_data = response["invoices"]
       results = response["results"]
@@ -160,7 +160,7 @@ module Mavenlink
 
     def stories(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
-      options["include"] = "workspace,assignees,parent,sub_stories,tags"
+      options["include"] = "workspace,assignees,parent,sub_stories,tags" if options["include"].eql? "all"
       response = get_request("/stories.json", options)
       story_data = response["stories"]
       results = response["results"]
@@ -198,7 +198,9 @@ module Mavenlink
 
     def posts(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
-      options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
+      if options["include"].eql? "all"
+        options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
+      end
       response = get_request("/posts.json", options)
       results = response["results"]
       posts_data = response["posts"]

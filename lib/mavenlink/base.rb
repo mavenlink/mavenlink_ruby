@@ -1,9 +1,6 @@
 require 'httmultiparty'
 
-# switch to https://github.com/lostisland/faraday  - will probably have to require 'json' and do JSON.parse on the result.
 # Don't use instance_variable_get, use attributes
-
-#include = options["include"] || options[:include] <-- this is better with HWIA
 #include = include.join(",") if include.is_a?(Array)
 
 module Mavenlink

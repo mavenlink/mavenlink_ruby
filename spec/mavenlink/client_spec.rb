@@ -129,19 +129,19 @@ describe Mavenlink::Client do
     use_vcr_cassette "invoices", :record => :new_episodes
 
     it "2 invoices exist" do
-      invoices = @cl.invoices({:workspace_id => "3457635,3467515"})
+      invoices = @cl.invoices({:workspace_id => "3457635,3467515", :include => "all"})
       invoices.should be_an_array_of(Mavenlink::Invoice, 2)
       invoices.first.status.should eql("accepted payment")
       invoices[1].status.should eql("new")
     end
 
     it "invoices can be filtered" do
-      invoices = @cl.invoices({:workspace_id => "3457635,3467515", :paid => "true"})
+      invoices = @cl.invoices({:workspace_id => "3457635,3467515", :paid => "true",:include => "all"})
       invoices.should be_an_array_of(Mavenlink::Invoice, 1)
     end
 
     it "can get invoice by id" do
-      invoices = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280315"})
+      invoices = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280315", :include => "all"})
       invoices.should be_an_array_of(Mavenlink::Invoice, 1)
       invoices.first.status.should eql("new")
     end
@@ -151,7 +151,7 @@ describe Mavenlink::Client do
     use_vcr_cassette "time_entries", :record => :new_episodes
 
     it "2 time entries exist" do
-      time_entries = @cl.time_entries({:workspace_id => 3457635})
+      time_entries = @cl.time_entries({:workspace_id => 3457635, :include => "all"})
       time_entries.should be_an_array_of(Mavenlink::TimeEntry, 2)
       entry = time_entries.first
       entry.billable.should be_false
@@ -159,12 +159,12 @@ describe Mavenlink::Client do
     end
 
     it "can be filtered and ordered" do
-      time_entries = @cl.time_entries({:workspace_id => 3457635, :order => "created_at:asc" })
+      time_entries = @cl.time_entries({:workspace_id => 3457635, :order => "created_at:asc", :include => "all"})
       time_entries[0].date_performed.should be_before time_entries[1].date_performed
     end
 
     it "create a new time entry" do
-      time_entries = @cl.time_entries({:workspace_id => 3403465})
+      time_entries = @cl.time_entries({:workspace_id => 3403465, :include => "all"})
       time_entries.should be_empty
       ent = @cl.create_time_entry({
                             :workspace_id => 3467515,
@@ -172,7 +172,7 @@ describe Mavenlink::Client do
                             :time_in_minutes => 34
                             })
       ent.should be_an_instance_of Mavenlink::TimeEntry
-      time_entries = @cl.time_entries({:workspace_id => 3467515})
+      time_entries = @cl.time_entries({:workspace_id => 3467515, :include => "all"})
       time_entries.should be_an_array_of(Mavenlink::TimeEntry, 1)
     end
 
@@ -188,18 +188,18 @@ describe Mavenlink::Client do
     use_vcr_cassette "stories", :record => :new_episodes
 
     it "3 stories exist" do
-      stories = @cl.stories({:workspace_id => 3403465})
+      stories = @cl.stories({:workspace_id => 3403465, :include => "all"})
       stories.should be_an_array_of(Mavenlink::Story, 3)
       stories.first.title.should eql("New Task")
     end
 
     it "can be filtered" do
-      stories = @cl.stories({:workspace_id => 3403465, :parents_only => true})
+      stories = @cl.stories({:workspace_id => 3403465, :parents_only => true, :include => "all"})
       stories.should be_an_array_of(Mavenlink::Story, 2)
     end
 
     it "can be ordered" do
-      stories = @cl.stories(:workspace_id => 3403465, :order => "created_at:asc")
+      stories = @cl.stories({:workspace_id => 3403465, :order => "created_at:asc", :include => "all"})
       stories[0].created_at.should be_before stories[1].created_at
     end
 
@@ -233,13 +233,13 @@ describe Mavenlink::Client do
     use_vcr_cassette "posts", :record => :new_episodes
 
     it "3 posts exist" do
-      posts = @cl.posts({:workspace_id => 3484825})
+      posts = @cl.posts({:workspace_id => 3484825, :include => "all"})
       posts.should be_an_array_of(Mavenlink::Post, 3)
       posts.first.message.should eq("Test Post 2")
     end
 
     it "can be filtered" do
-      posts = @cl.posts({:workspace_id => 3484825, :parents_only => true})
+      posts = @cl.posts({:workspace_id => 3484825, :parents_only => true, :include => "all"})
       posts.should be_an_array_of(Mavenlink::Post, 2)
     end
 
