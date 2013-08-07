@@ -1,4 +1,5 @@
 require 'httmultiparty'
+require 'active_support/core_ext/hash/indifferent_access'
 
 # Don't use instance_variable_get, use attributes
 #include = include.join(",") if include.is_a?(Array)
@@ -12,6 +13,8 @@ module Mavenlink
     attr_accessor :oauth_token, :attributes, :associated_objects
 
     def initialize(oauth_token, attributes, associated_objects={})
+      attributes = HashWithIndifferentAccess.new_from_hash_copying_default(attributes)
+      associated_objects = HashWithIndifferentAccess.new_from_hash_copying_default(associated_objects)
       self.oauth_token = oauth_token
       self.attributes = attributes
       self.associated_objects = associated_objects
@@ -76,12 +79,14 @@ module Mavenlink
         associated_objects[method]
       elsif attributes.has_key?(method[0...-1]) && method[-1] == '='
         self.attributes[method[0...-1]] = arguments.first
+      elsif method[-5,5].eql? "_json"
+        self.associated_objects[method_sym] = nil
+        nil
       else
         super
       end
     end
 
-    # Please show example input and output structures, since this is complex.
     def parse_associated_objects(associated_hash, data, response)
       associated_objects = {}
       associated_hash.each do |name, (json_root_key, attribute_key)|

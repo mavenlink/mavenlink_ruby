@@ -129,7 +129,7 @@ module Mavenlink
     def story
       reload("story") if story_json.nil?
       return nil if story_json.empty?
-      Post.new(self.oauth_token, self.story_json)
+      Post.new(oauth_token, story_json)
     end
 
     def reload(include_options="")

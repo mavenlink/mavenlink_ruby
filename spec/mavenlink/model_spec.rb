@@ -118,7 +118,7 @@ describe Mavenlink do
     it "has additional items" do
       inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280335",:include => "all"}).first
       additional_items = inv.additional_items
-      additional_items.should be_an_array_of(Hash, 1)
+      additional_items.should be_an_instance_of Array
       itm = additional_items.first
       itm["notes"].should eql("Additional Item 1")
     end
@@ -350,9 +350,33 @@ describe Mavenlink do
       primary_counterpart = workspace.primary_counterpart
       primary_counterpart.should be_nil
 
-      # Second call to primary counterpart should not reload
+      # Second call to primary counterpart should not call reload
       primary_counterpart = workspace.primary_counterpart
       primary_counterpart.should be_nil
+    end
+
+    it "entry should include workspace" do
+      entry = @cl.time_entries({:workspace_id => 3457635, :include => "workspace"}).first
+      entry.should_not_receive(:reload).with("workspace").and_call_original
+      workspace = entry.workspace
+      workspace.should be_an_instance_of Mavenlink::Workspace
+    end
+
+    it "entry should reload workspace when not included" do
+      entry = @cl.time_entries({:workspace_id => 3457635}).first
+      entry.should_receive(:reload).with("workspace").once.and_call_original
+      workspace = entry.workspace
+      workspace.should be_an_instance_of Mavenlink::Workspace
+      entry.user_json.should be_nil
+    end
+
+    it "entry should have a fully functional nested workspace" do
+      entry = @cl.time_entries({:workspace_id => 3457635, :include => "workspace"}).first
+      workspace = entry.workspace
+      workspace.should_receive(:reload).with("creator").and_call_original
+      creator = workspace.creator
+      creator.should be_an_instance_of Mavenlink::User
+      creator.full_name.should eql("Parth")
     end
 
   end
