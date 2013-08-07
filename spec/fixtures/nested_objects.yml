@@ -27,7 +27,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"761229de2c21fbbcb2d2aad337a1bb7c"'
+      - ! '"761229de2c21fbbcb2d2aad337a1bb7c"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -38,7 +38,7 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+      string: ! '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
         ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3403465"}],"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
     http_version: 
   recorded_at: Wed, 07 Aug 2013 02:31:24 GMT
@@ -69,7 +69,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"66ef2566757216af21e95cf235d7750a"'
+      - ! '"66ef2566757216af21e95cf235d7750a"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -80,7 +80,7 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+      string: ! '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
         ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3403465"}]}'
     http_version: 
   recorded_at: Wed, 07 Aug 2013 02:31:24 GMT
@@ -111,7 +111,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"761229de2c21fbbcb2d2aad337a1bb7c"'
+      - ! '"761229de2c21fbbcb2d2aad337a1bb7c"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -122,7 +122,7 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+      string: ! '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
         ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3403465"}],"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
     http_version: 
   recorded_at: Wed, 07 Aug 2013 02:31:27 GMT
@@ -153,7 +153,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"5ff2606cc8815bcffa6c15d7e5a47b43"'
+      - ! '"5ff2606cc8815bcffa6c15d7e5a47b43"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -164,7 +164,7 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
+      string: ! '{"count":1,"workspaces":{"3403465":{"title":"8105 Project","archived":false,"description":"---\r\n-
         ! ''---\r\n\r\n  - ergo\r\n\r\n  - ''''''''\r\n\r\n''\r\n- ''''","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T11:00:38-07:00","created_at":"2013-07-20T21:51:00-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":false,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$234","over_budget":false,"currency":"USD","id":"3403465","creator_id":"3711195","primary_counterpart_id":null}},"results":[{"key":"workspaces","id":"3403465"}],"users":{}}'
     http_version: 
   recorded_at: Wed, 07 Aug 2013 02:31:27 GMT
@@ -195,7 +195,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"15f482b9341d766847e57311eefd14ed"'
+      - ! '"15f482b9341d766847e57311eefd14ed"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -206,7 +206,7 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":3,"time_entries":{"8590085":{"created_at":"2013-07-31T15:50:39-07:00","date_performed":"2013-07-31","time_in_minutes":75,"billable":true,"notes":"asdfasdfasfd","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T15:52:42-07:00","user_can_edit":true,"id":"8590085","story_id":null,"workspace_id":"3457635","user_id":"3711195"},"8571785":{"created_at":"2013-07-31T10:43:48-07:00","date_performed":"2013-07-03","time_in_minutes":60,"billable":false,"notes":"","rate_in_cents":0,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:48-07:00","user_can_edit":false,"id":"8571785","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"},"8571775":{"created_at":"2013-07-31T10:43:32-07:00","date_performed":"2013-07-01","time_in_minutes":300,"billable":true,"notes":"Additional
+      string: ! '{"count":3,"time_entries":{"8590085":{"created_at":"2013-07-31T15:50:39-07:00","date_performed":"2013-07-31","time_in_minutes":75,"billable":true,"notes":"asdfasdfasfd","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T15:52:42-07:00","user_can_edit":true,"id":"8590085","story_id":null,"workspace_id":"3457635","user_id":"3711195"},"8571785":{"created_at":"2013-07-31T10:43:48-07:00","date_performed":"2013-07-03","time_in_minutes":60,"billable":false,"notes":"","rate_in_cents":0,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:48-07:00","user_can_edit":false,"id":"8571785","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"},"8571775":{"created_at":"2013-07-31T10:43:32-07:00","date_performed":"2013-07-01","time_in_minutes":300,"billable":true,"notes":"Additional
         Notes Example","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:32-07:00","user_can_edit":false,"id":"8571775","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"}},"results":[{"key":"time_entries","id":"8590085"},{"key":"time_entries","id":"8571785"},{"key":"time_entries","id":"8571775"}],"workspaces":{"3457635":{"title":"Random
         New Workspace","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T12:48:16-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$356","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"}}}'
     http_version: 
@@ -238,7 +238,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"3efdc9da4a1c9ee021c281e3b6c8233c"'
+      - ! '"3efdc9da4a1c9ee021c281e3b6c8233c"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -249,7 +249,7 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":3,"time_entries":{"8590085":{"created_at":"2013-07-31T15:50:39-07:00","date_performed":"2013-07-31","time_in_minutes":75,"billable":true,"notes":"asdfasdfasfd","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T15:52:42-07:00","user_can_edit":true,"id":"8590085","story_id":null,"workspace_id":"3457635","user_id":"3711195"},"8571785":{"created_at":"2013-07-31T10:43:48-07:00","date_performed":"2013-07-03","time_in_minutes":60,"billable":false,"notes":"","rate_in_cents":0,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:48-07:00","user_can_edit":false,"id":"8571785","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"},"8571775":{"created_at":"2013-07-31T10:43:32-07:00","date_performed":"2013-07-01","time_in_minutes":300,"billable":true,"notes":"Additional
+      string: ! '{"count":3,"time_entries":{"8590085":{"created_at":"2013-07-31T15:50:39-07:00","date_performed":"2013-07-31","time_in_minutes":75,"billable":true,"notes":"asdfasdfasfd","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T15:52:42-07:00","user_can_edit":true,"id":"8590085","story_id":null,"workspace_id":"3457635","user_id":"3711195"},"8571785":{"created_at":"2013-07-31T10:43:48-07:00","date_performed":"2013-07-03","time_in_minutes":60,"billable":false,"notes":"","rate_in_cents":0,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:48-07:00","user_can_edit":false,"id":"8571785","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"},"8571775":{"created_at":"2013-07-31T10:43:32-07:00","date_performed":"2013-07-01","time_in_minutes":300,"billable":true,"notes":"Additional
         Notes Example","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T10:43:32-07:00","user_can_edit":false,"id":"8571775","story_id":"26133885","workspace_id":"3457635","user_id":"3711195"}},"results":[{"key":"time_entries","id":"8590085"},{"key":"time_entries","id":"8571785"},{"key":"time_entries","id":"8571775"}]}'
     http_version: 
   recorded_at: Wed, 07 Aug 2013 02:31:28 GMT
@@ -280,7 +280,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"3322a70cb0fd947164e3e860cf79cac2"'
+      - ! '"3322a70cb0fd947164e3e860cf79cac2"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -291,7 +291,7 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":1,"time_entries":{"8590085":{"created_at":"2013-07-31T15:50:39-07:00","date_performed":"2013-07-31","time_in_minutes":75,"billable":true,"notes":"asdfasdfasfd","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T15:52:42-07:00","user_can_edit":true,"id":"8590085","story_id":null,"workspace_id":"3457635","user_id":"3711195"}},"results":[{"key":"time_entries","id":"8590085"}],"workspaces":{"3457635":{"title":"Random
+      string: ! '{"count":1,"time_entries":{"8590085":{"created_at":"2013-07-31T15:50:39-07:00","date_performed":"2013-07-31","time_in_minutes":75,"billable":true,"notes":"asdfasdfasfd","rate_in_cents":2500,"currency":"USD","currency_symbol":"$","currency_base_unit":100,"updated_at":"2013-07-31T15:52:42-07:00","user_can_edit":true,"id":"8590085","story_id":null,"workspace_id":"3457635","user_id":"3711195"}},"results":[{"key":"time_entries","id":"8590085"}],"workspaces":{"3457635":{"title":"Random
         New Workspace","archived":false,"description":"---\n- ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T12:48:16-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$356","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"}}}'
     http_version: 
   recorded_at: Wed, 07 Aug 2013 02:31:28 GMT
@@ -322,7 +322,7 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"4a5c3aff6aa49388990900607d3de38b"'
+      - ! '"4a5c3aff6aa49388990900607d3de38b"'
       Cache-Control:
       - must-revalidate, private, max-age=0
       X-Request-Id:
@@ -333,8 +333,51 @@ http_interactions:
       - miss
     body:
       encoding: UTF-8
-      string: '{"count":1,"workspaces":{"3457635":{"title":"Random New Workspace","archived":false,"description":"---\n-
+      string: ! '{"count":1,"workspaces":{"3457635":{"title":"Random New Workspace","archived":false,"description":"---\n-
         ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T12:48:16-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$356","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3457635"}],"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
     http_version: 
   recorded_at: Wed, 07 Aug 2013 02:55:33 GMT
+- request:
+    method: get
+    uri: https://api.mavenlink.com/api/v1/workspaces.json?include=creator&search=Test
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 999
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.2.0
+      Date:
+      - Wed, 07 Aug 2013 18:09:00 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - ! '"a88132b3eb9e3d41e1624254ca1b98e1"'
+      Cache-Control:
+      - must-revalidate, private, max-age=0
+      X-Request-Id:
+      - cae655a583ee098fd4ce4c05498012dc
+      X-Runtime:
+      - '0.173111'
+      X-Rack-Cache:
+      - miss
+    body:
+      encoding: US-ASCII
+      string: ! '{"count":2,"workspaces":{"3457635":{"title":"Random New Workspace","archived":false,"description":"---\n-
+        ''''\n- ''''\n","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T12:48:16-07:00","created_at":"2013-07-29T19:32:34-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$356","over_budget":false,"currency":"USD","id":"3457635","creator_id":"3711195"},"3484825":{"title":"Test
+        Project Meh","archived":false,"description":"","effective_due_date":"","budgeted":true,"change_orders_enabled":true,"updated_at":"2013-08-01T16:47:14-07:00","created_at":"2013-08-01T10:49:56-07:00","consultant_role_name":"Consultants","client_role_name":"Clients","can_create_line_items":true,"default_rate":"25.00","currency_symbol":"$","currency_base_unit":100,"can_invite":true,"has_budget_access":true,"price":"TBD","price_in_cents":null,"budget_used":"$0","over_budget":false,"currency":"USD","id":"3484825","creator_id":"3711195"}},"results":[{"key":"workspaces","id":"3457635"},{"key":"workspaces","id":"3484825"}],"users":{"3711195":{"full_name":"Parth","photo_path":"https://app.mavenlink.com/images/default_profile_photo/default.png","email_address":"parth@mavenlink.com","headline":null,"id":"3711195"}}}'
+    http_version: 
+  recorded_at: Wed, 07 Aug 2013 18:09:00 GMT
 recorded_with: VCR 2.5.0

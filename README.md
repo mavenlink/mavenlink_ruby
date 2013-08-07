@@ -90,8 +90,12 @@ categories = cl.expense_categories
 ###Workspace
 #####Get workspaces
 ```ruby
-    # All workspaces
-    workspaces = cl.workspaces
+    # All workspaces with all associated objects
+    workspaces = cl.workspaces({:include => "all"})
+
+    # Associated objects that can be included: primary_counterpart,participants,creator
+    workspaces = cl.workspace({:include => ['primary_counterpart', 'creator'])
+
 
     # Filter and search workspaces
     workspaces = @cl.workspaces({:search => "API Test Project"})
@@ -152,6 +156,9 @@ creator = wks.creator
     # All invoices
     invoices = cl.invoices
 
+    # Associated objects that can be included: time_entries,expenses,additional_items,workspaces,user
+    invoices = cl.invoices({:include => ['user', 'expenses'])
+
     # Filter invoices
     invoices = @cl.invoices({:workspace_id => "12345,12346", :paid => "true"})
 ```
@@ -185,8 +192,11 @@ user = inv.user
 ###TimeEntry
 #####Get time entries
 ```ruby
-    # All time entries
-    entries = cl.time_entries
+    # All time entries with all associated objects
+    entries = cl.time_entries({:include => 'all'})
+
+    # Associated objects that can be included: user,story,workspace
+    entries = cl.time_entries({:include => ['user', 'story'])
 
     # Filter invoices
     entries = @cl.entries({:workspace_id => 12345})
@@ -242,6 +252,9 @@ story = ent.story
 ```ruby
     # All stories
     stories = cl.stories
+
+    # Associated objects that can be included: workspace,assignees,parent,sub_stories,tags
+    stories = cl.stories({:include => ['workspace', 'parent'])
 
     # Filter and order stories
     stories = @cl.stories({:workspace_id => 12345, :order => "created_at:asc", :parents_only => true})
@@ -299,6 +312,10 @@ tags = stry.tags
 ```ruby
     # All stories
     posts = cl.posts
+
+
+    # Associated objects that can be included: subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets
+    stories = cl.stories({:include => ['subject', 'replies'])
 
     # Filter and order posts
     posts = @cl.posts({:workspace_id => 3484825, :parents_only => true})

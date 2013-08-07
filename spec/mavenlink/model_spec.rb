@@ -327,6 +327,14 @@ describe Mavenlink do
   describe "nested attribute objects" do
     use_vcr_cassette "nested_objects", :record => :new_episodes
 
+    it "can load attribute objects using array as include" do
+      workspace = @cl.workspaces({:search => "Test", :include => ["creator"]}).first
+      workspace.should_not_receive(:reload).with("creator").and_call_original
+      creator = workspace.creator
+      creator.should be_an_instance_of Mavenlink::User
+      creator.full_name.should eql("Parth")
+    end
+
     it "can reload using array of attributes" do
       workspace = @cl.workspaces({:search => "8105"}).first
       workspace.should_receive(:reload).with(["creator"]).and_call_original
