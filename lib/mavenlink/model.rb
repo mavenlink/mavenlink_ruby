@@ -47,7 +47,7 @@ module Mavenlink
     end
 
     def reload(include_options="")
-      include_options = include_options.delete(' ')
+      include_options = include_options.join(",") if include_options.is_a?(Array)
       include_options = "primary_counterpart,participants,creator" if include_options.eql? "all"
       options = {"include" => include_options} unless include_options.empty?
       response = get_request("/workspaces/#{self.id}.json", options)
@@ -133,7 +133,7 @@ module Mavenlink
     end
 
     def reload(include_options="")
-      include_options = include_options.delete(' ')
+      include_options = include_options.join(",") if include_options.is_a?(Array)
       include_options = "user,story,workspace" if include_options.eql? "all"
       options = {"include" => include_options} unless include_options.empty?
       response = get_request("/time_entries/#{id}.json", options)
@@ -152,7 +152,7 @@ module Mavenlink
 
   class Invoice < Base
     def reload(include_options="")
-      include_options = include_options.delete(' ')
+      include_options = include_options.join(",") if include_options.is_a?(Array)
       include_options = "time_entries,expenses,additional_items,workspaces,user" if include_options.eql? "all"
       options = {"include" => include_options} unless include_options.empty?
       response = get_request("/invoices/#{id}.json", options)
@@ -226,7 +226,7 @@ module Mavenlink
     end
 
     def reload(include_options="")
-      include_options = include_options.delete(' ')
+      include_options = include_options.join(",") if include_options.is_a?(Array)
       include_options = "workspace,assignees,parent,sub_stories,tags" if include_options.eql? "all"
       options = {"include" => include_options} unless include_options.empty?
       response = get_request("/stories/#{id}.json", options)
@@ -287,7 +287,7 @@ module Mavenlink
 
   class Post < Base
     def reload(include_options="")
-      include_options = include_options.delete(' ')
+      include_options = include_options.join(",") if include_options.is_a?(Array)
       if include_options.eql? "all"
         include_options =  "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
       end

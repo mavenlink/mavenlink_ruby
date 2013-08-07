@@ -56,6 +56,7 @@ module Mavenlink
 
     def workspaces(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
+      options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       options["include"] = "primary_counterpart,participants,creator" if options["include"].eql? "all"
       response = get_request("/workspaces.json", options)
       results = response["results"]
@@ -91,6 +92,7 @@ module Mavenlink
 
     def time_entries(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
+      options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       options["include"] = "user,story,workspace" if options["include"].eql? "all"
       response = get_request("/time_entries.json", options)
       time_entry_data = response["time_entries"]
@@ -123,6 +125,7 @@ module Mavenlink
 
     def invoices(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
+      options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       options["include"] = "time_entries,expenses,additional_items,workspaces,user" if options["include"].eql? "all"
       response = get_request("/invoices.json", options)
       invoices_data = response["invoices"]
@@ -147,6 +150,7 @@ module Mavenlink
 
     def create_asset(options)
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
+      options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       unless [:data, :type].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end
@@ -160,6 +164,7 @@ module Mavenlink
 
     def stories(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
+      options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       options["include"] = "workspace,assignees,parent,sub_stories,tags" if options["include"].eql? "all"
       response = get_request("/stories.json", options)
       story_data = response["stories"]
@@ -198,6 +203,7 @@ module Mavenlink
 
     def posts(options={})
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
+      options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       if options["include"].eql? "all"
         options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
       end

@@ -1,9 +1,6 @@
 require 'httmultiparty'
 require 'active_support/core_ext/hash/indifferent_access'
 
-# Don't use instance_variable_get, use attributes
-#include = include.join(",") if include.is_a?(Array)
-
 module Mavenlink
   class Base
     include HTTMultiParty
