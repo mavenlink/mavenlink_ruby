@@ -1,4 +1,4 @@
-Copyright (c) 2013 Parth Gandhi
+Copyright (c) 2013, Mavenlink, Parth Gandhi
 
 MIT License
 

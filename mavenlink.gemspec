@@ -6,11 +6,11 @@ require 'mavenlink/version'
 Gem::Specification.new do |spec|
   spec.name          = "mavenlink"
   spec.version       = Mavenlink::VERSION
-  spec.authors       = ["Parth Gandhi"]
-  spec.email         = ["parthgandhi@outlook.com"]
+  spec.authors       = ["Mavenlink", "Parth Gandhi"]
+  spec.email         = ["opensource@mavenlink.com"]
   spec.description   = %q{A Ruby client for Mavenlink's API}
-  spec.summary       = %q{Mavenlink API}
-  spec.homepage      = ""
+  spec.summary       = %q{}
+  spec.homepage      = "https://github.com/mavenlink/mavenlink_ruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "vcr"
   spec.add_development_dependency "pry"
   spec.add_runtime_dependency "httmultiparty"
-  spec.add_runtime_dependency "rest-client"
   spec.add_runtime_dependency "json"
   spec.add_runtime_dependency "active_support"
 end

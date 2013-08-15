@@ -37,7 +37,7 @@ describe Mavenlink::Client do
     it "1 user exists in particular workspace" do
       users = @cl.users({:participant_in => 3448785})
       users.should be_an_array_of(Mavenlink::User, 1)
-      users.first.email_address.should eql("mavenlinkapitest@gmail.com")
+      users.first.email_address.should eql("mavenlinkapitest@example.com")
     end
 
     it "get a user by id" do
