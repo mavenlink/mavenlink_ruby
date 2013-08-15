@@ -25,59 +25,59 @@ You will also need your oauth_token, which can be found on your Mavenlink userpa
 #####Initialize a new client
 
 ```ruby
-    require 'mavenlink'
-    cl = Mavenlink::Client.new(oauth_token)
+require 'mavenlink'
+cl = Mavenlink::Client.new(oauth_token)
 ```
 ###User
 #####Get users
 ```ruby    
-    # All users
-    users = cl.users
+# All users
+users = cl.users
     
-    # Filter responses by participant_in
-    filtered_users = cl.users({:participant_in => 12345})
+# Filter users
+filtered_users = cl.users({:participant_in => 12345})
 ```
 
 ###Expense
 #####Get expenses
     
 ```ruby    
-    # All expenses
-    expenses = cl.expenses
+# All expenses
+expenses = cl.expenses
     
-    # Filter responses by workspace_id and order by date
-    filtered_expenses = cl.expenses({:workspace_id => 12345, :order => "date:asc" })
+# Filter expenses
+filtered_expenses = cl.expenses({:workspace_id => 12345, :order => "date:asc" })
 ```
 
 #####Create a new expense
 ```ruby
 #Required parameters : workspace_id, date, category, amount_in_cents
 #Optional paramters : notes, currency
-cl.create_expense({ :workspace_id => 12345,
-                    :date => "2012/01/01",
-                    :category => "Travel",
-                    :amount_in_cents => 100 
-                    })
+expense = cl.create_expense({ :workspace_id => 12345,
+                              :date => "2012/01/01",
+                              :category => "Travel",
+                              :amount_in_cents => 100 
+                            })
 ```
 
 #####Save and reload expense
 ```ruby
 #Savable attributes: notes, category, date, amount_in_cents
-exp = cl.expenses.first
-exp_copy = cl.expenses.first
-exp.category = "Updated category"
+expense = cl.expenses.first
+expense_copy = cl.expenses.first
+expense.category = "Updated category"
 
-# exp.category != exp_copy.category
-exp.save
+# expense.category != expense_copy.category
+expense.save
 
-# exp.category == exp_copy.category
-exp_copy.reload
+# expense.category == expense_copy.category
+expense_copy.reload
 ```
 
 #####Delete an expense
 ```ruby
-exp = cl.expenses.first
-exp.delete
+expense = cl.expenses.first
+expense.delete
 ```
 
 ###Expense Category
@@ -90,15 +90,15 @@ categories = cl.expense_categories
 ###Workspace
 #####Get workspaces
 ```ruby
-    # All workspaces with all associated objects
-    workspaces = cl.workspaces({:include => "all"})
+# All workspaces with all associated objects
+workspaces = cl.workspaces({:include => "all"})
 
-    # Associated objects that can be included: primary_counterpart,participants,creator
-    workspaces = cl.workspace({:include => ['primary_counterpart', 'creator'])
+# Associated objects that can be included: primary_counterpart,participants,creator
+workspaces = cl.workspace({:include => ['primary_counterpart', 'creator'])
 
 
-    # Filter and search workspaces
-    workspaces = @cl.workspaces({:search => "API Test Project"})
+# Filter and search workspaces
+workspaces = @cl.workspaces({:search => "API Test Project"})
 ```
 
 #####Create a new workspace
