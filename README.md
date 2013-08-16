@@ -26,16 +26,19 @@ You will also need your oauth_token, which can be found on your Mavenlink userpa
 
 ```ruby
 require 'mavenlink'
-cl = Mavenlink::Client.new(oauth_token)
+client = Mavenlink::Client.new(oauth_token)
 ```
 ###User
 #####Get users
 ```ruby    
-# All users
-users = cl.users
+# All userss
+users = client.users
     
 # Filter users
-filtered_users = cl.users({:participant_in => 12345})
+filtered_users = client.users({:participant_in => 12345})
+
+# User by id
+user = client.users({:only => 123})
 ```
 
 ###Expense
@@ -43,21 +46,21 @@ filtered_users = cl.users({:participant_in => 12345})
     
 ```ruby    
 # All expenses
-expenses = cl.expenses
+expenses = client.expenses
     
 # Filter expenses
-filtered_expenses = cl.expenses({:workspace_id => 12345, :order => "date:asc" })
+filtered_expenses = client.expenses({:workspace_id => 12345, :order => "date:asc" })
 ```
 
 #####Create a new expense
 ```ruby
 #Required parameters : workspace_id, date, category, amount_in_cents
 #Optional paramters : notes, currency
-expense = cl.create_expense({ :workspace_id => 12345,
-                              :date => "2012/01/01",
-                              :category => "Travel",
-                              :amount_in_cents => 100 
-                            })
+expense = client.create_expense({ :workspace_id => 12345,
+                                  :date => "2012/01/01",
+                                  :category => "Travel",
+                                  :amount_in_cents => 100
+                               })
 ```
 
 #####Save and reload expense
