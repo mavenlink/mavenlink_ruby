@@ -28,6 +28,7 @@ You will also need your oauth_token, which can be found on your Mavenlink userpa
 require 'mavenlink'
 client = Mavenlink::Client.new(oauth_token)
 ```
+
 ###User
 #####Get users
 ```ruby    
@@ -66,20 +67,20 @@ expense = client.create_expense({ :workspace_id => 12345,
 #####Save and reload expense
 ```ruby
 #Savable attributes: notes, category, date, amount_in_cents
-expense = cl.expenses.first
-expense_copy = cl.expenses.first
+expense = client.expenses({:only => 1234})
+expense_copy = cl.expenses({:only => 1234})
 expense.category = "Updated category"
-
 # expense.category != expense_copy.category
+
 expense.save
 
-# expense.category == expense_copy.category
 expense_copy.reload
+# expense.category == expense_copy.category
 ```
 
 #####Delete an expense
 ```ruby
-expense = cl.expenses.first
+expense = client.expenses({:only => 1234})
 expense.delete
 ```
 
@@ -87,7 +88,7 @@ expense.delete
 #####Get expense categories
 ```ruby
 # Returns an array of expense category strings
-categories = cl.expense_categories
+categories = client.expense_categories
 ```
 
 ###Workspace
