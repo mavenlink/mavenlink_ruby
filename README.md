@@ -95,63 +95,71 @@ categories = client.expense_categories
 #####Get workspaces
 ```ruby
 # All workspaces with all associated objects
-workspaces = cl.workspaces({:include => "all"})
+workspaces = client.workspaces({:include => "all"})
 
 # Associated objects that can be included: primary_counterpart,participants,creator
-workspaces = cl.workspace({:include => ['primary_counterpart', 'creator'])
+workspaces = client.workspaces({:include => ['primary_counterpart', 'creator'])
 
 
 # Filter and search workspaces
-workspaces = @cl.workspaces({:search => "API Test Project"})
+workspaces = client.workspaces({:search => "API Test Project"})
 ```
 
 #####Create a new workspace
 ```ruby
 #Required parameters: title, creator_role(maven or buyer)
 #Optional parameters: budgeted, description, currency, price, due_date, project_tracker_template_id
-@cl.create_workspace({ :title => "Random Workspace X",
-                        :creator_role => "maven"
-                    }).
+client.create_workspace({ :title => "Random Workspace X",
+                          :creator_role => "maven"
+                        })
 ```
 
 #####Save and reload a workspace
 ```ruby
 #Savable attributes: title, budgeted, description, archived
-wks = cl.workspaces.first
-wks_copy = cl.workspaces.first
-exp.titile = "Updated title"
+workspace = client.workspaces({:search => "API Test Project"}, :include => ['creator'])
+workspace_copy = client.workspaces({:search => "API Test Project"})
+workspace.title = "Updated title"
+# workspace.title != workspace_copy.title
 
-# wks.title != wks_copy.title
-wks.save
+workspace.save
 
-# wks.title == wks_copy.title
-wks_copy.reload
+workspace_copy.reload
+# workspace.title == workspace_copy.title
 ```
 
 #####Create a workspace invitation
 ```ruby
-wks = cl.workspaces.first
+workspace = client.workspaces
 
 #Required parameters: full_name, email_address, invitee_role
 #Optional parameters: subject, message
-wks.create_workspace_invitation({ :full_name => "example name",
-                                  :email_address => "name@example.com",
-                                  :invitee_role => "maven"
-                               })
+workspace.create_workspace_invitation({ :full_name => "example name",
+                                         :email_address => "name@example.com",
+                                        :invitee_role => "maven"
+                                     })
 ```
 
 #####Associated objects
 ```ruby
-wks = cl.workspaces.first
+workspace = client.workspaces({:search => "API Test Project"}, :include => ['creator'])
+workspace_copy = client.workspaces({:search => "API Test Project"})
 
 #Lead of opposite team
-counterpart_user = wks.primary_counterpart
+counterpart_user = workspace.primary_counterpart
 
 #Array of participating users
-participants = wks.participants
+participants = workspace.participants
 
 #Creator of workspace
-creator = wks.creator
+# Preloaded - doesn't make an api call
+creator = workspace.creator
+
+# Not loaded - makes an api call
+creator = workspace_copy.creator
+
+# Explicit api call to load primary_counterpart
+workspace_copy.reload(['primary_counterpart'])
 ```
 
 ###Invoice
