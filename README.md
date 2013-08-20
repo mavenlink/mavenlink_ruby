@@ -165,40 +165,45 @@ workspace_copy.reload(['primary_counterpart'])
 ###Invoice
 #####Get invoices
 ```ruby
-    # All invoices
-    invoices = cl.invoices
+# All invoices
+invoices = client.invoices
 
-    # Associated objects that can be included: time_entries,expenses,additional_items,workspaces,user
-    invoices = cl.invoices({:include => ['user', 'expenses'])
+# Associated objects that can be included: time_entries,expenses,additional_items,workspaces,user
+invoices = client.invoices({:include => ['all'])
 
-    # Filter invoices
-    invoices = @cl.invoices({:workspace_id => "12345,12346", :paid => "true"})
+# Filter invoices
+invoices = client.invoices({:workspace_id => "12345,12346", :paid => "true"})
 ```
 
 #####Reload a invoice
 ```ruby
-inv = cl.invoices.first
-inv.reload
+invoice = client.invoices({:only => 1234})
+invoice.reload
+
+#Reload only associated time_entries
+invoice.reload(['time_entries'])
 ```
 
 #####Associated objects
 ```ruby
-inv = cl.invoices.first
+invoice = client.invoices({:include => ['time_entries,expenses,workspaces,user']).first
+
 
 #Time entries of an invoice
-time_entries = inv.time_entries
+time_entries = invoice.time_entries
 
 #Expenses of an invoice
-expenses = inv.expenses
+expenses = invoice.expenses
 
 #Additional items returned as a hash
-additional_items = inv.additional_items
+#Not loaded - makes an api call
+additional_items = invoice.additional_items
 
 #Workspaces related to the invoice
-workspaces = inv.workspaces
+workspaces = invoice.workspaces
 
 #Creator of the invoice
-user = inv.user
+user = invoice.user
 ```
 
 ###TimeEntry
