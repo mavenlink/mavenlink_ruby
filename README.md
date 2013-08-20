@@ -186,7 +186,7 @@ invoice.reload(['time_entries'])
 
 #####Associated objects
 ```ruby
-invoice = client.invoices({:include => ['time_entries,expenses,workspaces,user']).first
+invoice = client.invoices({:include => ['time_entries','expenses','workspaces','user']).first
 
 
 #Time entries of an invoice
@@ -267,14 +267,14 @@ story = ent.story
 ###Story
 #####Get stories
 ```ruby
-    # All stories
-    stories = cl.stories
+# All stories
+stories = client.stories
 
-    # Associated objects that can be included: workspace,assignees,parent,sub_stories,tags
-    stories = cl.stories({:include => ['workspace', 'parent'])
+# Associated objects that can be included: workspace,assignees,parent,sub_stories,tags
+stories = client.stories({:include => ['workspace', 'parent'])
 
-    # Filter and order stories
-    stories = @cl.stories({:workspace_id => 12345, :order => "created_at:asc", :parents_only => true})
+# Filter and order stories
+filtered_stories = client.stories({:workspace_id => 12345, :order => "created_at:asc", :parents_only => true})
 ```
 
 #####Create a new story
@@ -282,119 +282,119 @@ story = ent.story
 #Required parameters: workspace_id, title, story_type(task, milestone or deliverable)
 #Optional parameters: description, parent_id, start_date, due_date, assignees, budget_estimate_in_cents,
 #                     time_estimate_in_minutes, tag_list
-stry = @cl.create_story({
-                          :workspace_id => 3467515,
-                          :title => "New Task",
-                          :story_type => "task"
-                       })
+story = client.create_story({
+                            :workspace_id => 3467515,
+                            :title => "New Task",
+                            :story_type => "task"
+                            })
 ```
 
 #####Reload and save a story
 ```ruby
 #Savable attributes: title, description, story_type, start_date, due_date,
 #                    state, budget_estimate_in_cents, time_estimate_in_minutes, percentage_complete
-stry = cl.stories.first
-stry_copy = cl.stories.first
-stry.description = "Updated description"
+story = client.stories({:only => 1234})
+story_copy = client.stories({:only => 1234})
+story.description = "Updated description"
+#story.description != story_copy.description
 
-# stry.description != stry_copy.description
-stry.save
+story.save
 
-# stry.description == stry_copy.description
-stry_copy.reload
+story_copy.reload
+# story.description == story_copy.description
 ```
 
 #####Associated objects
 ```ruby
-stry = cl.stories.first
+story = client.stories({:include => ['workspace', 'assignees', 'parent', 'tags']}).first
 
 #Workspace that the story belongs to
 workspace = story.workspace
 
 #Parent story, if exists. Nil, otherwise
-parent = stry.parent_story
+parent = story.parent_story
 
 #Array of Users assigned to the story
-assignees = stry.assignees
+assignees = story.assignees
 
 #Sub-stories of this story
-sub_stories = stry.sub_stories
+#Not loaded - makes an api call
+sub_stories = story.sub_stories
 
 #Array of tags as strings
-tags = stry.tags
+tags = story.tags
 ```
 
 ###Post
 #####Get posts
 ```ruby
-    # All stories
-    posts = cl.posts
+# All stories
+posts = client.posts
 
+# Associated objects that can be included: subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets
+stories = client.stories({:include => ['subject', 'replies'])
 
-    # Associated objects that can be included: subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets
-    stories = cl.stories({:include => ['subject', 'replies'])
-
-    # Filter and order posts
-    posts = @cl.posts({:workspace_id => 3484825, :parents_only => true})
+# Filter and order posts
+posts = client.posts({:workspace_id => 23456, :parents_only => true})
 ```
 
 #####Create a new post
 ```ruby
 #Required parameters: message, workspace_id
 #Optional parameters: subject_id, subject_type, story_id, recipient_ids, file_ids
-pst = @cl.create_post({
-                       :message => "Created new post",
-                       :workspace_id => 3484825
-                      })
+post = client.create_post({
+                            :message => "Created new post",
+                           :workspace_id => 3484825
+                           })
 ```
 
 #####Reload and save a post
 ```ruby
 #Savable attributes: message, story_id
-pst = cl.posts.first
-pst_copy = cl.posts.first
-pst.message = "Updated message"
+post = cl.posts.first
+post_copy = cl.posts.first
+post.message = "Updated message"
+# post.message != post_copy.message
 
-# pst.message != pst_copy.message
-stry.save
+post.save
 
-# pst.message == pst_copy.message
-pst_copy.reload
+post_copy.reload
+# post.message == post_copy.message
 ```
 
 #####Associated objects
 ```ruby
-pst = cl.posts.first
+post = client.posts(:include => 'all').first
 
 #Workspace that the story belongs to
-workspace = pst.workspace
+workspace = post.workspace
 
 #Parent post, if exists. Nil, otherwise
-parent = pst.parent_post
+parent = post.parent_post
 
 #User who created the post
-user = pst.user
+user = post.user
 
 #Story associated with this post
-story = pst.story
+story = post.story
 
 #Replies to this post as an array of Posts
-replies = pst.replies
+replies = post.replies
 
 #Recipients of this post as an array of Users
-recipients = pst.recipients
+recipients = post.recipients
 
 #Newest reply to this post, if exists. Nil otherwise.
-newest_reply = pst.newest_reply
+newest_reply = post.newest_reply
 
 #User who posted the newest reply
-newest_reply_user = pst.newest_reply_user
+newest_reply_user = post.newest_reply_user
 
 # An array of urls to associated google docs
-google_documents = pst.google_documents
+google_documents = post.google_documents
 
-# A list of assets linked to this pst
-assets = pst.assets
+# A list of assets linked to this post
+assets = post.assets
 ```
 
 ###Asset
