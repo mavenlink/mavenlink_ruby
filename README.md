@@ -396,10 +396,10 @@ assets = pst.assets
 #####Create a new asset
 ```ruby
 # Required parameters: data (filepath of asset), type (expense or post)
-@cl.create_asset({
-                  :data => "example_file_path",
-                  :type => "expense"
-                 })
+asset = client.create_asset({
+                             :data => "example_file_path",
+                             :type => "expense"
+                            })
 ```
 
 #####Save an asset
