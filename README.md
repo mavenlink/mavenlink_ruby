@@ -209,56 +209,56 @@ user = invoice.user
 ###TimeEntry
 #####Get time entries
 ```ruby
-    # All time entries with all associated objects
-    entries = cl.time_entries({:include => 'all'})
+# All time entries with all associated objects
+entries = client.time_entries({:include => 'all'})
 
-    # Associated objects that can be included: user,story,workspace
-    entries = cl.time_entries({:include => ['user', 'story'])
+# Associated objects that can be included: user,story,workspace
+entries = client.time_entries({:include => ['user', 'story'])
 
-    # Filter invoices
-    entries = @cl.entries({:workspace_id => 12345})
+# Filter invoices
+entries = client.entries({:workspace_id => 12345})
 ```
 
 #####Create a new time entry
 ```ruby
 #Required parameters: workspace_id, date_performed, time_in_minutes
 #Optional parameters: billable, notes, rate_in_cents, story_id
-ent = @cl.create_time_entry({
-                              :workspace_id => 12345,
-                              :date_performed => "2013-07-04",
-                              :time_in_minutes => 34,
-                              :notes => "Notes for TE"
-                            })
+entry = client.create_time_entry({
+                                  :workspace_id => 12345,
+                                  :date_performed => "2013-07-04",
+                                  :time_in_minutes => 34,
+                                  :notes => "Notes for TE"
+                                 })
 ```
 
 #####Reload and save a time entry
 ```ruby
 Savable attributes: date_performed, time_in_minutes, notes, rate_in_cents, billable
-ent = cl.time_entries.first
-ent_copy = cl.time_entries.first
-ent.time_in_minutes = 10
+entry = client.time_entries.first
+entry_copy = client.time_entries.first
+entry.time_in_minutes = 10
+# entry.time_in_minutes != entry_copy.time_in_minutes
 
-# ent.category != ent_copy.time_in_minutes
-ent.save
+entry.save
 
-# exp.category == exp_copy.category
-ent_copy.reload
+entry_copy.reload
+# entry.time_in_minutes == entry_copy.time_in_minutes
 ```
 #####Delete an existing time entry
 ```ruby
-ent = cl.time_entry.first
-ent.delete
+entry = client.time_entries.first
+entry.delete
 ```
 
 #####Associated objects
 ```ruby
-ent = cl.time_entries.first
+entry = client.time_entries(:include => 'all').first
 
 #Workspace that the entry belongs to
-wks = ent.workspace
+workspace = entry.workspace
 
 #User that submitted the entry
-user = ent.user
+user = entry.user
 
 #Story associated with entry. nil if no story.
 story = ent.story
