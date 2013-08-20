@@ -68,7 +68,7 @@ expense = client.create_expense({ :workspace_id => 12345,
 ```ruby
 #Savable attributes: notes, category, date, amount_in_cents
 expense = client.expenses({:only => 1234})
-expense_copy = cl.expenses({:only => 1234})
+expense_copy = client.expenses({:only => 1234})
 expense.category = "Updated category"
 # expense.category != expense_copy.category
 
@@ -351,8 +351,8 @@ post = client.create_post({
 #####Reload and save a post
 ```ruby
 #Savable attributes: message, story_id
-post = cl.posts.first
-post_copy = cl.posts.first
+post = client.posts.first
+post_copy = client.posts.first
 post.message = "Updated message"
 # post.message != post_copy.message
 
