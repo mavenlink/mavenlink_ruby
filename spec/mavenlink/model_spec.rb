@@ -7,8 +7,8 @@ describe Mavenlink do
     @cl = Mavenlink::Client.new("999")
   end
 
-  describe "expenses" do
-    use_vcr_cassette "expenses", :record => :new_episodes
+  vcr_options = {cassette_name: 'expenses', :record => :new_episodes}
+  describe "expenses", vcr: vcr_options do
 
     it "save an existing expense" do
       exp = @cl.expenses({:workspace_id => 3457635, :order => "date:asc" }).first
@@ -39,8 +39,8 @@ describe Mavenlink do
 
   end
 
-  describe "workspaces" do
-    use_vcr_cassette "workspaces", :record => :new_episodes
+  vcr_options = {cassette_name: 'workspaces', :record => :new_episodes}
+  describe "workspaces", vcr: vcr_options do
 
     it "has a creator" do
       workspace = @cl.workspaces({:search => "8105", :include => "all"}).first
@@ -89,8 +89,8 @@ describe Mavenlink do
     end
   end
 
-  describe "invoices" do
-    use_vcr_cassette "invoices", :record => :new_episodes
+  vcr_options = {cassette_name: 'invoices', :record => :new_episodes}
+  describe "invoices", vcr: vcr_options do
 
     it "has time entries" do
       inv = @cl.invoices({:workspace_id => "3457635,3467515", :only => "280315", :include => "all"}).first
@@ -142,8 +142,8 @@ describe Mavenlink do
 
   end
 
-  describe "time_entries" do
-    use_vcr_cassette "time_entries", :record => :new_episodes
+  vcr_options = {cassette_name: 'time_entries', :record => :new_episodes}
+  describe "time_entries", vcr: vcr_options do
 
     it "has a user" do
       entries = @cl.time_entries({:workspace_id => 3457635, :include => "all"})
@@ -190,8 +190,8 @@ describe Mavenlink do
 
   end
 
-  describe "stories" do
-    use_vcr_cassette "stories", :record => :new_episodes
+  vcr_options = {cassette_name: 'stories', :record => :new_episodes}
+  describe "stories", vcr: vcr_options do
 
     it "has a workspace" do
       story = @cl.stories({:workspace_id => 3403465, :include => "all"}).first
@@ -255,8 +255,8 @@ describe Mavenlink do
     end
   end
 
-  describe "posts" do
-    use_vcr_cassette "posts", :record => :new_episodes
+  vcr_options = {cassette_name: 'posts', :record => :new_episodes}
+  describe "posts", vcr: vcr_options do
 
     it "has a parent_post" do
       post = @cl.posts({:workspace_id => 3457635, :include => "all"})[1]
@@ -324,8 +324,8 @@ describe Mavenlink do
     end
   end
 
-  describe "nested attribute objects" do
-    use_vcr_cassette "nested_objects", :record => :new_episodes
+  vcr_options = {cassette_name: 'nested_objects', :record => :new_episodes}
+  describe "nested attribute objects", vcr: vcr_options do
 
     it "can load attribute objects using array as include" do
       workspace = @cl.workspaces({:search => "Test", :include => ["creator"]}).first

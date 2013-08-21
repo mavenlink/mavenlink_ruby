@@ -1,8 +1,8 @@
-# Mavenlink
+#Mavenlink
 
 Ruby gem for Mavenlink's API v1. 
 
-## Installation
+##Installation
 
 Add this line to your application's Gemfile:
 
@@ -16,26 +16,31 @@ Or install it yourself as:
 
     $ gem install mavenlink
 
-## Usage
+##Usage
 
 Please read the API documentation (http://developer.mavenlink.com/) before using the gem.  
 
 You will also need your oauth_token, which can be found on your Mavenlink userpage.
-### Client
+###Client
 #####Initialize a new client
 
 ```ruby
 require 'mavenlink'
-cl = Mavenlink::Client.new(oauth_token)
+oauth_token = 'abc123def456'
+client = Mavenlink::Client.new(oauth_token)
 ```
+
 ###User
 #####Get users
 ```ruby    
-# All users
-users = cl.users
+# All userss
+users = client.users
     
 # Filter users
-filtered_users = cl.users({:participant_in => 12345})
+filtered_users = client.users({:participant_in => 12345})
+
+# User by id
+user = client.users({:only => 123}).first
 ```
 
 ###Expense
@@ -43,40 +48,40 @@ filtered_users = cl.users({:participant_in => 12345})
     
 ```ruby    
 # All expenses
-expenses = cl.expenses
+expenses = client.expenses
     
 # Filter expenses
-filtered_expenses = cl.expenses({:workspace_id => 12345, :order => "date:asc" })
+filtered_expenses = client.expenses({:workspace_id => 12345, :order => "date:asc" })
 ```
 
 #####Create a new expense
 ```ruby
 #Required parameters : workspace_id, date, category, amount_in_cents
 #Optional paramters : notes, currency
-expense = cl.create_expense({ :workspace_id => 12345,
-                              :date => "2012/01/01",
-                              :category => "Travel",
-                              :amount_in_cents => 100 
-                            })
+expense = client.create_expense({ :workspace_id => 12345,
+                                  :date => "2012/01/01",
+                                  :category => "Travel",
+                                  :amount_in_cents => 100
+                               })
 ```
 
 #####Save and reload expense
 ```ruby
 #Savable attributes: notes, category, date, amount_in_cents
-expense = cl.expenses.first
-expense_copy = cl.expenses.first
+expense = client.expenses({:only => 1234})
+expense_copy = client.expenses({:only => 1234})
 expense.category = "Updated category"
-
 # expense.category != expense_copy.category
+
 expense.save
 
-# expense.category == expense_copy.category
 expense_copy.reload
+# expense.category == expense_copy.category
 ```
 
 #####Delete an expense
 ```ruby
-expense = cl.expenses.first
+expense = client.expenses({:only => 1234}).first
 expense.delete
 ```
 
@@ -84,180 +89,193 @@ expense.delete
 #####Get expense categories
 ```ruby
 # Returns an array of expense category strings
-categories = cl.expense_categories
+categories = client.expense_categories
 ```
 
 ###Workspace
 #####Get workspaces
 ```ruby
 # All workspaces with all associated objects
-workspaces = cl.workspaces({:include => "all"})
+workspaces = client.workspaces({:include => "all"})
 
 # Associated objects that can be included: primary_counterpart,participants,creator
-workspaces = cl.workspace({:include => ['primary_counterpart', 'creator'])
+workspaces = client.workspaces({:include => ['primary_counterpart', 'creator'])
 
 
 # Filter and search workspaces
-workspaces = @cl.workspaces({:search => "API Test Project"})
+workspaces = client.workspaces({:search => "API Test Project"})
 ```
 
 #####Create a new workspace
 ```ruby
 #Required parameters: title, creator_role(maven or buyer)
 #Optional parameters: budgeted, description, currency, price, due_date, project_tracker_template_id
-@cl.create_workspace({ :title => "Random Workspace X",
-                        :creator_role => "maven"
-                    }).
+client.create_workspace({ :title => "Random Workspace X",
+                          :creator_role => "maven"
+                        })
 ```
 
 #####Save and reload a workspace
 ```ruby
 #Savable attributes: title, budgeted, description, archived
-wks = cl.workspaces.first
-wks_copy = cl.workspaces.first
-exp.titile = "Updated title"
+workspace = client.workspaces({:search => "API Test Project"}, :include => ['creator'])
+workspace_copy = client.workspaces({:search => "API Test Project"})
+workspace.title = "Updated title"
+# workspace.title != workspace_copy.title
 
-# wks.title != wks_copy.title
-wks.save
+workspace.save
 
-# wks.title == wks_copy.title
-wks_copy.reload
+workspace_copy.reload
+# workspace.title == workspace_copy.title
 ```
 
 #####Create a workspace invitation
 ```ruby
-wks = cl.workspaces.first
+workspace = client.workspaces
 
 #Required parameters: full_name, email_address, invitee_role
 #Optional parameters: subject, message
-wks.create_workspace_invitation({ :full_name => "example name",
-                                  :email_address => "name@example.com",
-                                  :invitee_role => "maven"
-                               })
+workspace.create_workspace_invitation({ :full_name => "example name",
+                                        :email_address => "name@example.com",
+                                        :invitee_role => "maven"
+                                     })
 ```
 
 #####Associated objects
 ```ruby
-wks = cl.workspaces.first
+workspace = client.workspaces({:search => "API Test Project"}, :include => ['creator'])
+workspace_copy = client.workspaces({:search => "API Test Project"})
 
 #Lead of opposite team
-counterpart_user = wks.primary_counterpart
+counterpart_user = workspace.primary_counterpart
 
 #Array of participating users
-participants = wks.participants
+participants = workspace.participants
 
 #Creator of workspace
-creator = wks.creator
+# Preloaded - doesn't make an api call
+creator = workspace.creator
+
+# Not loaded - makes an api call
+creator = workspace_copy.creator
+
+# Explicit api call to load primary_counterpart
+workspace_copy.reload(['primary_counterpart'])
 ```
 
 ###Invoice
 #####Get invoices
 ```ruby
-    # All invoices
-    invoices = cl.invoices
+# All invoices
+invoices = client.invoices
 
-    # Associated objects that can be included: time_entries,expenses,additional_items,workspaces,user
-    invoices = cl.invoices({:include => ['user', 'expenses'])
+# Associated objects that can be included: time_entries,expenses,additional_items,workspaces,user
+invoices = client.invoices({:include => ['all'])
 
-    # Filter invoices
-    invoices = @cl.invoices({:workspace_id => "12345,12346", :paid => "true"})
+# Filter invoices
+invoices = client.invoices({:workspace_id => "12345,12346", :paid => "true"})
 ```
 
 #####Reload a invoice
 ```ruby
-inv = cl.invoices.first
-inv.reload
+invoice = client.invoices({:only => 1234})
+invoice.reload
+
+#Reload only associated time_entries
+invoice.reload(['time_entries'])
 ```
 
 #####Associated objects
 ```ruby
-inv = cl.invoices.first
+invoice = client.invoices({:include => ['time_entries','expenses','workspaces','user']).first
+
 
 #Time entries of an invoice
-time_entries = inv.time_entries
+time_entries = invoice.time_entries
 
 #Expenses of an invoice
-expenses = inv.expenses
+expenses = invoice.expenses
 
 #Additional items returned as a hash
-additional_items = inv.additional_items
+#Not loaded - makes an api call
+additional_items = invoice.additional_items
 
 #Workspaces related to the invoice
-workspaces = inv.workspaces
+workspaces = invoice.workspaces
 
 #Creator of the invoice
-user = inv.user
+user = invoice.user
 ```
 
 ###TimeEntry
 #####Get time entries
 ```ruby
-    # All time entries with all associated objects
-    entries = cl.time_entries({:include => 'all'})
+# All time entries with all associated objects
+entries = client.time_entries({:include => 'all'})
 
-    # Associated objects that can be included: user,story,workspace
-    entries = cl.time_entries({:include => ['user', 'story'])
+# Associated objects that can be included: user,story,workspace
+entries = client.time_entries({:include => ['user', 'story'])
 
-    # Filter invoices
-    entries = @cl.entries({:workspace_id => 12345})
+# Filter invoices
+entries = client.entries({:workspace_id => 12345})
 ```
 
 #####Create a new time entry
 ```ruby
 #Required parameters: workspace_id, date_performed, time_in_minutes
 #Optional parameters: billable, notes, rate_in_cents, story_id
-ent = @cl.create_time_entry({
-                              :workspace_id => 12345,
-                              :date_performed => "2013-07-04",
-                              :time_in_minutes => 34,
-                              :notes => "Notes for TE"
-                            })
+entry = client.create_time_entry({
+                                  :workspace_id => 12345,
+                                  :date_performed => "2013-07-04",
+                                  :time_in_minutes => 34,
+                                  :notes => "Notes for TE"
+                                 })
 ```
 
 #####Reload and save a time entry
 ```ruby
 Savable attributes: date_performed, time_in_minutes, notes, rate_in_cents, billable
-ent = cl.time_entries.first
-ent_copy = cl.time_entries.first
-ent.time_in_minutes = 10
+entry = client.time_entries.first
+entry_copy = client.time_entries.first
+entry.time_in_minutes = 10
+# entry.time_in_minutes != entry_copy.time_in_minutes
 
-# ent.category != ent_copy.time_in_minutes
-ent.save
+entry.save
 
-# exp.category == exp_copy.category
-ent_copy.reload
+entry_copy.reload
+# entry.time_in_minutes == entry_copy.time_in_minutes
 ```
 #####Delete an existing time entry
 ```ruby
-ent = cl.time_entry.first
-ent.delete
+entry = client.time_entries.first
+entry.delete
 ```
 
 #####Associated objects
 ```ruby
-ent = cl.time_entries.first
+entry = client.time_entries(:include => 'all').first
 
 #Workspace that the entry belongs to
-wks = ent.workspace
+workspace = entry.workspace
 
 #User that submitted the entry
-user = ent.user
+user = entry.user
 
 #Story associated with entry. nil if no story.
-story = ent.story
+story = entry.story
 ```
 
 ###Story
 #####Get stories
 ```ruby
-    # All stories
-    stories = cl.stories
+# All stories
+stories = client.stories
 
-    # Associated objects that can be included: workspace,assignees,parent,sub_stories,tags
-    stories = cl.stories({:include => ['workspace', 'parent'])
+# Associated objects that can be included: workspace,assignees,parent,sub_stories,tags
+stories = client.stories({:include => ['workspace', 'parent'])
 
-    # Filter and order stories
-    stories = @cl.stories({:workspace_id => 12345, :order => "created_at:asc", :parents_only => true})
+# Filter and order stories
+filtered_stories = client.stories({:workspace_id => 12345, :order => "created_at:asc", :parents_only => true})
 ```
 
 #####Create a new story
@@ -265,129 +283,129 @@ story = ent.story
 #Required parameters: workspace_id, title, story_type(task, milestone or deliverable)
 #Optional parameters: description, parent_id, start_date, due_date, assignees, budget_estimate_in_cents,
 #                     time_estimate_in_minutes, tag_list
-stry = @cl.create_story({
-                          :workspace_id => 3467515,
-                          :title => "New Task",
-                          :story_type => "task"
-                       })
+story = client.create_story({
+                            :workspace_id => 3467515,
+                            :title => "New Task",
+                            :story_type => "task"
+                            })
 ```
 
 #####Reload and save a story
 ```ruby
 #Savable attributes: title, description, story_type, start_date, due_date,
 #                    state, budget_estimate_in_cents, time_estimate_in_minutes, percentage_complete
-stry = cl.stories.first
-stry_copy = cl.stories.first
-stry.description = "Updated description"
+story = client.stories({:only => 1234})
+story_copy = client.stories({:only => 1234})
+story.description = "Updated description"
+#story.description != story_copy.description
 
-# stry.description != stry_copy.description
-stry.save
+story.save
 
-# stry.description == stry_copy.description
-stry_copy.reload
+story_copy.reload
+# story.description == story_copy.description
 ```
 
 #####Associated objects
 ```ruby
-stry = cl.stories.first
+story = client.stories({:include => ['workspace', 'assignees', 'parent', 'tags']}).first
 
 #Workspace that the story belongs to
 workspace = story.workspace
 
 #Parent story, if exists. Nil, otherwise
-parent = stry.parent_story
+parent = story.parent_story
 
 #Array of Users assigned to the story
-assignees = stry.assignees
+assignees = story.assignees
 
 #Sub-stories of this story
-sub_stories = stry.sub_stories
+#Not loaded - makes an api call
+sub_stories = story.sub_stories
 
 #Array of tags as strings
-tags = stry.tags
+tags = story.tags
 ```
 
 ###Post
 #####Get posts
 ```ruby
-    # All stories
-    posts = cl.posts
+# All stories
+posts = client.posts
 
+# Associated objects that can be included: subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets
+stories = client.stories({:include => ['subject', 'replies'])
 
-    # Associated objects that can be included: subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets
-    stories = cl.stories({:include => ['subject', 'replies'])
-
-    # Filter and order posts
-    posts = @cl.posts({:workspace_id => 3484825, :parents_only => true})
+# Filter and order posts
+posts = client.posts({:workspace_id => 23456, :parents_only => true})
 ```
 
 #####Create a new post
 ```ruby
 #Required parameters: message, workspace_id
 #Optional parameters: subject_id, subject_type, story_id, recipient_ids, file_ids
-pst = @cl.create_post({
-                       :message => "Created new post",
-                       :workspace_id => 3484825
-                      })
+post = client.create_post({
+                            :message => "Created new post",
+                            :workspace_id => 3484825
+                           })
 ```
 
 #####Reload and save a post
 ```ruby
 #Savable attributes: message, story_id
-pst = cl.posts.first
-pst_copy = cl.posts.first
-pst.message = "Updated message"
+post = client.posts.first
+post_copy = client.posts.first
+post.message = "Updated message"
+# post.message != post_copy.message
 
-# pst.message != pst_copy.message
-stry.save
+post.save
 
-# pst.message == pst_copy.message
-pst_copy.reload
+post_copy.reload
+# post.message == post_copy.message
 ```
 
 #####Associated objects
 ```ruby
-pst = cl.posts.first
+post = client.posts(:include => 'all').first
 
 #Workspace that the story belongs to
-workspace = pst.workspace
+workspace = post.workspace
 
 #Parent post, if exists. Nil, otherwise
-parent = pst.parent_post
+parent = post.parent_post
 
 #User who created the post
-user = pst.user
+user = post.user
 
 #Story associated with this post
-story = pst.story
+story = post.story
 
 #Replies to this post as an array of Posts
-replies = pst.replies
+replies = post.replies
 
 #Recipients of this post as an array of Users
-recipients = pst.recipients
+recipients = post.recipients
 
 #Newest reply to this post, if exists. Nil otherwise.
-newest_reply = pst.newest_reply
+newest_reply = post.newest_reply
 
 #User who posted the newest reply
-newest_reply_user = pst.newest_reply_user
+newest_reply_user = post.newest_reply_user
 
 # An array of urls to associated google docs
-google_documents = pst.google_documents
+google_documents = post.google_documents
 
-# A list of assets linked to this pst
-assets = pst.assets
+# A list of assets linked to this post
+assets = post.assets
 ```
 
 ###Asset
 #####Create a new asset
 ```ruby
 # Required parameters: data (filepath of asset), type (expense or post)
-@cl.create_asset({
-                  :data => "example_file_path",
-                  :type => "expense"
-                 })
+asset = client.create_asset({
+                             :data => "example_file_path",
+                             :type => "expense"
+                            })
 ```
 
 #####Save an asset

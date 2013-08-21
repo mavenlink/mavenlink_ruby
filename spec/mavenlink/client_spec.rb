@@ -16,9 +16,9 @@ describe Mavenlink::Client do
       Mavenlink::Client.base_uri.should eql("https://api.mavenlink.com/api/v1")
     end
   end
-  
-  describe "expense categories" do
-    use_vcr_cassette "expense_categories", :record => :new_episodes
+
+  vcr_options = {cassette_name: 'expense_categories', :record => :new_episodes}
+  describe "expense categories", vcr: vcr_options do
 
     it "should be an array of 6 strings" do
       expense_categories = @cl.expense_categories
@@ -26,8 +26,8 @@ describe Mavenlink::Client do
     end
   end
 
-  describe "users" do
-    use_vcr_cassette "users", :record => :new_episodes
+  vcr_options = {cassette_name: 'users', :record => :new_episodes}
+  describe "users", vcr: vcr_options do
 
     it "two users exist" do
       users = @cl.users
@@ -48,8 +48,8 @@ describe Mavenlink::Client do
 
   end
 
-  describe "expenses" do
-    use_vcr_cassette "expenses", :record => :new_episodes
+  vcr_options = {cassette_name: 'expenses', :record => :new_episodes}
+  describe "expenses", vcr: vcr_options do
 
     it "two expenses exist" do
       expenses = @cl.expenses({:workspace_id => 3457635})
@@ -86,8 +86,8 @@ describe Mavenlink::Client do
 
   end
 
-  describe "workspaces" do
-    use_vcr_cassette "workspaces", :record => :new_episodes
+  vcr_options = {cassette_name: 'workspaces', :record => :new_episodes}
+  describe "workspaces", vcr: vcr_options do
 
     it "3 active workspaces should exist" do
       workspaces = @cl.workspaces({:include => "all"})
@@ -125,8 +125,8 @@ describe Mavenlink::Client do
     end
   end
 
-  describe "invoices" do
-    use_vcr_cassette "invoices", :record => :new_episodes
+  vcr_options = {cassette_name: 'invoices', :record => :new_episodes}
+  describe "invoices", vcr: vcr_options do
 
     it "2 invoices exist" do
       invoices = @cl.invoices({:workspace_id => "3457635,3467515", :include => "all"})
@@ -147,8 +147,8 @@ describe Mavenlink::Client do
     end
   end
 
-  describe "time_entries" do
-    use_vcr_cassette "time_entries", :record => :new_episodes
+  vcr_options = {cassette_name: 'time_entries', :record => :new_episodes}
+  describe "time_entries", vcr: vcr_options do
 
     it "2 time entries exist" do
       time_entries = @cl.time_entries({:workspace_id => 3457635, :include => "all"})
@@ -184,8 +184,8 @@ describe Mavenlink::Client do
     end
   end
 
-  describe "stories" do
-    use_vcr_cassette "stories", :record => :new_episodes
+  vcr_options = {cassette_name: 'stories', :record => :new_episodes}
+  describe "stories", vcr: vcr_options do
 
     it "3 stories exist" do
       stories = @cl.stories({:workspace_id => 3403465, :include => "all"})
@@ -229,8 +229,8 @@ describe Mavenlink::Client do
     end
   end
 
-  describe "posts" do
-    use_vcr_cassette "posts", :record => :new_episodes
+  vcr_options = {cassette_name: 'posts', :record => :new_episodes}
+  describe "posts", vcr: vcr_options do
 
     it "3 posts exist" do
       posts = @cl.posts({:workspace_id => 3484825, :include => "all"})
@@ -259,8 +259,8 @@ describe Mavenlink::Client do
     end
   end
 
-  describe "assets" do
-    use_vcr_cassette "assets", :record => :new_episodes
+  vcr_options = {cassette_name: 'assets', :record => :new_episodes}
+  describe "assets", vcr: vcr_options do
 
     it "creates a new asset" do
       asset = @cl.create_asset({
