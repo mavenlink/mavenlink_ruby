@@ -1,8 +1,8 @@
-# Mavenlink
+#Mavenlink
 
 Ruby gem for Mavenlink's API v1. 
 
-## Installation
+##Installation
 
 Add this line to your application's Gemfile:
 
@@ -16,16 +16,17 @@ Or install it yourself as:
 
     $ gem install mavenlink
 
-## Usage
+##Usage
 
 Please read the API documentation (http://developer.mavenlink.com/) before using the gem.  
 
 You will also need your oauth_token, which can be found on your Mavenlink userpage.
-### Client
+###Client
 #####Initialize a new client
 
 ```ruby
 require 'mavenlink'
+oauth_token = 'abc123def456'
 client = Mavenlink::Client.new(oauth_token)
 ```
 
@@ -39,7 +40,7 @@ users = client.users
 filtered_users = client.users({:participant_in => 12345})
 
 # User by id
-user = client.users({:only => 123})
+user = client.users({:only => 123}).first
 ```
 
 ###Expense
@@ -80,7 +81,7 @@ expense_copy.reload
 
 #####Delete an expense
 ```ruby
-expense = client.expenses({:only => 1234})
+expense = client.expenses({:only => 1234}).first
 expense.delete
 ```
 
@@ -135,7 +136,7 @@ workspace = client.workspaces
 #Required parameters: full_name, email_address, invitee_role
 #Optional parameters: subject, message
 workspace.create_workspace_invitation({ :full_name => "example name",
-                                         :email_address => "name@example.com",
+                                        :email_address => "name@example.com",
                                         :invitee_role => "maven"
                                      })
 ```
@@ -261,7 +262,7 @@ workspace = entry.workspace
 user = entry.user
 
 #Story associated with entry. nil if no story.
-story = ent.story
+story = entry.story
 ```
 
 ###Story
@@ -344,7 +345,7 @@ posts = client.posts({:workspace_id => 23456, :parents_only => true})
 #Optional parameters: subject_id, subject_type, story_id, recipient_ids, file_ids
 post = client.create_post({
                             :message => "Created new post",
-                           :workspace_id => 3484825
+                            :workspace_id => 3484825
                            })
 ```
 
