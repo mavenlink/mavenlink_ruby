@@ -3,16 +3,16 @@ module Mavenlink
   class User < Base
   end
 
-  class Asset < Base
+  class Attachment < Base
 
     def save
       options = {}
-      options["asset[filename]"] = self.file_name
-      put_request("/assets/#{id}.json", options)
+      options["attachment[filename]"] = self.file_name
+      put_request("/attachments/#{id}.json", options)
     end
 
     def delete
-      delete_request("/assets/#{id}.json")
+      delete_request("/attachments/#{id}.json")
     end
   end
 
@@ -65,7 +65,7 @@ module Mavenlink
     def create_workspace_invitation(options)
       unless [:full_name, :email_address, :invitee_role].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
-      end 
+      end
       unless ["buyer", "maven"].include? options[:invitee_role]
         raise InvalidParametersError.new("invitee_role must be 'buyer' or 'maven'")
       end
@@ -289,7 +289,7 @@ module Mavenlink
     def reload(include_options="")
       include_options = include_options.join(",") if include_options.is_a?(Array)
       if include_options.eql? "all"
-        include_options =  "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
+        include_options =  "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,attachments"
       end
       options = {"include" => include_options} unless include_options.empty?
       response = get_request("/posts/#{id}.json", options)
@@ -302,7 +302,7 @@ module Mavenlink
           :newest_reply => ["posts", "newest_reply_id"],
           :newest_reply_user => ["users", "newest_reply_user_id"],
           :recipients => ["users", "recipient_ids"],
-          :assets => ["assets", "asset_ids"],
+          :attachments => ["attachments", "attachment_ids"],
           :replies => ["posts", "reply_ids"],
           :google_documents => ["google_documents", "google_document_ids"]
       }
@@ -390,14 +390,14 @@ module Mavenlink
       google_doc_urls
     end
 
-    def assets
-      reload("assets") if assets_json.nil?
-      return [] if assets_json.empty?
-      assets = []
-      assets_json.each do |asset|
-        assets << Asset.new(self.oauth_token, { "id" => asset["id"], "file_name" => asset["filename"]})
+    def attachments
+      reload("attachments") if attachments_json.nil?
+      return [] if attachments_json.empty?
+      attachments = []
+      attachments_json.each do |attachment|
+        attachments << Attachment.new(self.oauth_token, { "id" => attachment["id"], "file_name" => attachment["filename"]})
       end
-      assets
+      attachments
     end
   end
 

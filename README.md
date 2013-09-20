@@ -1,6 +1,6 @@
 #Mavenlink
 
-Ruby gem for Mavenlink's API v1. 
+Ruby gem for Mavenlink's API v1.
 
 ##Installation
 
@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ##Usage
 
-Please read the API documentation (http://developer.mavenlink.com/) before using the gem.  
+Please read the API documentation (http://developer.mavenlink.com/) before using the gem.
 
 You will also need your oauth_token, which can be found on your Mavenlink userpage.
 ###Client
@@ -32,10 +32,10 @@ client = Mavenlink::Client.new(oauth_token)
 
 ###User
 #####Get users
-```ruby    
+```ruby
 # All userss
 users = client.users
-    
+
 # Filter users
 filtered_users = client.users({:participant_in => 12345})
 
@@ -45,11 +45,11 @@ user = client.users({:only => 123}).first
 
 ###Expense
 #####Get expenses
-    
-```ruby    
+
+```ruby
 # All expenses
 expenses = client.expenses
-    
+
 # Filter expenses
 filtered_expenses = client.expenses({:workspace_id => 12345, :order => "date:asc" })
 ```
@@ -332,7 +332,7 @@ tags = story.tags
 # All stories
 posts = client.posts
 
-# Associated objects that can be included: subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets
+# Associated objects that can be included: subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,attachments
 stories = client.stories({:include => ['subject', 'replies'])
 
 # Filter and order posts
@@ -342,7 +342,7 @@ posts = client.posts({:workspace_id => 23456, :parents_only => true})
 #####Create a new post
 ```ruby
 #Required parameters: message, workspace_id
-#Optional parameters: subject_id, subject_type, story_id, recipient_ids, file_ids
+#Optional parameters: subject_id, subject_type, story_id, recipient_ids, attachment_ids
 post = client.create_post({
                             :message => "Created new post",
                             :workspace_id => 3484825
@@ -394,30 +394,30 @@ newest_reply_user = post.newest_reply_user
 # An array of urls to associated google docs
 google_documents = post.google_documents
 
-# A list of assets linked to this post
-assets = post.assets
+# A list of attachments linked to this post
+attachments = post.attachments
 ```
 
 ###Asset
-#####Create a new asset
+#####Create a new attachment
 ```ruby
-# Required parameters: data (filepath of asset), type (expense or post)
-asset = client.create_asset({
+# Required parameters: data (filepath of attachment), type (receipt or post_attachment)
+attachment = client.create_attachment({
                              :data => "example_file_path",
-                             :type => "expense"
+                             :type => "receipt"
                             })
 ```
 
-#####Save an asset
+#####Save an attachment
 ```ruby
 #Savable attributes: file_name
-asset.file_name = "updated_file_name"
-asset.save
+attachment.file_name = "updated_file_name"
+attachment.save
 ```
 
-#####Delete an asset
+#####Delete an attachment
 ```ruby
-asset.delete
+attachment.delete
 ```
 ## Contributing
 

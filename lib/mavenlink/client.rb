@@ -147,18 +147,18 @@ module Mavenlink
       invoices
     end
 
-    def create_asset(options)
+    def create_attachment(options)
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       unless [:data, :type].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
       end
-      raise "Type of asset must be 'post' or 'expense'" unless ["post", "expense"].include? options[:type]
-      response = post_request('/assets.json', {
-                                    "asset[data]" => File.new(options[:data], 'rb'),
-                                    "asset[type]" => options[:type]
+      raise "Type of attachment must be 'post' or 'expense'" unless ["post_attachment", "receipt"].include? options[:type]
+      response = post_request('/attachments.json', {
+                                    "attachment[data]" => File.new(options[:data], 'rb'),
+                                    "attachment[type]" => options[:type]
                                     })
-      Asset.new(oauth_token, {"id" => response["id"], "file_name" =>options[:data]})
+      Attachment.new(oauth_token, {"id" => response["id"], "file_name" =>options[:data]})
     end
 
     def stories(options={})
@@ -191,7 +191,7 @@ module Mavenlink
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:title, :story_type, :workspace_id ].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
-      end 
+      end
       unless %w[milestone task deliverable].include? options[:story_type]
         raise InvalidParametersError.new("story_type must be milestone, task or deliverable")
       end
@@ -204,7 +204,7 @@ module Mavenlink
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       options["include"] = options["include"].join(",") if options["include"].is_a?(Array)
       if options["include"].eql? "all"
-        options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,assets"
+        options["include"] = "subject,user,workspace,story,replies,newest_reply,newest_reply_user,recipients,google_documents,attachments"
       end
       response = get_request("/posts.json", options)
       results = response["results"]
@@ -215,7 +215,7 @@ module Mavenlink
           post = posts_data[result["id"]]
           associated_hash =  {
                           :workspace => ["workspaces", "workspace_id"],
-                          :assets => ["assets", "asset_ids"],
+                          :attachments => ["attachments", "attachment_ids"],
                           :user => ["users", "user_id"],
                           :subject => ["posts", "subject_id"],
                           :story => ["stories", "story_id"],
@@ -236,7 +236,7 @@ module Mavenlink
       options = HashWithIndifferentAccess.new_from_hash_copying_default(options)
       unless [:message, :workspace_id].all? {|k| options.has_key? k}
         raise InvalidParametersError.new("Missing required parameters")
-      end 
+      end
       options.keys.each {|key| options["post[#{key}]"] = options.delete(key)}
       response = post_request("/posts.json", options)
       Post.new(oauth_token, response["posts"][response["results"].first["id"]])

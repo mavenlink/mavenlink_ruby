@@ -72,7 +72,7 @@ describe Mavenlink::Client do
       @cl.create_expense({ :workspace_id => 3403465,
                             :date => "2012/01/01",
                             :category => "Travel",
-                            :amount_in_cents => 100 
+                            :amount_in_cents => 100
                           }).should be_an_instance_of Mavenlink::Expense
 
     end
@@ -259,15 +259,15 @@ describe Mavenlink::Client do
     end
   end
 
-  vcr_options = {cassette_name: 'assets', :record => :new_episodes}
-  describe "assets", vcr: vcr_options do
+  vcr_options = {cassette_name: 'attachments', :record => :new_episodes}
+  describe "attachments", vcr: vcr_options do
 
-    it "creates a new asset" do
-      asset = @cl.create_asset({
+    it "creates a new attachment" do
+      attachment = @cl.create_attachment({
                                 :data => "spec/fixtures/mavenlink-logo.jpg",
-                                :type => "expense"
+                                :type => "receipt"
                               })
-      asset.should be_an_instance_of Mavenlink::Asset
+      attachment.should be_an_instance_of Mavenlink::Attachment
     end
   end
 

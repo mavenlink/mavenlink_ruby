@@ -316,11 +316,11 @@ describe Mavenlink do
       newest_reply_user.should be_an_instance_of Mavenlink::User
     end
 
-    it "has assets" do
+    it "has attachments" do
       post = @cl.posts({:workspace_id => 3457635, :only => 26236765, :include => "all"}).first
-      assets = post.assets
-      assets.should be_an_array_of(Mavenlink::Asset, 1)
-      assets.first.file_name.should eql("png.png")
+      attachments = post.attachments
+      attachments.should be_an_array_of(Mavenlink::Attachment, 1)
+      attachments.first.file_name.should eql("png.png")
     end
   end
 
@@ -342,7 +342,7 @@ describe Mavenlink do
       creator = workspace.creator
       creator.should be_an_instance_of Mavenlink::User
     end
-    
+
     it "workspace should include creator" do
       workspace = @cl.workspaces({:search => "8105", :include => "creator"}).first
       workspace.should_not_receive(:reload).with("creator").and_call_original
