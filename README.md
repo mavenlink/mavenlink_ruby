@@ -1,3 +1,9 @@
+*This Gem is deprecated in favor of https://github.com/mavenlink/mavenlink_gem*
+
+
+
+
+
 #Mavenlink
 
 Ruby gem for Mavenlink's API v1.
